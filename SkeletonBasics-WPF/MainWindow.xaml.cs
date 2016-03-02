@@ -267,16 +267,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
             // Tar ut x,y,z-position
-            Joint joint0 = skeleton.Joints[JointType.Head];
+            Joint joint0 = skeleton.Joints[JointType.Spine];
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
 
             // Lägger till z-positionen i lista
             list1.Add(joint0.Position.Z);
             textBlock3.Text = "Element i listan: " + list1.Count.ToString();
             // Gör om till "pixel"
-            SkeletonPoint HeadPoint = joint0.Position;
-            Point hej = SkeletonPointToScreen(HeadPoint);
-            textBlock1.Text = "Pixel: " + hej.ToString();
+            // SkeletonPoint HeadSkeletonPoint = joint0.Position;
+            SkeletonPoint SpineSkeletonPoint = skeleton.Joints[JointType.Spine].Position;
+            Point SpinePoint = SkeletonPointToScreen(SpineSkeletonPoint);
+            
+            textBlock1.Text = "Pixel: " + SpinePoint.ToString();
             // Render Torso
             this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
