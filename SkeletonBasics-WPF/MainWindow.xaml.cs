@@ -266,6 +266,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         List<float> list1 = new List<float>();
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
+            // Elli vill testa lite branch-github
             // Tar ut x,y,z-position
             Joint joint0 = skeleton.Joints[JointType.Head];
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
