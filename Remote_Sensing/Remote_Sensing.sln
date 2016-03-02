@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote_Sensing", "Remote_Sensing\Remote_Sensing.csproj", "{6588568E-BB92-4B16-ADC9-6FDC8D54CD89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkeletonBasics-WPF", "..\..\..\..\Documents\Ny mapp\Kinect projekt\SkeletonBasics-WPF\SkeletonBasics-WPF.csproj", "{8121846D-923E-4BB0-8647-30DA753D156E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkeletonBasics-WPF", "..\SkeletonBasics-WPF\SkeletonBasics-WPF.csproj", "{8121846D-923E-4BB0-8647-30DA753D156E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
