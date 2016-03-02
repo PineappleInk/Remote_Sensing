@@ -72,6 +72,5 @@
         </StatusBar>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="-264,335,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock3" Height="47" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="634,198,10,0" Grid.Row="1"/>
-        <sparrowToolkit:LineSeries x:Name="Line1" HorizontalAlignment="Left" Height="167" Margin="486,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="230"/>
     </Grid>
 </Window>
