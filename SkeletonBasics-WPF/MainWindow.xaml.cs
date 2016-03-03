@@ -11,6 +11,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using System.Collections.Generic;
+    using System.Reflection;
+
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -261,6 +263,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         /// 
         List<float> list1 = new List<float>();
+        int a = 1;
+        // Create the MATLAB instance 
+        MLApp.MLApp matlab = new MLApp.MLApp();
+
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
             // Tar ut x,y,z-position
@@ -268,14 +274,38 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
 
             // Lägger till z-positionen i lista
-            list1.Add(joint0.Position.Z);
-            textBlock3.Text = "Element i listan: " + list1.Count.ToString();
+            if (list1.Count >= 300)
+            {
+                list1.RemoveAt(0);
+                list1.Add(joint0.Position.Z);
+            }
+            else
+            {
+                list1.Add(joint0.Position.Z);
+            }
+
+            textBlock3.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0];
             // Gör om till "pixel"
             // SkeletonPoint HeadSkeletonPoint = joint0.Position;
             SkeletonPoint SpineSkeletonPoint = skeleton.Joints[JointType.Spine].Position;
             Point SpinePoint = SkeletonPointToScreen(SpineSkeletonPoint);
             
             textBlock1.Text = "Pixel: " + SpinePoint.ToString();
+
+            // Change to the directory  where the function is located 
+            //matlab.Execute(@"cd C:\Users\Rasmus\Documents\MATLAB");
+
+            // Define the output 
+            object result = null;
+
+            // Call the MATLAB function myfunc
+            matlab.Feval("myfunc", 1, out result, list1.ToArray());
+
+            // Display result 
+            object[] res = result as object[];
+
+            textBlock4.Text = res[0].ToString();
+
             // Render Torso
             this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
