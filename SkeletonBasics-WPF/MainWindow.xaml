@@ -72,6 +72,6 @@
             </StatusBarItem>
         </StatusBar>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="-264,335,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock3" Height="102" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="587,198,10,0" Grid.Row="1"/>
+        <TextBlock x:Name="textBlock3" Height="212" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="587,198,10,0" Grid.Row="1"/>
     </Grid>
 </Window>

@@ -284,7 +284,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 list1.Add(joint0.Position.Z);
             }
 
-            textBlock3.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0];
+            // Current directory
+            var path = Path.Combine(Directory.GetCurrentDirectory());
+
+            textBlock3.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0] + System.Environment.NewLine + path.ToString();
             // Gör om till "pixel"
             // SkeletonPoint HeadSkeletonPoint = joint0.Position;
             SkeletonPoint SpineSkeletonPoint = skeleton.Joints[JointType.Spine].Position;
@@ -293,7 +296,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             textBlock1.Text = "Pixel: " + SpinePoint.ToString();
 
             // Change to the directory  where the function is located 
-            //matlab.Execute(@"cd C:\Users\Rasmus\Documents\MATLAB");
+            matlab.Execute(@"cd " + path + @"\..\..");
 
             // Define the output 
             object result = null;
