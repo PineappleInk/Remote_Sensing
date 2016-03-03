@@ -297,7 +297,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             textBlock1.Text = "Pixel: " + SpinePoint.ToString();
 
             // Change to the directory  where the function is located 
-            //matlab.Execute(@"cd C:\Users\Rasmus\Documents\MATLAB");
+            var path = Path.Combine(Directory.GetCurrentDirectory());
+            matlab.Execute(@"cd " + path);
 
             // Define the output 
             object result = null;
