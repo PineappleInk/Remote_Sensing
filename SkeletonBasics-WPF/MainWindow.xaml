@@ -60,6 +60,7 @@
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
             <TextBlock x:Name="textBlock" Height="47" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="175" HorizontalAlignment="Right"/>
             <TextBlock x:Name="textBlock1" Height="47" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+            <TextBlock x:Name="textBlock4" Height="47" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" HorizontalAlignment="Right" Width="135"/>
         </DockPanel>
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,173,163,43.5" Grid.RowSpan="2" Width="582">
             <Image x:Name="Image" Width="224" Height="153"/>
@@ -71,6 +72,6 @@
             </StatusBarItem>
         </StatusBar>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="-264,335,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock3" Height="47" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="634,198,10,0" Grid.Row="1"/>
+        <TextBlock x:Name="textBlock3" Height="102" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="587,198,10,0" Grid.Row="1"/>
     </Grid>
 </Window>
