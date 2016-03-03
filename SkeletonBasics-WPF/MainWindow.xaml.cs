@@ -272,6 +272,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
+            // Elli testar branch och merge
             // Tar ut x,y,z-position
             Joint joint0 = skeleton.Joints[JointType.Spine];
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
