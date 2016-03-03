@@ -311,7 +311,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             // Display result 
             object[] res = result as object[];
 
-            textBlock4.Text = res[0].ToString();
+            //textBlock4.Text = res[0].ToString();
 
             // Render Torso
             this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
