@@ -13,6 +13,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Collections.Generic;
     using System.Reflection;
 
+    // Pixelfärg
+    using System.Drawing;
+
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -166,8 +169,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // Turn on the skeleton stream to receive skeleton frames
                 this.sensor.SkeletonStream.Enable();
 
+                // Sätt på RGB-kameran 
+                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
                 // Add an event handler to be called whenever there is new color frame data
                 this.sensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
+
+                // Event handler för RGB-kamera
+                this.sensor.ColorFrameReady += this.SensorColorFrameReady;
 
                 // Start the sensor!
                 try
@@ -256,6 +265,19 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
+        // RGB-kamera, implementera en event handler
+        private void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+        {
+            using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+            {
+                if (colorFrame != null)
+                {
+                    colorFrame.CopyPixelDataTo(this.colorPixels);
+                // Något här ...
+                } 
+            }
+        }
+
         /// <summary>
         /// Draws a skeleton's bones and joints
         /// </summary>
@@ -272,6 +294,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             // Tar ut x,y,z-position
             Joint joint0 = skeleton.Joints[JointType.Spine];
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
+
+            // Pixelfärg
+            pixelColor = Bitmap.GetPixel(joint0.Position.X, )
 
             // Lägger till z-positionen i lista
             if (list1.Count >= 300)
