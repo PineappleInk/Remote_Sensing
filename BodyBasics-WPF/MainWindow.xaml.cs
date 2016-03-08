@@ -468,7 +468,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                 // Display result
                 object[] res = result as object[];
-                Console.WriteLine(res[0]);
+                //Console.WriteLine(res[0]);
             }
             //textBlock4.Text = res[0].ToString();
 
