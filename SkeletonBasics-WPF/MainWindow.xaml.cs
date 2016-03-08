@@ -278,7 +278,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
 
             // Lägger till z-positionen i lista
-            if (list1.Count >= 300)
+            if (list1.Count >= 900)
             {
                 list1.RemoveAt(0);
                 list1.Add(joint0.Position.Z);
@@ -429,6 +429,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     this.sensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default;
                 }
+            }
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            if (sensor.ElevationAngle != (int)slider.Value)
+            {
+                sensor.ElevationAngle = (int)slider.Value;
             }
         }
     }

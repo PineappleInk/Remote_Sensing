@@ -73,5 +73,7 @@
         </StatusBar>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="-264,335,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock3" Height="212" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="587,198,10,0" Grid.Row="1"/>
+        <Slider x:Name="slider" Margin="593,469,0,0" Grid.Row="1" RenderTransformOrigin="0.5,0.5" Height="42" VerticalAlignment="Top" HorizontalAlignment="Left" Width="127" Minimum="-26" Maximum="26" AutoToolTipPlacement="TopLeft"/>
+        <Button x:Name="button" Content="Kinect Angle" HorizontalAlignment="Left" Margin="618,522,0,0" Grid.Row="1" VerticalAlignment="Top" Width="76" Click="button_Click"/>
     </Grid>
 </Window>
