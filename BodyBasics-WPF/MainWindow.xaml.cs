@@ -416,7 +416,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// /// <param name="drawingPen">specifies color to draw a specific bone</param>
 
         List<float> list1 = new List<float>();
-        int a = 1;
 
         // Create the MATLAB instance 
         MLApp.MLApp matlab = new MLApp.MLApp();
@@ -455,7 +454,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //textBlock1.Text = "Pixel: " + SpinePoint.ToString();
 
                 // Change to the directory  where the function is located 
-                matlab.Execute(@"cd " + path + @"\..\..");
+                matlab.Execute(@"cd " + path + @"\..\..\..");
 
                 // Define the output 
                 object result = null;
