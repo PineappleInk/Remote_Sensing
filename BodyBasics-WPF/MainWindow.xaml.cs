@@ -432,7 +432,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
 
                 // Lägger till z-positionen i lista
-                if (list1.Count >= 300)
+                if (list1.Count >= 600)
                 {
                     list1.RemoveAt(0);
                     list1.Add(joint0.Position.Z);
@@ -446,7 +446,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 var path = Path.Combine(Directory.GetCurrentDirectory());
 
                 textBlock1.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0] + System.Environment.NewLine + path.ToString();
-                
+
                 // Gör om till "pixel"
                 //SkeletonPoint SpineSkeletonPoint = skeleton.Joints[JointType.Spine].Position;
                 //Point SpinePoint = SkeletonPointToScreen(SpineSkeletonPoint);
@@ -460,10 +460,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 object result = null;
 
                 // Call the MATLAB function myfunc
+                if (list1.Count >= 600)
+                {
                 matlab.Feval("myfunc", 1, out result, list1.ToArray());
+                list1.Clear();
+                }
 
-                // Display result 
+                // Display result
                 object[] res = result as object[];
+                Console.WriteLine(res[0]);
             }
             //textBlock4.Text = res[0].ToString();
 
