@@ -139,6 +139,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         private WriteableBitmap colorBitmap = null;
 
+        private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
+
+        Joint Huvudpunkt;
+
+        // Create the MATLAB instance 
+        MLApp.MLApp matlab = new MLApp.MLApp();
+
+        // Current directory
+        string path = Path.Combine(Directory.GetCurrentDirectory());
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -340,6 +349,72 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        /// Funktion som tar ut färgvärdena för en pixel
+        /// 
+
+       private List<string> getcolorfrompixel(int width, int heigth, byte[] array)
+        {
+            List<string> lista = null;
+            lista = new List<string>();
+
+            Console.WriteLine("Bredd: " + width);
+            Console.WriteLine("Höjd: " + heigth);
+            Console.WriteLine("Längd på array: " + array.Length);
+            Console.WriteLine("Första värdet i arrayen: " + array.GetValue(0));
+
+            if ((array.Length == 8294400) && (heigth > 0) && (width > 0))
+            {
+                int startposition = (((1920 * (heigth - 1)) + width) * 4) - 1;
+                Console.WriteLine(startposition);
+                lista.Add(array.GetValue(startposition).ToString());
+                lista.Add(array.GetValue(startposition + 1).ToString());
+                lista.Add(array.GetValue(startposition + 2).ToString());
+                lista.Add(array.GetValue(startposition + 3).ToString());
+            }
+            else
+            {
+                lista.Add("0");
+                lista.Add("0");
+                lista.Add("0");
+                lista.Add("0");
+            }
+
+            return lista;
+
+        }
+
+        private void ChangePixelColor(int x, int y, byte[] array, string color)
+        {
+            if ((array.Length == 8294400) && (y > 0) && (x > 0))
+            {
+                int startposition = (((1920 * (y - 1)) + x) * 4) - 1;
+                if (color == "blue")
+                {
+                    array[startposition] = 0;
+                    array[startposition + 1] = 255;
+                    array[startposition + 2] = 0;
+                    array[startposition + 3] = 0;
+                }
+                else if (color == "green")
+                {
+                    array[startposition] = 0;
+                    array[startposition + 1] = 0;
+                    array[startposition + 2] = 255;
+                    array[startposition + 3] = 0;
+                }
+                else if (color == "red")
+                {
+                    array[startposition] = 0;
+                    array[startposition + 1] = 0;
+                    array[startposition + 2] = 0;
+                    array[startposition + 3] = 255;
+                }
+            }
+        }
+
+
+        List<double> list3 = new List<double>();
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -353,6 +428,76 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null)
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+                    
+                    int width = colorFrame.FrameDescription.Width;
+                    int height = colorFrame.FrameDescription.Height;
+
+                    byte[] pixels = new byte[width * height * ((PixelFormats.Bgr32.BitsPerPixel + 7) / 8)];
+
+                    if (colorFrame.RawColorImageFormat == ColorImageFormat.Bgra)
+                    {
+                        colorFrame.CopyRawFrameDataToArray(pixels);
+                    }
+                    else
+                    {
+                        colorFrame.CopyConvertedFrameDataToArray(pixels, ColorImageFormat.Bgra);
+                    }
+
+                    if (Huvudpunkt.JointType == JointType.Head)
+                    {
+                        try
+                        {
+                            ColorSpacePoint colorSpacePoint = coordinateMapper.MapCameraPointToColorSpace(Huvudpunkt.Position);
+                            textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
+
+
+                            List<string> list2 = null;
+                            list2 = new List<string>();
+
+                            list2 = getcolorfrompixel(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels);
+
+                            textBlock3.Text =
+                                "Blå kanal: " + list2[1].ToString() +
+                                System.Environment.NewLine + "Grön kanal: " + list2[2].ToString() +
+                                System.Environment.NewLine + "Röd kanal: " + list2[3].ToString();
+                            
+                            if (list3.Count >= 300)
+                            {
+                                double x = Convert.ToDouble(list2[3]);
+                                list3.RemoveAt(0);
+                                list3.Add(x);
+                            }
+                            else
+                            {
+                                double x = Convert.ToDouble(list2[3]);
+                                list3.Add(x);
+                            }
+                            
+                            list2.Clear();
+                            
+                            ChangePixelColor(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels, "green");
+                        }
+                        catch
+                        { }
+                        
+                        // Change to the directory  where the function is located 
+                        matlab.Execute(@"cd " + path + @"\..\..\..");
+
+                        // Define the output 
+                        object result = null;
+
+                        // Call the MATLAB function myfunc
+                        if (list3 != null)
+                        {
+                            try
+                            {
+                                matlab.Feval("myfunc1", 0, out result, list3.ToArray());
+                            }
+                            catch (System.Runtime.InteropServices.COMException)
+                            {
+                            }
+                        }
+                    }
 
                     using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                     {
@@ -368,6 +513,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             this.colorBitmap.AddDirtyRect(new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight));
                         }
+
+                        colorBitmap.WritePixels(
+                            new Int32Rect(0, 0, width, height),
+                            pixels,
+                            width * Bgr32BytesPerPixel,
+                            0);
 
                         this.colorBitmap.Unlock();
                     }
@@ -499,14 +650,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         List<float> list1 = new List<float>();
 
-        // Create the MATLAB instance 
-        MLApp.MLApp matlab = new MLApp.MLApp();
+
 
         private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
         {
             Joint joint0 = joints[jointType0];
             Joint joint1 = joints[jointType1];
 
+            if (joint0.JointType == JointType.Head)
+            {
+                Huvudpunkt.Position = joint0.Position;
+                Huvudpunkt.JointType = joint0.JointType;
+            }
+            if (joint1.JointType == JointType.Head)
+            {
+                Huvudpunkt.Position = joint0.Position;
+                Huvudpunkt.JointType = joint0.JointType;
+            }
 
             if (joint0.JointType == JointType.SpineMid)
             {
@@ -524,8 +684,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     list1.Add(joint0.Position.Z);
                 }
 
-                // Current directory
-                var path = Path.Combine(Directory.GetCurrentDirectory());
+                
 
                 textBlock1.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0] + System.Environment.NewLine + path.ToString();
 
@@ -544,13 +703,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 // Call the MATLAB function myfunc
                 if (list1.Count >= 600)
                 {
-                matlab.Feval("myfunc", 1, out result, list1.ToArray());
-                list1.Clear();
+                    try
+                    {
+                        matlab.Feval("myfunc", 0, out result, list1.ToArray());
+                        list1.Clear();
+                    }
+                    catch (System.Runtime.InteropServices.COMException)
+                    {
+                        list1.Clear();
+                    }
                 }
 
-                // Display result
-                object[] res = result as object[];
-                //Console.WriteLine(res[0]);
+               // Display result
+               // object[] res = result as object[];
+               //Console.WriteLine(res[0]);
             }
             //textBlock4.Text = res[0].ToString();
 

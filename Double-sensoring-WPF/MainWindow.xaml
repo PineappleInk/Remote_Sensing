@@ -14,10 +14,12 @@
         <Viewbox HorizontalAlignment="Left" Margin="50,10,0,306" Width="295">
             <Image Source="{Binding ImageSource1}" Stretch="UniformToFill" />
         </Viewbox>
-        <Viewbox HorizontalAlignment="Right" Margin="0,10,54,306" Width="281">
+        <Viewbox HorizontalAlignment="Right" Margin="0,10,43.4,211.1" Width="385">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="73,361,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="47" Width="198"/>
         <TextBlock x:Name="textBlock1" HorizontalAlignment="Right" Margin="0,361,92,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="47" Width="140"/>
+        <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="238,440,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="86" Width="153"/>
+        <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="470,440,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="98" Width="140"/>
     </Grid>
 </Window>
