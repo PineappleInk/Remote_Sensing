@@ -105,9 +105,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private KinectSensor kinectSensor;
 
+        public Joint headJoint;
+        
+
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
+            headJoint = new Joint();
+            
         }
 
         public void createBodySensor()
@@ -189,6 +194,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.bodyFrameReader = bodyFrameReader;
         }
+
+        public CoordinateMapper getCoordinateMapper()
+        {
+            return coordinateMapper;
+        }
+
 
         /// <summary>
         /// Handles the body frame data arriving from the sensor
@@ -321,7 +332,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             Joint joint0 = joints[jointType0];
             Joint joint1 = joints[jointType1];
+            
 
+            if (joint0.JointType == JointType.Head)
+            {
+                headJoint = joint0;
+            }
+            else if (joint1.JointType == JointType.Head)
+            {
+                headJoint = joint1;
+            }
 
             if (joint0.JointType == JointType.SpineMid)
             {
@@ -350,7 +370,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Point SpinePoint = SkeletonPointToScreen(SpineSkeletonPoint);
 
                 //textBlock1.Text = "Pixel: " + SpinePoint.ToString();
-
+                /*
                 // Change to the directory  where the function is located 
                 matlab.Execute(@"cd " + path + @"\..\..\..");
 
@@ -358,7 +378,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 object result = null;
 
                 // Call the MATLAB function myfunc
-                if (list1.Count >= 600)
+                if (list1.Count >= 00)
                 {
                     matlab.Feval("myfunc", 1, out result, list1.ToArray());
                     list1.Clear();
@@ -366,7 +386,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                 // Display result
                 object[] res = result as object[];
-                //Console.WriteLine(res[0]);
+                //Console.WriteLine(res[0]);*/
             }
             //textBlock4.Text = res[0].ToString();
 
