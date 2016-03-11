@@ -193,35 +193,33 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
 
-        private int getcolorfrompixel(int width, int heigth, byte[] array)
+       private int getcolorfrompixel(int width, int heigth, byte[] array, string color)
         {
-            //List<string> lista = null;
-            //lista = new List<string>();
-            /*
-            Console.WriteLine("Bredd: " + width);
-            Console.WriteLine("Höjd: " + heigth);
-            Console.WriteLine("Längd på array: " + array.Length);
-            Console.WriteLine("Första värdet i arrayen: " + array.GetValue(0));
-            */
             if ((array.Length == 8294400) && (heigth - 5 > 0) && (width - 5 > 0) && (heigth + 5 < 1080) && (width + 5 < 1920))
             {
                 int startposition = (((1920 * (heigth - 1)) + width) * 4) - 1;
-                //Console.WriteLine(startposition);
-                //lista.Add(array.GetValue(startposition).ToString());
-                //lista.Add(array.GetValue(startposition + 1).ToString()); // Blå
-                //lista.Add(array.GetValue(startposition + 2).ToString()); // Grön
+
+                if (color == "red")
+                {
                 return Convert.ToInt32(array.GetValue(startposition + 3)); // Röd
             }
+                else if (color == "green")
+                {
+                    return Convert.ToInt32(array.GetValue(startposition + 2)); // Grön
+                }
+                else if (color == "blue")
+                {
+                    return Convert.ToInt32(array.GetValue(startposition + 1)); // Blå
+                }
             else
             {
-                //lista.Add("0");
-                //lista.Add("0");
-                //lista.Add("0");
                 return 0;
             }
-
-            //return lista;
-
+        }
+            else
+            {
+                return 0;
+            }
         }
 
         private void ChangePixelColor(int x, int y, byte[] array, string color)
@@ -269,7 +267,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null)
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-
+                    
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
 
@@ -284,31 +282,33 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         colorFrame.CopyConvertedFrameDataToArray(pixels, ColorImageFormat.Bgra);
                     }
 
-
+                    
                     //--------------------------------------------Puls----------------------------------------------------------------------
                     if (bodySensning.getHeadJoint().JointType == JointType.Head)
                     {
                         try
                         {
-
+                            
                             ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
-
+                            
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
                             rödapixlar = new List<int>();
 
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 5); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 5); ++i)
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 10); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 10); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 10); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 10); ++j)
                                 {
-                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels));
+                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels, "red"));
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
                             }
 
+                            // ----- Värden från gröna kanalerna, för tester
                             //Här tar vi ut alla gröna värden i de intressanta pixlarna
+                            /*
                             List<int> grönapixlar = null;
                             grönapixlar = new List<int>();
 
@@ -316,8 +316,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
                                 {
-                                    grönapixlar.Add(getcolorfrompixel(i, j, pixels));
+                                    grönapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
                                 }
+                            }
+                            */
+
+                            //Filtrering av högsta/lägsta värden
+                           
+                            rödapixlar.Sort();
+                            
+                            //Ta bort alla lägsta värden
+                            for (int i = 0; i < rödapixlar.Count / 5; i++)
+                            {
+                                rödapixlar.RemoveAt(i);
+                                }
+
+                            //Ta bort alla högsta värden
+                            for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
+                            {
+                                rödapixlar.RemoveAt(i);
                             }
 
                             //Medelvärde av de röda kanalerna i intressanta pixlar
@@ -332,6 +349,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             redcoloraverage = (redcoloraverage / rödapixlar.Count);
 
                             //Medelvärde av de gröna kanalerna i intressanta pixlar
+                            /*
                             double greencoloraverage = 0;
 
                             for (int i = 0; i < grönapixlar.Count; i++)
@@ -339,12 +357,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                                 greencoloraverage += grönapixlar[i];
                             }
+                            */
 
-
-                            greencoloraverage = (greencoloraverage / grönapixlar.Count);
-
+                            //greencoloraverage = (greencoloraverage / grönapixlar.Count);
+                           
                             //rött medel minus grönt medel
-                            double coloraverage = redcoloraverage - greencoloraverage;
+                            double coloraverage = redcoloraverage; // - greencoloraverage;
 
                             if (matlabPulsLista.Count >= 300)
                             {
@@ -357,13 +375,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
 
                             rödapixlar.Clear();
-                            grönapixlar.Clear();
-
-
+                            //grönapixlar.Clear();
+                            
+                            
                         }
                         catch
                         { }
-
+                        
                         // Change to the directory  where the function is located 
                         matlab.Execute(@"cd " + path + @"\..\..\..");
 
@@ -371,12 +389,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         object result = null;
 
                         // Call the MATLAB function myfunc
-                        if (matlabPulsLista.Count >= 300)
-                        {
+                        if (matlabPulsLista.Count >= 300 )
+                        //
                             try
                             {
-                                //matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
-                                for (int i = 0; i < 10; ++i)
+                                matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
+                                for (int i = 0; i < 30; ++i)
                                 {
                                     matlabPulsLista.RemoveAt(i);
                                 }
@@ -385,7 +403,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 Console.WriteLine("FEL MED MATLAB PANIK");
                             }
-                        }
+                        //}
                     }
 
                     using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
@@ -425,9 +443,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (depthFrame != null)
                 {
-                    ushort[] pixelData = new ushort[512 * 424];
+                ushort[] pixelData = new ushort[512 * 424];
 
-                    depthFrame.CopyFrameDataToArray(pixelData);
+                depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
@@ -481,8 +499,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-
-        //------------------------------------------------------------------------------------------------------------------------------------------
+        
+//------------------------------------------------------------------------------------------------------------------------------------------
 
 
         /// <summary>
