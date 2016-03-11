@@ -74,6 +74,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private BodyFrameReader bodyFrameReader = null;
 
         /// <summary>
+        /// Drawing image that we will display
+        /// </summary>
+        private DrawingImage imageSource;
+
+        //--------------------
+
+
+        /// <summary>
         /// Array for the bodies
         /// </summary>
         private Body[] bodies = null;
@@ -105,14 +113,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private KinectSensor kinectSensor;
 
-        public Joint headJoint;
-        
+        private Joint headJoint;
+
+        private Joint spineMidJoint;
+
 
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
-            headJoint = new Joint();
-            
+            headJoint = new Joint(); //används i matlabfunktion i mainwindow
+            //spineMidJoint = new Joint(); //används i matlabfunktion i mainwindow
+            createBodySensor();
+
         }
 
         public void createBodySensor()
@@ -129,6 +141,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // open the reader for the body frames
             this.bodyFrameReader = this.kinectSensor.BodyFrameSource.OpenReader();
+
+            // Create an image source that we can use in our image control
+            this.imageSource = new DrawingImage(drawingGroup);
 
             // a bone defined as a line between two joints
             this.bones = new List<Tuple<JointType, JointType>>();
@@ -199,7 +214,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             return coordinateMapper;
         }
+        
+        public DrawingImage getImageSource()
+        {
+            return imageSource;
+        }
 
+        public Joint getSpineMidJoint()
+        {
+            return spineMidJoint;
+        }
+
+        public Joint getHeadJoint()
+        {
+            return headJoint;
+        }
 
         /// <summary>
         /// Handles the body frame data arriving from the sensor
@@ -333,7 +362,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Joint joint0 = joints[jointType0];
             Joint joint1 = joints[jointType1];
             
-
+            //För matlabfunktion i mainwindow
+            //head - puls
             if (joint0.JointType == JointType.Head)
             {
                 headJoint = joint0;
@@ -341,6 +371,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             else if (joint1.JointType == JointType.Head)
             {
                 headJoint = joint1;
+            }
+            //midspine - puls
+            if (joint0.JointType == JointType.SpineMid)
+            {
+                spineMidJoint = joint0;
+            }
+            else if (joint1.JointType == JointType.SpineMid)
+            {
+                spineMidJoint = joint1;
             }
 
             if (joint0.JointType == JointType.SpineMid)
