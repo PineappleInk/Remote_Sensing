@@ -43,13 +43,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //BODY
         private BodySensing bodySensning;
 
-        private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-
+        ////----------------------
+        ///Matlab-variabler
+        /// Current directory
+        string path = Path.Combine(Directory.GetCurrentDirectory());
         // Create the MATLAB instance 
         MLApp.MLApp matlab = new MLApp.MLApp();
 
-        // Current directory
-        string path = Path.Combine(Directory.GetCurrentDirectory());
+        //puls
+        List<double> matlabPulsLista = new List<double>();
+
+        //andning
+        List<float> listDepthMatlab = new List<float>();
+        //----------------------
+
+        private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -183,6 +191,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.colorSensing.setColorFrameReader(null);
             }
 
+            if (this.depthSensing.getDepthFrameReader() != null)
+            {
+                // ColorFrameReder is IDisposable
+                this.depthSensing.getDepthFrameReader().Dispose();
+                this.depthSensing.setDepthFrameReader(null);
+            }
+
             if (this.kinectSensor != null)
             {
                 this.kinectSensor.Close();
@@ -190,10 +205,46 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        ///MATLAB-funktionen: Härifrån köra alla kommandon som har med matlab att göra.
+        /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
+        /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
+        int antalFel = 0;
+        private void matlabCommand(string codeString, List<float> measurements)
+        {
+            // Change to the directory  where the function is located 
+            matlab.Execute(@"cd " + path + @"\..\..\..");
+
+            // Define the output 
+            object result = null;
+
+            try
+            {
+                //Analys av puls i matlab
+                if (codeString == "pulse")
+                {
+
+                }
+                //Analys av andning i matlab
+                else if (codeString == "breathing")
+                {
+                    matlab.Feval("myfunc", 1, out result, measurements.ToArray());
+                }
+                else
+                {
+                    Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
+                }
+            }
+            catch
+            {
+                antalFel += 1;
+                Console.WriteLine("antal kastade matlabfel: " + antalFel.ToString());
+            }
+
+        }
+
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
-
-       private int getcolorfrompixel(int width, int heigth, byte[] array, string color)
+        private int getcolorfrompixel(int width, int heigth, byte[] array, string color)
         {
             if ((array.Length == 8294400) && (heigth - 5 > 0) && (width - 5 > 0) && (heigth + 5 < 1080) && (width + 5 < 1920))
             {
@@ -201,8 +252,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                 if (color == "red")
                 {
-                return Convert.ToInt32(array.GetValue(startposition + 3)); // Röd
-            }
+                    return Convert.ToInt32(array.GetValue(startposition + 3)); // Röd
+                }
                 else if (color == "green")
                 {
                     return Convert.ToInt32(array.GetValue(startposition + 2)); // Grön
@@ -211,11 +262,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     return Convert.ToInt32(array.GetValue(startposition + 1)); // Blå
                 }
-            else
-            {
-                return 0;
+                else
+                {
+                    return 0;
+                }
             }
-        }
             else
             {
                 return 0;
@@ -252,7 +303,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
 
-        List<double> matlabPulsLista = new List<double>();
+
 
         /// <summary>
         /// Handles the color frame data arriving from the sensor
@@ -267,7 +318,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null)
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-                    
+
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
 
@@ -282,16 +333,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         colorFrame.CopyConvertedFrameDataToArray(pixels, ColorImageFormat.Bgra);
                     }
 
-                    
+
                     //--------------------------------------------Puls----------------------------------------------------------------------
                     if (bodySensning.getHeadJoint().JointType == JointType.Head)
                     {
                         try
                         {
-                            
+
                             ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
-                            
+
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -322,14 +373,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             */
 
                             //Filtrering av högsta/lägsta värden
-                           
+
                             rödapixlar.Sort();
-                            
+
                             //Ta bort alla lägsta värden
                             for (int i = 0; i < rödapixlar.Count / 5; i++)
                             {
                                 rödapixlar.RemoveAt(i);
-                                }
+                            }
 
                             //Ta bort alla högsta värden
                             for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
@@ -360,7 +411,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             */
 
                             //greencoloraverage = (greencoloraverage / grönapixlar.Count);
-                           
+
                             //rött medel minus grönt medel
                             double coloraverage = redcoloraverage; // - greencoloraverage;
 
@@ -376,34 +427,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             rödapixlar.Clear();
                             //grönapixlar.Clear();
-                            
-                            
+
+
                         }
                         catch
                         { }
-                        
-                        // Change to the directory  where the function is located 
-                        matlab.Execute(@"cd " + path + @"\..\..\..");
-
-                        // Define the output 
-                        object result = null;
-
-                        // Call the MATLAB function myfunc
-                        if (matlabPulsLista.Count >= 300 )
-                        //
-                            try
-                            {
-                                matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
-                                for (int i = 0; i < 30; ++i)
-                                {
-                                    matlabPulsLista.RemoveAt(i);
-                                }
-                            }
-                            catch (System.Runtime.InteropServices.COMException)
-                            {
-                                Console.WriteLine("FEL MED MATLAB PANIK");
-                            }
-                        //}
+                        // här ska methlab-funktionen köras--------------------^*************************^^,
+                        //definiera hur ofta och hur stor listan är här innan.
                     }
 
                     using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
@@ -433,9 +463,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+
         //-................-.-.--.-------------------.....................
-        List<float> listDepth = new List<float>();
-        float average = 0;
         //------------------------------------Andning, flera punkter-------------------------------------------------------
         private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
         {
@@ -443,15 +472,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (depthFrame != null)
                 {
-                ushort[] pixelData = new ushort[512 * 424];
+                    ushort[] pixelData = new ushort[512 * 424];
 
-                depthFrame.CopyFrameDataToArray(pixelData);
+                    depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
                     {
                         try
                         {
+                            float average = 0;
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineMidJoint().Position);
 
@@ -461,8 +491,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 5);
                                     ix <= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 5); ix++)
                             {
-                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y) - 5);
-                                    iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 5); iy++)
+                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y));
+                                    iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 10); iy++)
                                 {
                                     pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                                 }
@@ -475,20 +505,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                             average = average / pixelDepthList.Count;
 
-                            //lägg till i listan med alla djupvärden
+                            //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepth.Count >= 30)
+                            if (listDepthMatlab.Count >= 300)
                             {
-                                //Console.WriteLine("Average breathing depth: " + average.ToString());
-                                listDepth.Clear();
+                                Console.WriteLine("Average breathing depth: " + average.ToString());
+                                listDepthMatlab.Add(average);
+                                matlabCommand("breathing", listDepthMatlab);
+                                listDepthMatlab.Clear();
                                 average = 0;
                             }
                             else
                             {
-                                listDepth.Add(average);
+                                listDepthMatlab.Add(average);
                                 average = 0;
                             }
-                            //kör methlab-funktionen
+
 
                         }
                         catch
@@ -499,8 +531,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-        
-//------------------------------------------------------------------------------------------------------------------------------------------
+
+
+        //------------------------------------------------------------------------------------------------------------------------------------------
 
 
         /// <summary>

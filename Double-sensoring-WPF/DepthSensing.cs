@@ -37,7 +37,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.depthFrameReader = depthFrameReader;
         }
-        
+
+        public void setDepthFrameReader(DepthFrameReader depthFrameReader)
+        {
+            this.depthFrameReader = depthFrameReader;
+        }
+
         public void createDepthSensor()
         {
             // open the reader for the color frames
