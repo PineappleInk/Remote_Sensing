@@ -158,7 +158,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             if (depthSensing.getDepthFrameReader() != null)
             {
-                depthSensing.getDepthFrameReader().FrameArrived += breathingDepthValue;
+                depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
         }
 
@@ -193,7 +193,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
 
-       private int getcolorfrompixel(int width, int heigth, byte[] array)
+        private int getcolorfrompixel(int width, int heigth, byte[] array)
         {
             //List<string> lista = null;
             //lista = new List<string>();
@@ -269,7 +269,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null)
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-                    
+
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
 
@@ -284,16 +284,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         colorFrame.CopyConvertedFrameDataToArray(pixels, ColorImageFormat.Bgra);
                     }
 
-                    
+
                     //--------------------------------------------Puls----------------------------------------------------------------------
                     if (bodySensning.getHeadJoint().JointType == JointType.Head)
                     {
                         try
                         {
-                            
+
                             ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
-                            
+
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -342,7 +342,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                             greencoloraverage = (greencoloraverage / grönapixlar.Count);
-                           
+
                             //rött medel minus grönt medel
                             double coloraverage = redcoloraverage - greencoloraverage;
 
@@ -358,12 +358,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             rödapixlar.Clear();
                             grönapixlar.Clear();
-                            
-                            
+
+
                         }
                         catch
                         { }
-                        
+
                         // Change to the directory  where the function is located 
                         matlab.Execute(@"cd " + path + @"\..\..\..");
 
@@ -371,11 +371,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         object result = null;
 
                         // Call the MATLAB function myfunc
-                        if (matlabPulsLista.Count >= 300 )
+                        if (matlabPulsLista.Count >= 300)
                         {
                             try
                             {
-                                matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
+                                //matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
                                 for (int i = 0; i < 10; ++i)
                                 {
                                     matlabPulsLista.RemoveAt(i);
@@ -417,24 +417,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //-................-.-.--.-------------------.....................
         List<float> listDepth = new List<float>();
+        float average = 0;
         //------------------------------------Andning, flera punkter-------------------------------------------------------
-        private void breathingDepthValue(object sender, DepthFrameArrivedEventArgs e)
+        private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
         {
             using (DepthFrame depthFrame = e.FrameReference.AcquireFrame())
             {
-                if(depthFrame != null)
-                { //TILL JAKob och SimoN i framtiden; Gör en egen ".cs" till DepthSensing, flytta allt sånt från bodysensing
+                if (depthFrame != null)
+                {
+                    ushort[] pixelData = new ushort[512 * 424];
 
-                //int width = depthFrame.FrameDescription.Width;
-                //int height = depthFrame.FrameDescription.Height;
+                    depthFrame.CopyFrameDataToArray(pixelData);
 
-                //byte[] pixels = new byte[width * height * ((PixelF/ormats.Default.BitsPerPixel + 7) / 8)];  //TVEEEEEEEEEEEEEEK 7/8?
-
-                ushort[] pixelData = new ushort[512 * 424];
-
-                depthFrame.CopyFrameDataToArray(pixelData);
-
-
+                    //Om midSpine-jointen hittas ska andningen beräknas
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
                     {
                         try
@@ -442,18 +437,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineMidJoint().Position);
 
-                            List<float> pixelDepthList = null;
+                            List<float> pixelDepthList = new List<float>();
 
+                            //for-loop för att hämta djupvärdet i punkter utgående från midSpine
                             for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 5);
-                                    ix >= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 5); ix++)
+                                    ix <= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 5); ix++)
                             {
                                 for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y) - 5);
-                                    iy >= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 5); iy++)
+                                    iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 5); iy++)
                                 {
                                     pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                                 }
                             }
-                            float average = 0;
+
+                            //for-loop följt av division för att ta fram medelvärdet över djupvärdena
                             for (int i = 0; i < pixelDepthList.Count; i++)
                             {
                                 average += pixelDepthList[i];
@@ -461,26 +458,31 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             average = average / pixelDepthList.Count;
 
                             //lägg till i listan med alla djupvärden
+                            //skicka listan om den blivit tillräckligt stor
                             if (listDepth.Count >= 30)
                             {
-                                Console.WriteLine("Average breathing depth: " + average.ToString());
+                                //Console.WriteLine("Average breathing depth: " + average.ToString());
                                 listDepth.Clear();
+                                average = 0;
                             }
                             else
                             {
                                 listDepth.Add(average);
+                                average = 0;
                             }
-                            //kör methlab
+                            //kör methlab-funktionen
 
                         }
                         catch
-                        { }
+                        {
+                            Console.WriteLine("Felhantering i breathingDepthAverage");
+                        }
                     }
                 }
             }
         }
-        
-//------------------------------------------------------------------------------------------------------------------------------------------
+
+        //------------------------------------------------------------------------------------------------------------------------------------------
 
 
         /// <summary>
