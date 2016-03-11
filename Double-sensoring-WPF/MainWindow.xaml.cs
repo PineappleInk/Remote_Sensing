@@ -16,6 +16,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
+    using System.Linq;
 
     /// <summary>
     /// hej
@@ -94,7 +95,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Gets the bitmap to display
         /// </summary>
-       public ImageSource ImageSource1
+        public ImageSource ImageSource1
         {
             get
             {
@@ -153,7 +154,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             if (colorSensing.getColorFrameReader() != null)
             {
                 colorSensing.getColorFrameReader().FrameArrived += Reader_ColorFrameArrived;
-            }
+        }
 
             if (depthSensing.getDepthFrameReader() != null)
             {
@@ -192,34 +193,40 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
 
-        private List<string> getcolorfrompixel(int width, int heigth, byte[] array)
+       private int getcolorfrompixel(int width, int heigth, byte[] array)
         {
-            List<string> lista = null;
-            lista = new List<string>();
-                   
-            if ((array.Length == 8294400) && (heigth > 0) && (width > 0))
+            //List<string> lista = null;
+            //lista = new List<string>();
+            /*
+            Console.WriteLine("Bredd: " + width);
+            Console.WriteLine("Höjd: " + heigth);
+            Console.WriteLine("Längd på array: " + array.Length);
+            Console.WriteLine("Första värdet i arrayen: " + array.GetValue(0));
+            */
+            if ((array.Length == 8294400) && (heigth - 5 > 0) && (width - 5 > 0) && (heigth + 5 < 1080) && (width + 5 < 1920))
             {
                 int startposition = (((1920 * (heigth - 1)) + width) * 4) - 1;
                 //Console.WriteLine(startposition);
-                lista.Add(array.GetValue(startposition).ToString());
-                lista.Add(array.GetValue(startposition + 1).ToString());
-                lista.Add(array.GetValue(startposition + 2).ToString());
-                lista.Add(array.GetValue(startposition + 3).ToString());
+                //lista.Add(array.GetValue(startposition).ToString());
+                //lista.Add(array.GetValue(startposition + 1).ToString()); // Blå
+                //lista.Add(array.GetValue(startposition + 2).ToString()); // Grön
+                return Convert.ToInt32(array.GetValue(startposition + 3)); // Röd
             }
             else
             {
-                lista.Add("0");
-                lista.Add("0");
-                lista.Add("0");
-                lista.Add("0");
+                //lista.Add("0");
+                //lista.Add("0");
+                //lista.Add("0");
+                return 0;
             }
 
-            return lista;
+            //return lista;
+
         }
 
         private void ChangePixelColor(int x, int y, byte[] array, string color)
         {
-            if ((array.Length == 8294400) && (y > 0) && (x > 0))
+            if ((array.Length == 8294400) && (y - 5 > 0) && (x - 5 > 0) && (y + 5 < 1080) && (x + 5 < 1920))
             {
                 int startposition = (((1920 * (y - 1)) + x) * 4) - 1;
                 if (color == "blue")
@@ -262,7 +269,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null)
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-
+                    
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
 
@@ -277,45 +284,64 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         colorFrame.CopyConvertedFrameDataToArray(pixels, ColorImageFormat.Bgra);
                     }
 
-
+                    
                     //--------------------------------------------Puls----------------------------------------------------------------------
                     if (bodySensning.getHeadJoint().JointType == JointType.Head)
                     {
                         try
                         {
-
+                            
                             ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
+                            
+                            List<int> list2 = null;
+                            list2 = new List<int>();
 
-                            List<string> list2 = null;
-                            list2 = new List<string>();
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 5); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 5); ++i)
+                            {
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
+                                {
+                                    list2.Add(getcolorfrompixel(i, j, pixels));
+                                    ChangePixelColor(i, j, pixels, "green");
+                                }
+                            }
 
-                            list2 = getcolorfrompixel(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels);
+                            //list2.Add(getcolorfrompixel(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels));
 
+                            double coloraverage = 0;
+
+                            for (int i = 0; i < list2.Count; i++)
+                            {
+
+                                coloraverage += list2[i];
+                            }
+
+
+                            coloraverage = (coloraverage / list2.Count);
+                           
+                            /*
                             textBlock3.Text =
                                 "Blå kanal: " + list2[1].ToString() +
                                 System.Environment.NewLine + "Grön kanal: " + list2[2].ToString() +
                                 System.Environment.NewLine + "Röd kanal: " + list2[3].ToString();
-
+                            */
                             if (list3.Count >= 300)
                             {
-                                double x = Convert.ToDouble(list2[3]);
                                 list3.RemoveAt(0);
-                                list3.Add(x);
+                                list3.Add(coloraverage);
                             }
                             else
                             {
-                                double x = Convert.ToDouble(list2[3]);
-                                list3.Add(x);
+                                list3.Add(coloraverage);
                             }
-
+                            
                             list2.Clear();
-
-                            ChangePixelColor(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels, "green");
+                            
+                            
                         }
                         catch
                         { }
-
+                        
                         // Change to the directory  where the function is located 
                         matlab.Execute(@"cd " + path + @"\..\..\..");
 
@@ -323,11 +349,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         object result = null;
 
                         // Call the MATLAB function myfunc
-                        if (list3 != null)
+                        if (list3.Count > 0)
                         {
                             try
                             {
-                               // matlab.Feval("myfunc1", 0, out result, list3.ToArray());
+                                matlab.Feval("myfunc1", 0, out result, list3.ToArray());
                             }
                             catch (System.Runtime.InteropServices.COMException)
                             {
@@ -426,15 +452,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-
+        
 //------------------------------------------------------------------------------------------------------------------------------------------
 
 
-                /// <summary>
-                /// Handles the event which the sensor becomes unavailable (E.g. paused, closed, unplugged).
-                /// </summary>
-                /// <param name="sender">object sending the event</param>
-                /// <param name="e">event arguments</param>
+        /// <summary>
+        /// Handles the event which the sensor becomes unavailable (E.g. paused, closed, unplugged).
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
         private void Sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
         {
             // on failure, set the status text
