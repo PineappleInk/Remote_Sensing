@@ -251,7 +251,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
 
-        List<double> list3 = new List<double>();
+        List<double> matlabPulsLista = new List<double>();
 
         /// <summary>
         /// Handles the color frame data arriving from the sensor
@@ -291,50 +291,72 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.headJoint.Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
                             
-                            List<int> list2 = null;
-                            list2 = new List<int>();
+
+                            // Här tar vi ut alla röda värden i de intressanta pixlarna
+                            List<int> rödapixlar = null;
+                            rödapixlar = new List<int>();
 
                             for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 5); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 5); ++i)
                             {
                                 for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
                                 {
-                                    list2.Add(getcolorfrompixel(i, j, pixels));
+                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels));
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
                             }
 
-                            //list2.Add(getcolorfrompixel(Convert.ToInt32(Math.Round(colorSpacePoint.X)), Convert.ToInt32(Math.Round(colorSpacePoint.Y)), pixels));
+                            //Här tar vi ut alla gröna värden i de intressanta pixlarna
+                            List<int> grönapixlar = null;
+                            grönapixlar = new List<int>();
 
-                            double coloraverage = 0;
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 5); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 5); ++i)
+                            {
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
+                                {
+                                    grönapixlar.Add(getcolorfrompixel(i, j, pixels));
+                                }
+                            }
 
-                            for (int i = 0; i < list2.Count; i++)
+                            //Medelvärde av de röda kanalerna i intressanta pixlar
+                            double redcoloraverage = 0;
+
+                            for (int i = 0; i < rödapixlar.Count; i++)
                             {
 
-                                coloraverage += list2[i];
+                                redcoloraverage += rödapixlar[i];
+                            }
+                            
+                            redcoloraverage = (redcoloraverage / rödapixlar.Count);
+
+                            //Medelvärde av de gröna kanalerna i intressanta pixlar
+                            double greencoloraverage = 0;
+
+                            for (int i = 0; i < grönapixlar.Count; i++)
+                            {
+
+                                greencoloraverage += grönapixlar[i];
                             }
 
 
-                            coloraverage = (coloraverage / list2.Count);
-                           
-                            /*
-                            textBlock3.Text =
-                                "Blå kanal: " + list2[1].ToString() +
-                                System.Environment.NewLine + "Grön kanal: " + list2[2].ToString() +
-                                System.Environment.NewLine + "Röd kanal: " + list2[3].ToString();
-                            */
-                            if (list3.Count >= 300)
+                            greencoloraverage = (greencoloraverage / grönapixlar.Count);
+
+                            //rött medel minus grönt medel
+                            double coloraverage = redcoloraverage - greencoloraverage;
+
+                            if (matlabPulsLista.Count >= 300)
                             {
-                                list3.RemoveAt(0);
-                                list3.Add(coloraverage);
+                                matlabPulsLista.RemoveAt(0);
+                                matlabPulsLista.Add(coloraverage);
                             }
                             else
                             {
-                                list3.Add(coloraverage);
+                                matlabPulsLista.Add(coloraverage);
                             }
 
-                            list2.Clear();
-                            
-                            
+                            rödapixlar.Clear();
+                            grönapixlar.Clear();
+
+
                         }
                         catch
                         { }
@@ -346,14 +368,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         object result = null;
 
                         // Call the MATLAB function myfunc
-                        if (list3.Count > 0)
+                        if (matlabPulsLista.Count >= 300 )
                         {
                             try
                             {
-                                matlab.Feval("myfunc1", 0, out result, list3.ToArray());
+                                matlab.Feval("myfunc1", 0, out result, matlabPulsLista.ToArray());
+                                for (int i = 0; i < 10; ++i)
+                                {
+                                    matlabPulsLista.RemoveAt(i);
+                                }
                             }
                             catch (System.Runtime.InteropServices.COMException)
                             {
+                                Console.WriteLine("FEL MED MATLAB PANIK");
                             }
                         }
                     }

@@ -264,8 +264,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             this.DrawBody(joints, jointPoints, dc, drawPen);
 
-                            this.DrawHand(body.HandLeftState, jointPoints[JointType.HandLeft], dc);
-                            this.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
+                            //this.DrawHand(body.HandLeftState, jointPoints[JointType.HandLeft], dc);
+                            //this.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
                         }
                     }
 
@@ -289,7 +289,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 this.DrawBone(joints, jointPoints, bone.Item1, bone.Item2, drawingContext, drawingPen);
             }
-
+            /*
             // Draw the joints
             foreach (JointType jointType in joints.Keys)
             {
@@ -310,7 +310,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
                 }
-            }
+            }*/
         }
 
         /// <summary>
