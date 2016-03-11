@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="BodySensing.cs" />
     <Compile Include="ColorSensing.cs" />
+    <Compile Include="DepthSensing.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

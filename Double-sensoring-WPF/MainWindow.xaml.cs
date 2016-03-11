@@ -25,11 +25,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         /// <summary>
-        /// Drawing image that we will display
-        /// </summary>
-        private DrawingImage imageSource1;
-
-        /// <summary>
         /// Active Kinect sensor
         /// </summary>
         private KinectSensor kinectSensor = null;
@@ -41,6 +36,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //COLOR
         private ColorSensing colorSensing;
+
+        //Depth
+        private DepthSensing depthSensing;
 
         //BODY
         private BodySensing bodySensning;
@@ -67,26 +65,26 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // open the sensor
             this.kinectSensor.Open();
 
+            // use the window object as the view model in this simple example
+            this.DataContext = this;
+
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.NoSensorStatusText;
             //BODY
             this.bodySensning = new BodySensing(kinectSensor);
-            bodySensning.createBodySensor();
-            // Create an image source that we can use in our image control
-            this.imageSource1 = new DrawingImage(bodySensning.getDrawingGroup());
-
-            // use the window object as the view model in this simple example
-            this.DataContext = this;
+            //bodySensning.createBodySensor();
 
             //COLOR
             this.colorSensing = new ColorSensing(kinectSensor);
             colorSensing.createColorSensor();
 
+            //Depth
+            this.depthSensing = new DepthSensing(kinectSensor);
+            depthSensing.createDepthSensor();
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
-
-
         }
 
         /// <summary>
@@ -101,7 +99,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             get
             {
-                return this.imageSource1;
+                return bodySensning.getImageSource();
             }
         }
 
@@ -153,9 +151,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 bodySensning.getBodyFrameReader().FrameArrived += bodySensning.Reader_FrameArrived;
             }
 
-            if (bodySensning.getBodyFrameReader() != null)
+            if (colorSensing.getColorFrameReader() != null)
             {
                 colorSensing.getColorFrameReader().FrameArrived += Reader_ColorFrameArrived;
+            }
+
+            if (depthSensing.getDepthFrameReader() != null)
+            {
+                depthSensing.getDepthFrameReader().FrameArrived += breathingDepthValue;
             }
         }
 
@@ -282,13 +285,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
 
                     
-
-                    if (bodySensning.headJoint.JointType == JointType.Head)
+                    //--------------------------------------------Puls----------------------------------------------------------------------
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
                     {
                         try
                         {
                             
-                            ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.headJoint.Position);
+                            ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
                             
 
@@ -325,7 +328,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                                 redcoloraverage += rödapixlar[i];
                             }
-                            
+
                             redcoloraverage = (redcoloraverage / rödapixlar.Count);
 
                             //Medelvärde av de gröna kanalerna i intressanta pixlar
@@ -339,7 +342,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                             greencoloraverage = (greencoloraverage / grönapixlar.Count);
-
+                           
                             //rött medel minus grönt medel
                             double coloraverage = redcoloraverage - greencoloraverage;
 
@@ -355,8 +358,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             rödapixlar.Clear();
                             grönapixlar.Clear();
-
-
+                            
+                            
                         }
                         catch
                         { }
@@ -411,7 +414,74 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
+
+        //-................-.-.--.-------------------.....................
+        List<float> listDepth = new List<float>();
+        //------------------------------------Andning, flera punkter-------------------------------------------------------
+        private void breathingDepthValue(object sender, DepthFrameArrivedEventArgs e)
+        {
+            using (DepthFrame depthFrame = e.FrameReference.AcquireFrame())
+            {
+                if(depthFrame != null)
+                { //TILL JAKob och SimoN i framtiden; Gör en egen ".cs" till DepthSensing, flytta allt sånt från bodysensing
+
+                //int width = depthFrame.FrameDescription.Width;
+                //int height = depthFrame.FrameDescription.Height;
+
+                //byte[] pixels = new byte[width * height * ((PixelF/ormats.Default.BitsPerPixel + 7) / 8)];  //TVEEEEEEEEEEEEEEK 7/8?
+
+                ushort[] pixelData = new ushort[512 * 424];
+
+                depthFrame.CopyFrameDataToArray(pixelData);
+
+
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    {
+                        try
+                        {
+                            DepthSpacePoint depthSpacePoint =
+                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineMidJoint().Position);
+
+                            List<float> pixelDepthList = null;
+
+                            for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 5);
+                                    ix >= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 5); ix++)
+                            {
+                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y) - 5);
+                                    iy >= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 5); iy++)
+                                {
+                                    pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
+                                }
+                            }
+                            float average = 0;
+                            for (int i = 0; i < pixelDepthList.Count; i++)
+                            {
+                                average += pixelDepthList[i];
+                            }
+                            average = average / pixelDepthList.Count;
+
+                            //lägg till i listan med alla djupvärden
+                            if (listDepth.Count >= 30)
+                            {
+                                Console.WriteLine("Average breathing depth: " + average.ToString());
+                                listDepth.Clear();
+                            }
+                            else
+                            {
+                                listDepth.Add(average);
+                            }
+                            //kör methlab
+
+                        }
+                        catch
+                        { }
+                    }
+                }
+            }
+        }
         
+//------------------------------------------------------------------------------------------------------------------------------------------
+
 
         /// <summary>
         /// Handles the event which the sensor becomes unavailable (E.g. paused, closed, unplugged).
