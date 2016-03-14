@@ -26,5 +26,6 @@
             </Slider.RenderTransform>
         </Slider>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="472,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="86" Width="175"><Run Text="Hjärtrytm:"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Andningsrytm:"/></TextBlock>
+        <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="42,337,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
     </Grid>
 </Window>

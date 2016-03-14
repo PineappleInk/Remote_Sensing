@@ -230,14 +230,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     matlab.Feval("pulse_instant", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
-                    heartrate = Convert.ToDouble(res[0]);
+                    heartrate = Math.Round(Convert.ToDouble(res[0]));
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
                     matlab.Feval("breathing_instant", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
-                    breathingrate = Convert.ToDouble(res[0]);
+                    breathingrate = Math.Round(Convert.ToDouble(res[0]));
                 }
                 else
                 {
@@ -527,8 +527,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-
-        //-................-.-.--.-------------------.....................
         //------------------------------------Andning, flera punkter-------------------------------------------------------
         private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
         {
@@ -548,6 +546,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             double average = 0;
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getBellyJoint().Position);
+
+                            //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
+                            //OBS spineShoulder eller dylikt måste skapas
+                            /*DepthSpacePoint depthSpacePointCompare = 
+                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
+                            double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
                             List<double> pixelDepthList = new List<double>();
 
@@ -607,9 +611,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //INTE NYTT
 
                         }
-                        catch
+                        catch (System.IndexOutOfRangeException)
                         {
-                            Console.WriteLine("Felhantering i breathingDepthAverage");
+                            MessageBox.Show("Baby has escaped, he can't be far");
                         }
                     }
                 }
@@ -635,6 +639,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             this.bellyJointYPosition = Slider.Value;
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            listDepthMatlab.Clear();
+            matlabPulsLista.Clear();
         }
     }
 }
