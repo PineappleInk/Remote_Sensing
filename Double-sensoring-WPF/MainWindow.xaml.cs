@@ -231,14 +231,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     matlab.Feval("pulse_instant", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
-                    heartrate = Convert.ToDouble(res[0]);
+                    heartrate = Math.Round(Convert.ToDouble(res[0]));
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
                     matlab.Feval("breathing_instant", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
-                    breathingrate = Convert.ToDouble(res[0]);
+                    breathingrate = Math.Round(Convert.ToDouble(res[0]));
                 }
                 else
                 {
@@ -640,6 +640,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             this.bellyJointYPosition = Slider.Value;
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            listDepthMatlab.Clear();
+            matlabPulsLista.Clear();
         }
     }
 }
