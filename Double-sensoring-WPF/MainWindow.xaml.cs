@@ -19,7 +19,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Linq;
 
     /// <summary>
-    /// hej
     /// Interaction logic for MainWindow
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
@@ -30,30 +29,36 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private KinectSensor kinectSensor = null;
 
         /// <summary>
+        /// Paramteter for position of bellyJoint
+        /// </summary>
+        private double bellyJointYPosition = 2 / 3;
+        private double bellyJointXPosition = 2 / 3;
+
+        /// <summary>
         /// Current status text to display
         /// </summary>
         private string statusText = null;
 
-        //COLOR
+        //COLOR-instans
         private ColorSensing colorSensing;
 
-        //Depth
+        //DEPTH-instans
         private DepthSensing depthSensing;
 
-        //BODY
+        //BODY-instans
         private BodySensing bodySensning;
 
         ////----------------------
         ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
-        // Create the MATLAB instance 
+        //MATLAB-instans 
         MLApp.MLApp matlab = new MLApp.MLApp();
 
-        //puls
+        //Puls
         List<double> matlabPulsLista = new List<double>();
 
-        //andning
+        //Andning
         List<double> listDepthMatlab = new List<double>();
         //----------------------
 
@@ -85,11 +90,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //COLOR
             this.colorSensing = new ColorSensing(kinectSensor);
-            colorSensing.createColorSensor();
 
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
-            depthSensing.createDepthSensor();
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -302,9 +305,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-
-
-
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -322,7 +322,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
 
-                    byte[] pixels = new byte[width * height * ((PixelFormats.Bgr32.BitsPerPixel + 7) / 8)];
+                    byte[] pixels = new byte[width * height * Bgr32BytesPerPixel];
 
                     if (colorFrame.RawColorImageFormat == ColorImageFormat.Bgra)
                     {
@@ -457,9 +457,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         try
                         {
                             // Rutan som följer SpineMidJoint
-                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X,
+                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X +
+                                (bodySensning.getSpineBase().Position.X - bodySensning.getSpineMidJoint().Position.X) * (float)bellyJointXPosition,
                                 bodySensning.getSpineMidJoint().Position.Y + 
-                                (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * 2 / 3,
+                                (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * (float)bellyJointYPosition,
                                 bodySensning.getSpineMidJoint().Position.Z);
 
                             ColorSpacePoint colorSpaceSpinePoint = bodySensning.getCoordinateMapper().
@@ -606,6 +607,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // on failure, set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
+        }
+        //Slider som ändrar positionen på bellyJointen
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.bellyJointYPosition = Slider.Value;
         }
     }
 }

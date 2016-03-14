@@ -11,15 +11,19 @@
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
     </Window.Resources>
     <Grid Margin="0,0,-6.4,0.4">
-        <Viewbox HorizontalAlignment="Left" Margin="50,10,0,306" Width="295">
-            <Image Source="{Binding ImageSource1}" Stretch="UniformToFill" />
-        </Viewbox>
-        <Viewbox HorizontalAlignment="Right" Margin="0,10,43.4,211.1" Width="385">
+        <Viewbox HorizontalAlignment="Right" Margin="0,10,166,215" Width="385">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="73,361,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="47" Width="198"/>
-        <TextBlock x:Name="textBlock1" HorizontalAlignment="Right" Margin="0,361,92,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="47" Width="140"/>
-        <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="238,440,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="86" Width="153"/>
-        <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="470,440,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="98" Width="140"/>
+        <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="262,416,0,0" TextWrapping="Wrap" Text="Pixel values" VerticalAlignment="Top" Height="86" Width="153"/>
+        <Slider x:Name="Slider" Margin="76,421,0,64" Width="33" RenderTransformOrigin="0.431,0.268" Maximum="1" LargeChange="0.1" ValueChanged="slider_ValueChanged" Orientation="Vertical" Cursor="Hand" Value="0.66" HorizontalAlignment="Left">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="180"/>
+                    <TranslateTransform X="4.554" Y="35.264"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
     </Grid>
 </Window>
