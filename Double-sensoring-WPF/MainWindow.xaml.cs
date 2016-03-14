@@ -54,7 +54,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> matlabPulsLista = new List<double>();
 
         //andning
-        List<float> listDepthMatlab = new List<float>();
+        List<double> listDepthMatlab = new List<double>();
         //----------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -209,7 +209,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
         /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
         int antalFel = 0;
-        private void matlabCommand(string codeString, List<float> measurements)
+        private void matlabCommand(string codeString, List<double> measurements)
         {
             // Change to the directory  where the function is located 
             matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
@@ -429,11 +429,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //grönapixlar.Clear();
 
 
+                            // här ska methlab-funktionen köras--------------------^*************************^^,
+                            //definiera hur ofta och hur stor listan är här innan.
+                            if (matlabPulsLista.Count >= 300)
+                            {
+                                matlabCommand("pulse", matlabPulsLista);
+                                for (int i = 0; i < 30; ++i)
+                                {
+                                    matlabPulsLista.RemoveAt(0);
+                                }
+                            }
                         }
+
                         catch
                         { }
-                        // här ska methlab-funktionen köras--------------------^*************************^^,
-                        //definiera hur ofta och hur stor listan är här innan.
+                        
                     }
 
                     using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
@@ -481,11 +491,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-                            float average = 0;
+                            double average = 0;
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineMidJoint().Position);
 
-                            List<float> pixelDepthList = new List<float>();
+                            List<double> pixelDepthList = new List<double>();
 
                             //for-loop för att hämta djupvärdet i punkter utgående från midSpine
                             for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 5);
@@ -512,13 +522,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 Console.WriteLine("Average breathing depth: " + average.ToString());
                                 listDepthMatlab.Add(average);
                                 matlabCommand("breathing", listDepthMatlab);
-                                listDepthMatlab.Clear();
-                                average = 0;
+
+                                for (int i = 0; i < 30; ++i)
+                                {
+                                    listDepthMatlab.RemoveAt(0);
+                                }
                             }
                             else
                             {
                                 listDepthMatlab.Add(average);
-                                average = 0;
                             }
 
 
