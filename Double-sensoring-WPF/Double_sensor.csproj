@@ -132,6 +132,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="matlab\breathing_instant.m" />
     <Content Include="matlab\pulse_instant.m" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
