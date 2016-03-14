@@ -34,6 +34,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double bellyJointYPosition = 2 / 3;
         private double bellyJointXPosition = 2 / 3;
 
+        double heartrate = 0;
+        double breathingrate = 0;
+
         /// <summary>
         /// Current status text to display
         /// </summary>
@@ -226,16 +229,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (codeString == "pulse")
                 {
                     matlab.Feval("pulse_instant", 1, out result, measurements.ToArray());
+                    object[] res = result as object[];
+                    heartrate = Convert.ToDouble(res[0]);
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
                     matlab.Feval("breathing_instant", 1, out result, measurements.ToArray());
+                    object[] res = result as object[];
+                    breathingrate = Convert.ToDouble(res[0]);
                 }
                 else
                 {
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
                 }
+
+                //Skriver ut hjärtrytm och andningsrytm i programmet
+                textBlock.Text = "Hjärtrytm: " + System.Environment.NewLine + heartrate + System.Environment.NewLine +
+                    "Andningsrytm: " + System.Environment.NewLine + breathingrate;
+
             }
             catch
             {
@@ -421,7 +433,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //rött medel minus grönt medel
                             double coloraverage = redcoloraverage; // - greencoloraverage;
 
-                            if (matlabPulsLista.Count >= 300)
+                            if (matlabPulsLista.Count >= 900)
                             {
                                 matlabPulsLista.RemoveAt(0);
                                 matlabPulsLista.Add(coloraverage);
@@ -434,16 +446,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             rödapixlar.Clear();
                             //grönapixlar.Clear();
 
-
-                            // här ska methlab-funktionen köras--------------------^*************************^^,
-                            //definiera hur ofta och hur stor listan är här innan.
-                            if (matlabPulsLista.Count >= 300)
+                            //Rensa listan från de X äldsta värdena om listan är över en viss längd
+                            if (matlabPulsLista.Count >= 900)
                             {
-                                matlabCommand("pulse", matlabPulsLista);
                                 for (int i = 0; i < 30; ++i)
                                 {
                                     matlabPulsLista.RemoveAt(0);
                                 }
+                            }
+
+                            // här ska methlab-funktionen köras--------------------^*************************^^,
+                            //definiera hur ofta och hur stor listan är här innan.
+                            if (matlabPulsLista.Count % 30 == 0)
+                            {
+                                matlabCommand("pulse", matlabPulsLista);
                             }
                         }
 
@@ -570,22 +586,29 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count >= 300)
+                            if (listDepthMatlab.Count >= 900)
                             {
-                                Console.WriteLine("Average breathing depth: " + average.ToString());
+                                listDepthMatlab.RemoveAt(0);
                                 listDepthMatlab.Add(average);
-                                matlabCommand("breathing", listDepthMatlab);
-
-                                for (int i = 0; i < 30; ++i)
-                                {
-                                    listDepthMatlab.RemoveAt(0);
-                                }
                             }
                             else
                             {
                                 listDepthMatlab.Add(average);
                             }
+                            //NYTT
+                            if (listDepthMatlab.Count >= 900)
+                            {
+                                for (int i = 0; i < 30; ++i)
+                                {
+                                    listDepthMatlab.RemoveAt(0);
+                                }
+                            }
 
+                            if (listDepthMatlab.Count % 30 == 0)
+                            {
+                                matlabCommand("breathing", listDepthMatlab);
+                            }
+                            //INTE NYTT
 
                         }
                         catch (System.IndexOutOfRangeException)
