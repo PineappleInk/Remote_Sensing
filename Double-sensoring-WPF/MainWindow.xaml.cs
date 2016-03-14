@@ -227,7 +227,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
-                    matlab.Feval("myfunc", 1, out result, measurements.ToArray());
+                    matlab.Feval("breathing_instant", 1, out result, measurements.ToArray());
                 }
                 else
                 {
@@ -385,13 +385,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Ta bort alla lägsta värden
                             for (int i = 0; i < rödapixlar.Count / 5; i++)
                             {
-                                rödapixlar.RemoveAt(i);
+                                rödapixlar.RemoveAt(0);
                             }
 
                             //Ta bort alla högsta värden
                             for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
                             {
-                                rödapixlar.RemoveAt(i);
+                                rödapixlar.RemoveAt(rödapixlar.Count - 1);
                             }
 
                             //Medelvärde av de röda kanalerna i intressanta pixlar
@@ -544,6 +544,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                                 }
                             }
+
+                            //Filtrera pixelDepthList från extremvärden
+                            for (int i = 0; i < pixelDepthList.Count / 5; i++)
+                            {
+                                pixelDepthList.RemoveAt(0);
+                            }
+                            for (int i = pixelDepthList.Count * (4/5); i <= pixelDepthList.Count; i++)
+                            {
+                                pixelDepthList.RemoveAt(pixelDepthList.Count - 1);
+                            }
+
 
                             //for-loop följt av division för att ta fram medelvärdet över djupvärdena
                             for (int i = 0; i < pixelDepthList.Count; i++)

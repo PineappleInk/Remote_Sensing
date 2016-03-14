@@ -1,5 +1,7 @@
 function [ mean_pulse ] = pulse_instant( color_list )
 % Calculates mean pulse over some time-interval
+% clf(subplot(2,2,1))
+% clf(subplot(2,2,3))
 
 % Inställningar; välj dina inställnignar för koden här
 samples_per_sec = 30;
@@ -18,14 +20,15 @@ end
 % Slut
 
 % Plot av rådata
-figure(2)
-subplot(2,1,1)
-plot(color_list);
+figure(1)
+subplot(2,2,1)
+plot(color_list, 'red');
 grid on
 %grid minor
 title('Plot puls rådata');
 xlabel('tid [s/30]')
 ylabel('Färgskillnad i pixel i ansiktet (röd-grön)')
+% Slut plot rådata
 
 % Filtrera color_list med hjälp av högsta möjliga gradens
 % Savitzky Golay FIR-filter
@@ -37,7 +40,7 @@ if length(color_list)>=3
     
     % Lokaliserar peakarna i den filtrerade kurvan
     %[~, peak_location]=findpeaks(smooth_color_list, 'MinPeakDistance',10);
-    [~, peak_location]=findpeaks(smooth_color_list)
+    [height_of_peaks, peak_location]=findpeaks(smooth_color_list);
     number_of_peaks=length(peak_location);
 end
 % Slut filtrering
@@ -47,14 +50,15 @@ BPM_pulse = (number_of_peaks/time_of_measurement)*60;
 % Slut medelvärde över antal sekunder
 
 % Plot av filtrerad data
-%figure(2)
-subplot(2,1,2)
-plot(smooth_color_list);
+subplot(2,2,3)
+plot(smooth_color_list, 'red');
+% hold on
+% plot(peak_location, height_of_peaks, 'red o');
 grid on
-%grid minor
 title('Plot puls filtrerad med Savitzky Golay av högsta möjliga grad');
 xlabel('tid [s/30]')
 ylabel('Färgskillnad i pixel i ansiktet (röd-grön)')
+%hold off
 % Slut plot av filtrerad data
 
 % Utskrifter
@@ -62,4 +66,3 @@ mean_pulse = BPM_pulse
 % Slut utskrifter
 
 end
-

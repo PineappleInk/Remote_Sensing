@@ -4,7 +4,9 @@ function [x] = myfunc(a)
 %Spara en bra mätning
 matning3 = a;
 save matning3.mat
-
+figure(1)
+subplot(2,2,2)
+plot(a);
 x=plot(a)
 
 
