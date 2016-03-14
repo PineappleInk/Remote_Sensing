@@ -33,6 +33,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Paramteter for position of bellyJoint
         /// </summary>
         private double bellyJointYPosition = 2 / 3;
+        private double bellyJointXPosition = 2 / 3;
 
         /// <summary>
         /// Current status text to display
@@ -462,9 +463,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         try
                         {
                             // Rutan som följer SpineMidJoint
-                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X,
+                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X +
+                                (bodySensning.getSpineBase().Position.X - bodySensning.getSpineMidJoint().Position.X) * (float)bellyJointXPosition,
                                 bodySensning.getSpineMidJoint().Position.Y + 
-                                (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * 2 / 3,
+                                (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * (float)bellyJointYPosition,
                                 bodySensning.getSpineMidJoint().Position.Z);
 
                             ColorSpacePoint colorSpaceSpinePoint = bodySensning.getCoordinateMapper().
@@ -604,8 +606,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double bellyJointYPosition = Slider.Value;
-            textBlock4.Text = bellyJointYPosition.ToString();
+            this.bellyJointYPosition = Slider.Value;
         }
     }
 }
