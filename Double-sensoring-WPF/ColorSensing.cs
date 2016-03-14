@@ -13,7 +13,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 {
     class ColorSensing
     {
-
         /// <summary>
         /// Reader for color frames
         /// </summary>
@@ -29,8 +28,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public ColorSensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
+
+            // open the reader for the color frames
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+
+            // create the colorFrameDescription from the ColorFrameSource using Bgra format
+            FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
+
+            // create the bitmap to display
+            this.colorBitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
         }
 
+        // Get- och setfunktioner
         public ColorFrameReader getColorFrameReader()
         {
             return colorFrameReader;
@@ -44,19 +53,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public WriteableBitmap getColorBitmap()
         {
             return colorBitmap;
-        }
-
-        public void createColorSensor()
-        {
-            // open the reader for the color frames
-            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
-
-            // create the colorFrameDescription from the ColorFrameSource using Bgra format
-            FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
-
-            // create the bitmap to display
-            this.colorBitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
-        }
-        
+        }        
     }
 }

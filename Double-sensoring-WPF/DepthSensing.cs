@@ -24,10 +24,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public DepthSensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;            
-            depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+
+            // open the reader for the color frames
+            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+
+            // get the depth (display) extents
+            FrameDescription frameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
         }
 
-
+        // Get- och setfunktioner
         public DepthFrameReader getDepthFrameReader()
         {
             return depthFrameReader;
@@ -41,15 +46,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public void setDepthFrameReader(DepthFrameReader depthFrameReader)
         {
             this.depthFrameReader = depthFrameReader;
-        }
-
-        public void createDepthSensor()
-        {
-            // open the reader for the color frames
-            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
-
-            // get the depth (display) extents
-            FrameDescription frameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
         }
     }
 }
