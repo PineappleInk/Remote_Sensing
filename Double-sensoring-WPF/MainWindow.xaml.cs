@@ -527,8 +527,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-
-        //-................-.-.--.-------------------.....................
         //------------------------------------Andning, flera punkter-------------------------------------------------------
         private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
         {
@@ -548,6 +546,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             double average = 0;
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getBellyJoint().Position);
+
+                            //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
+                            //OBS spineShoulder eller dylikt måste skapas
+                            /*DepthSpacePoint depthSpacePointCompare = 
+                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
+                            double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
                             List<double> pixelDepthList = new List<double>();
 
@@ -607,9 +611,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //INTE NYTT
 
                         }
-                        catch
+                        catch (System.IndexOutOfRangeException)
                         {
-                            Console.WriteLine("Felhantering i breathingDepthAverage");
+                            MessageBox.Show("Baby has escaped, he can't be far");
                         }
                     }
                 }
