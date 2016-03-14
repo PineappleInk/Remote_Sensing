@@ -212,7 +212,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void matlabCommand(string codeString, List<float> measurements)
         {
             // Change to the directory  where the function is located 
-            matlab.Execute(@"cd " + path + @"\..\..\..");
+            matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
 
             // Define the output 
             object result = null;
@@ -222,7 +222,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av puls i matlab
                 if (codeString == "pulse")
                 {
-
+                    matlab.Feval("pulse_instant", 1, out result, measurements.ToArray());
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
