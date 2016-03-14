@@ -51,9 +51,10 @@ BPM_breath = (number_of_peaks/time_of_measurement)*60;
 
 % Plot av filtrerad data
 subplot(2,2,4)
+hold off
 plot(smooth_z_list, 'blue' );
-% hold on
-% plot(peak_location, height_of_peaks, 'blue o');
+hold on
+plot(peak_location, height_of_peaks, 'blue o');
 grid on
 title('Plot andning filtrerad med Savitzky Golay av högsta möjliga grad');
 xlabel('tid [s/30]')

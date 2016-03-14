@@ -51,9 +51,10 @@ BPM_pulse = (number_of_peaks/time_of_measurement)*60;
 
 % Plot av filtrerad data
 subplot(2,2,3)
+hold off
 plot(smooth_color_list, 'red');
-% hold on
-% plot(peak_location, height_of_peaks, 'red o');
+hold on
+plot(peak_location, height_of_peaks, 'red o');
 grid on
 title('Plot puls filtrerad med Savitzky Golay av högsta möjliga grad');
 xlabel('tid [s/30]')
