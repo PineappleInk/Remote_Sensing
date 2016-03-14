@@ -562,7 +562,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y));
                                     iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 10); iy++)
                                 {
-                                    pixelDepthList.Add(jointCompare - pixelData[((iy - 1) * 512 + ix)]);
+                                    pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                                 }
                             }
 
