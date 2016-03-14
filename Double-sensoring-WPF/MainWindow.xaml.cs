@@ -219,6 +219,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             // Change to the directory  where the function is located 
             matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
+            //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
 
             // Define the output 
             object result = null;
@@ -370,7 +371,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
                                     j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
                                 {
-                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels, "red"));
+                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
                             }
