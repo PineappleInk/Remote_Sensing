@@ -25,5 +25,6 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="472,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="86" Width="175"><Run Text="Hjärtrytm:"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Andningsrytm:"/></TextBlock>
     </Grid>
 </Window>
