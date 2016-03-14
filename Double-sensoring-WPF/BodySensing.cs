@@ -120,6 +120,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private Joint bellyJoint;
 
+        private Joint spineShoulderJoint;
 
         public BodySensing(KinectSensor kinectSensor)
         {
@@ -198,7 +199,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Skapar joints
             headJoint = new Joint(); //används i matlabfunktion i mainwindow
             bellyJoint = new Joint();
-
         }
 
         // Get- och setfunktioner
@@ -357,7 +357,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Create the MATLAB instance 
         MLApp.MLApp matlab = new MLApp.MLApp();
 
-        private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
+        private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point>
+            jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
         {
             Joint joint0 = joints[jointType0];
             Joint joint1 = joints[jointType1];

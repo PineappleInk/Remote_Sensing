@@ -511,8 +511,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-
-        //-................-.-.--.-------------------.....................
         //------------------------------------Andning, flera punkter-------------------------------------------------------
         private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
         {
@@ -533,6 +531,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             DepthSpacePoint depthSpacePoint =
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getBellyJoint().Position);
 
+                            //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
+                            //OBS spineShoulder eller dylikt måste skapas
+                            /*DepthSpacePoint depthSpacePointCompare = 
+                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
+                            double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
+
                             List<double> pixelDepthList = new List<double>();
 
                             //for-loop för att hämta djupvärdet i punkter utgående från midSpine
@@ -542,7 +546,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y));
                                     iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 10); iy++)
                                 {
-                                    pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
+                                    pixelDepthList.Add(jointCompare - pixelData[((iy - 1) * 512 + ix)]);
                                 }
                             }
 
@@ -584,9 +588,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                         }
-                        catch
+                        catch (System.IndexOutOfRangeException)
                         {
-                            Console.WriteLine("Felhantering i breathingDepthAverage");
+                            MessageBox.Show("Baby has escaped, he can't be far");
                         }
                     }
                 }
