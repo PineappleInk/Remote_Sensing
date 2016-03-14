@@ -30,6 +30,9 @@ zList=double(zList);
 zList=double(zList); % Kanske ej behövs
 degreeOfPolynomialBreath = samplesPerSecBreath - 1;
 smoothZList = sgolayfilt(zList,degreeOfPolynomialBreath,numberOfSamplesBreath);
+% Vänd på kurvan för mer naturligt gränssnitt och beräkning av
+% inandnignar
+smoothZList = smoothZList.*(-1);
 
 % Lokaliserar peakarna (topparna) i den filtrerade kurvan
 [heightOfPeaksBreath, peakLocationBreath]=findpeaks(smoothZList);
