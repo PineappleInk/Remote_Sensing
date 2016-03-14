@@ -133,6 +133,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
     <Resource Include="matlab\pulseplot.png" />
     <Content Include="matlab\pulse.m" />
