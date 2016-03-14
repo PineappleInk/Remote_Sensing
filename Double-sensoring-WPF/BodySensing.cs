@@ -117,14 +117,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private Joint spineMidJoint;
 
+        private Joint spineBase;
+
+        private Joint bellyJoint;
+
 
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
             headJoint = new Joint(); //används i matlabfunktion i mainwindow
             //spineMidJoint = new Joint(); //används i matlabfunktion i mainwindow
+            bellyJoint = new Joint();
             createBodySensor();
-
         }
 
         public void createBodySensor()
@@ -230,6 +234,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return headJoint;
         }
 
+        public Joint getBellyJoint()
+        {
+            return bellyJoint;
+        }
+
+        public void setBellyJointPos(float positionX, float positionY, float positionZ)
+        {
+            this.bellyJoint.Position.X = positionX;
+            this.bellyJoint.Position.Y = positionY;
+            this.bellyJoint.Position.Z = positionZ;
+        }
+
+        public Joint getSpineBase()
+        {
+            return spineBase;
+        }
         /// <summary>
         /// Handles the body frame data arriving from the sensor
         /// </summary>
@@ -380,6 +400,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             else if (joint1.JointType == JointType.SpineMid)
             {
                 spineMidJoint = joint1;
+            }
+            //spinebase - andning
+            if (joint0.JointType == JointType.SpineBase)
+            {
+                spineBase = joint0;
+            }
+            else if (joint1.JointType == JointType.SpineBase)
+            {
+                spineBase = joint1;
             }
 
             if (joint0.JointType == JointType.SpineMid)

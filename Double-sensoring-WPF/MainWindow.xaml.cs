@@ -340,17 +340,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         try
                         {
 
-                            ColorSpacePoint colorSpacePoint = bodySensning.getCoordinateMapper().MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
-                            textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " + Math.Round(colorSpacePoint.X, 0).ToString() + ", " + Math.Round(colorSpacePoint.Y, 0).ToString();
+                            ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
+                                MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
+
+                            textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
+                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
 
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
                             rödapixlar = new List<int>();
 
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 10); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 10); ++i)
+                            // Rutan som följer HeadJoint
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 10);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 10); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 10); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 10); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
                                 {
                                     rödapixlar.Add(getcolorfrompixel(i, j, pixels, "red"));
                                     ChangePixelColor(i, j, pixels, "green");
@@ -446,12 +452,43 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         
                     }
 
-                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    {
+                        try
+                        {
+                            // Rutan som följer SpineMidJoint
+                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X,
+                                bodySensning.getSpineMidJoint().Position.Y + 
+                                (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * 2 / 3,
+                                bodySensning.getSpineMidJoint().Position.Z);
+
+                            ColorSpacePoint colorSpaceSpinePoint = bodySensning.getCoordinateMapper().
+                            MapCameraPointToColorSpace(bodySensning.getBellyJoint().Position);
+
+                            if (colorSpaceSpinePoint.X > 0)
+                            {
+                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - 10);
+                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + 10); ++i)
+                                {
+                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - 10);
+                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + 10); ++j)
+                                    {
+                                        ChangePixelColor(i, j, pixels, "red");
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        { }
+                    }
+
+                        using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                     {
                         this.colorSensing.getColorBitmap().Lock();
 
                         // verify data and write the new color frame data to the display bitmap
-                        if ((colorFrameDescription.Width == this.colorSensing.getColorBitmap().PixelWidth) && (colorFrameDescription.Height == this.colorSensing.getColorBitmap().PixelHeight))
+                        if ((colorFrameDescription.Width == this.colorSensing.getColorBitmap().PixelWidth) &&
+                            (colorFrameDescription.Height == this.colorSensing.getColorBitmap().PixelHeight))
                         {
                             colorFrame.CopyConvertedFrameDataToIntPtr(
                                 this.colorSensing.getColorBitmap().BackBuffer,
@@ -493,7 +530,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             double average = 0;
                             DepthSpacePoint depthSpacePoint =
-                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineMidJoint().Position);
+                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getBellyJoint().Position);
 
                             List<double> pixelDepthList = new List<double>();
 
