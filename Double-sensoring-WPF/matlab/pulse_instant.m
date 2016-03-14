@@ -1,8 +1,6 @@
 function [ mean_pulse ] = pulse_instant( color_list )
 % Calculates mean pulse over some time-interval
 
-load mtlb
-
 % Inställningar; välj dina inställnignar för koden här
 samples_per_sec = 30;
 % Slut inställningar
@@ -15,7 +13,7 @@ time_of_measurement = number_of_samples/samples_per_sec;
 % Gör längden på vectorns indata udda
 if (mod(number_of_samples,2) == 0) % color_list är jämn i längd
     color_list = color_list(2:number_of_samples);
-    number_of_samples = length(color_list)
+    number_of_samples = length(color_list);
 end
 % Slut
 
@@ -60,7 +58,7 @@ ylabel('Färgskillnad i pixel i ansiktet (röd-grön)')
 % Slut plot av filtrerad data
 
 % Utskrifter
-BPM_pulse
+mean_pulse = BPM_pulse
 % Slut utskrifter
 
 end
