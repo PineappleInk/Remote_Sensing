@@ -80,7 +80,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //--------------------
 
-
         /// <summary>
         /// Array for the bodies
         /// </summary>
@@ -125,9 +124,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
-            headJoint = new Joint(); //används i matlabfunktion i mainwindow
-            //spineMidJoint = new Joint(); //används i matlabfunktion i mainwindow
-            bellyJoint = new Joint();
             createBodySensor();
         }
 
@@ -199,8 +195,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
 
+            // Skapar joints
+            headJoint = new Joint(); //används i matlabfunktion i mainwindow
+            bellyJoint = new Joint();
+
         }
 
+        // Get- och setfunktioner
         public DrawingGroup getDrawingGroup()
         {
             return drawingGroup;
@@ -250,6 +251,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             return spineBase;
         }
+
         /// <summary>
         /// Handles the body frame data arriving from the sensor
         /// </summary>
@@ -338,28 +340,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 this.DrawBone(joints, jointPoints, bone.Item1, bone.Item2, drawingContext, drawingPen);
             }
-            /*
-            // Draw the joints
-            foreach (JointType jointType in joints.Keys)
-            {
-                Brush drawBrush = null;
-
-                TrackingState trackingState = joints[jointType].TrackingState;
-
-                if (trackingState == TrackingState.Tracked)
-                {
-                    drawBrush = this.trackedJointBrush;
-                }
-                else if (trackingState == TrackingState.Inferred)
-                {
-                    drawBrush = this.inferredJointBrush;
-                }
-
-                if (drawBrush != null)
-                {
-                    drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
-                }
-            }*/
         }
 
         /// <summary>
@@ -413,9 +393,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             if (joint0.JointType == JointType.SpineMid)
             {
-                //OBS
-                //textBlock.Text = "X: " + joint0.Position.X.ToString() + System.Environment.NewLine + "Y: " + joint0.Position.Y.ToString() + System.Environment.NewLine + "Z: " + joint0.Position.Z.ToString();
-
                 // Lägger till z-positionen i lista
                 if (list1.Count >= 600)
                 {
@@ -429,34 +406,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                 // Current directory
                 var path = Path.Combine(Directory.GetCurrentDirectory());
-
-                //OBS
-                //textBlock1.Text = "Element i listan: " + list1.Count.ToString() + System.Environment.NewLine + "Första elementet: " + list1[0] + System.Environment.NewLine + path.ToString();
-
-                // Gör om till "pixel"
-                //SkeletonPoint SpineSkeletonPoint = skeleton.Joints[JointType.Spine].Position;
-                //Point SpinePoint = SkeletonPointToScreen(SpineSkeletonPoint);
-
-                //textBlock1.Text = "Pixel: " + SpinePoint.ToString();
-                /*
-                // Change to the directory  where the function is located 
-                matlab.Execute(@"cd " + path + @"\..\..\..");
-
-                // Define the output 
-                object result = null;
-
-                // Call the MATLAB function myfunc
-                if (list1.Count >= 00)
-                {
-                    matlab.Feval("myfunc", 1, out result, list1.ToArray());
-                    list1.Clear();
-                }
-
-                // Display result
-                object[] res = result as object[];
-                //Console.WriteLine(res[0]);*/
             }
-            //textBlock4.Text = res[0].ToString();
 
             // If we can't find either of these joints, exit
             if (joint0.TrackingState == TrackingState.NotTracked ||
