@@ -49,6 +49,10 @@ end
 BPM_pulse = (number_of_peaks/time_of_measurement)*60;
 % Slut medelvärde över antal sekunder
 
+% Utskrifter
+mean_pulse = BPM_pulse
+% Slut utskrifter
+
 % Plot av filtrerad data
 subplot(2,2,3)
 hold off
@@ -56,14 +60,10 @@ plot(smooth_color_list, 'red');
 hold on
 plot(peak_location, height_of_peaks, 'red o');
 grid on
-title('Plot puls filtrerad med Savitzky Golay av högsta möjliga grad');
+title({'BPM';mean_pulse}, 'color', 'red', 'FontWeight', 'bold')
+hold all
 xlabel('tid [s/30]')
-ylabel('Färgskillnad i pixel i ansiktet (röd-grön)')
-%hold off
+ylabel('Pulskurva')
 % Slut plot av filtrerad data
-
-% Utskrifter
-mean_pulse = BPM_pulse
-% Slut utskrifter
 
 end

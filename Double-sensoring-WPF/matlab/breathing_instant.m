@@ -49,6 +49,10 @@ end
 BPM_breath = (number_of_peaks/time_of_measurement)*60;
 % Slut medelvärde över antal sekunder
 
+% Utskrifter
+mean_breath = BPM_breath
+% Slut utskrifter
+
 % Plot av filtrerad data
 subplot(2,2,4)
 hold off
@@ -56,15 +60,10 @@ plot(smooth_z_list, 'blue' );
 hold on
 plot(peak_location, height_of_peaks, 'blue o');
 grid on
-title('Plot andning filtrerad med Savitzky Golay av högsta möjliga grad');
+title({'Andetag per minut:', mean_breath}, 'color', 'blue', 'FontWeight', 'bold')
 xlabel('tid [s/30]')
-ylabel('Andning')
-%hold off
+ylabel('Andningskurva')
 % Slut plot
-
-% Utskrifter
-mean_breath = BPM_breath
-% Slut utskrifter
 
 end
 
