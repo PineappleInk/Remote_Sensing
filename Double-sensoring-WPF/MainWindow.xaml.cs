@@ -17,6 +17,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using System.Linq;
+    using System.Drawing;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -316,7 +317,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-
+        System.Drawing.Bitmap bmp;
+        Image image;
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -460,12 +462,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (matlabPulsLista.Count % 30 == 0)
                             {
                                 matlabCommand("pulse", matlabPulsLista);
+                                /*
+                                MemoryStream ms = new MemoryStream();
+                                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                ms.Position = 0;
+                                BitmapImage bi = new BitmapImage();
+                                bi.BeginInit();
+                                bi.StreamSource = ms;
+                                bi.EndInit();
+
+                                image1.Source = bi;
+                                */
                             }
                         }
 
                         catch
                         { }
-                        
+
                     }
 
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
@@ -475,7 +488,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Rutan som följer SpineMidJoint
                             bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X +
                                 (bodySensning.getSpineBase().Position.X - bodySensning.getSpineMidJoint().Position.X) * (float)bellyJointXPosition,
-                                bodySensning.getSpineMidJoint().Position.Y + 
+                                bodySensning.getSpineMidJoint().Position.Y +
                                 (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * (float)bellyJointYPosition,
                                 bodySensning.getSpineMidJoint().Position.Z);
 
@@ -499,7 +512,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         { }
                     }
 
-                        using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                     {
                         this.colorSensing.getColorBitmap().Lock();
 
@@ -571,7 +584,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 pixelDepthList.RemoveAt(0);
                             }
-                            for (int i = pixelDepthList.Count * (4/5); i <= pixelDepthList.Count; i++)
+                            for (int i = pixelDepthList.Count * (4 / 5); i <= pixelDepthList.Count; i++)
                             {
                                 pixelDepthList.RemoveAt(pixelDepthList.Count - 1);
                             }
