@@ -49,12 +49,36 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Expression.Prototyping.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="microsoft.expression.prototyping.runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Kinect">
       <HintPath>$(KINECTSDK20_DIR)Assemblies\Microsoft.Kinect.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
+      <HintPath>packages\OxyPlot.Core.1.0.0-unstable2063\lib\net45\OxyPlot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL">
+      <HintPath>packages\OxyPlot.Wpf.1.0.0-unstable2063\lib\net45\OxyPlot.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OxyPlot.Xps, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\OxyPlot.Wpf.1.0.0-unstable2063\lib\net45\OxyPlot.Xps.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Input.Toolkit.VisualStudio.Design, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -63,9 +87,14 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\WPF Toolkit\v3.5.50211.1\WPFToolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -81,6 +110,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BodySensing.cs" />
+    <Compile Include="ViewModel.cs" />
     <Compile Include="ColorSensing.cs" />
     <Compile Include="DepthSensing.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -107,6 +137,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -17,12 +17,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using System.Linq;
+    using OxyPlot;
+    using OxyPlot.Axes;
+    using OxyPlot.Series;
 
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        //Graf
+        private ViewModel viewModel;
+        private List<double> listTest;
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
@@ -96,6 +102,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
+
+            //Graf
+            listTest = new List<double> { 1, 2, 3 };
+            matlabCommand("hej", listTest);
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -220,6 +230,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Change to the directory  where the function is located 
             matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
             //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
+
+            //Graf
+            viewModel = new ViewModel();
+            DataContext = viewModel;
+
+            for (int i = 0; i < measurements.Count(); i++)
+            {
+                viewModel.AddDatapoint(measurements[i], i);
+            }
 
             // Define the output 
             object result = null;
@@ -646,6 +665,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             listDepthMatlab.Clear();
             matlabPulsLista.Clear();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            var r = new Random();
+            this.listTest.Add(4);
+            matlabCommand("hej", listTest);
         }
     }
 }
