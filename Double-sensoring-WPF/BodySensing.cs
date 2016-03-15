@@ -120,8 +120,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private Joint bellyJoint;
 
-        private Joint spineShoulderJoint;
-
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
