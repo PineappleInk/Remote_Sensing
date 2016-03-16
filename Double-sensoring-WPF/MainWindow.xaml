@@ -11,7 +11,7 @@
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
     </Window.Resources>
     <Grid Margin="0,0,-6.4,0.4">
-        <Viewbox HorizontalAlignment="Right" Margin="0,10,166,215" Width="385">
+        <Viewbox HorizontalAlignment="Right" Margin="0,10,188,234" Width="319">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="262,416,0,0" TextWrapping="Wrap" Text="Pixel values" VerticalAlignment="Top" Height="86" Width="153"/>
