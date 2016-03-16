@@ -100,7 +100,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             // initialize the components (controls) of the window
-            this.InitializeComponent()
+            this.InitializeComponent();
 
         CompositionTarget.Rendering += CompositionTargetRendering;
         }
