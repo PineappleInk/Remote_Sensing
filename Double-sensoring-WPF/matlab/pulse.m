@@ -86,7 +86,7 @@ end
 colorList55(:,:,i) = filtcolorList;
 if (i == 4)
 % Plot av filtrerad data
-figure(1)
+h = figure(1)
 subplot(2,1,1)
 %hold off
 plot(filtcolorList, color);
@@ -101,6 +101,7 @@ ylabel('Pulskurva')
 end
 end
 hold off
+saveas(h, 'pulseplot.png')
 end
 
 
