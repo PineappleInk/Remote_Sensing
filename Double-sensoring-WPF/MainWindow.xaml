@@ -32,5 +32,10 @@
         <Viewbox HorizontalAlignment="Right" Margin="0,0,10.4,372.2" Width="529" Grid.Column="1">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="472,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="47" Width="175"><Run Text="Hjärtrytm"/><Run Text=":"/></TextBlock>
+        <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="42,337,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
+        <Image x:Name="image1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"/>
+        <Label x:Name="averageBreathingLabel" Content="Medelfrekvens andning: " Margin="345,507,52.733,24.267" FontWeight="Bold" FontSize="16"/>
+        <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="472,468,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="193"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
     </Grid>
 </Window>
