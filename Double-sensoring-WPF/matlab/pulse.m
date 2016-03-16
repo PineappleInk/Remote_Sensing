@@ -86,7 +86,7 @@ end
 colorList55(:,:,i) = filtcolorList;
 if (i == 4)
 % Plot av filtrerad data
-h = figure(1)
+h = figure('visible', 'off')
 subplot(2,1,1)
 %hold off
 plot(filtcolorList, color);

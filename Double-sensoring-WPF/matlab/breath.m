@@ -48,7 +48,7 @@ meanBreath = bpmBreath
 % Slut utskrifter
 
 % Plot av filtrerad data
-figure(1)
+figure('visible', 'off')
 subplot(2,1,2)
 hold off
 plot(smoothZList, 'blue' );

@@ -102,12 +102,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-        CompositionTarget.Rendering += CompositionTargetRendering;
+        //Om man vill rendera hela tiden!
+        //CompositionTarget.Rendering += CompositionTargetRendering;
         }
 
-        private void CompositionTargetRendering(object sender, EventArgs e)
+        private void CompositionTargetRendering() //object sender, EventArgs e
         {
-            image1.InvalidateVisual();
+            BitmapImage _image = new BitmapImage();
+            _image.BeginInit();
+            _image.CacheOption = BitmapCacheOption.None;
+            _image.UriCachePolicy = new System.Net.Cache.RequestCachePolicy();
+            _image.CacheOption = BitmapCacheOption.OnLoad;
+            _image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            _image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
+            _image.EndInit();
+            image1.Source = _image;
+            Console.WriteLine("hej");
         }
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -252,6 +262,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
                 }
+                CompositionTargetRendering();
+
 
                 //Skriver ut hjärtrytm och andningsrytm i programmet
                 textBlock.Text = "Hjärtrytm: " + System.Environment.NewLine + heartrate + System.Environment.NewLine +
