@@ -36,7 +36,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double bellyJointXPosition = 2 / 3;
 
         double heartrate = 0;
-        double breathingrate = 0;
 
         /// <summary>
         /// Current status text to display
@@ -64,7 +63,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<List<double>> biglist = new List<List<double>>();
 
         //Andning
+        /// <summary>
+        /// listDepthMatlab - lista som skickas till matlab
+        /// calculatedBreaths - lista med uträknade frekvenser från matlab, medelvärdesbildas och visas i användargränssnittet
+        ///                     30 värden samlas in och medelvärdet visas för användaren (se matlabCommand)
+        /// </summary>
         List<double> listDepthMatlab = new List<double>();
+        List<double> calculatedBreaths = new List<double>();
         //----------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -240,16 +245,37 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     matlab.Feval("breath", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
-                    breathingrate = Math.Round(Convert.ToDouble(res[0]));
+
+                    //lägg till frekvensvärdet i listan
+                    if (calculatedBreaths.Count >= 30)
+                    {
+                        calculatedBreaths.RemoveAt(0);
+                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
+                    }
+                    else
+                    {
+                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
+                    }
+
+                    //ta fram medelvärde och visa för användaren
+                    double averageBreathing = 0;
+
+                    for (int i = 0; i < calculatedBreaths.Count; i++)
+                    {
+                        averageBreathing += calculatedBreaths[i];
+                    }
+                    averageBreathing = (averageBreathing / calculatedBreaths.Count);
+                    averageBreathingLabel.Content = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
+
+
                 }
                 else
                 {
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
                 }
 
-                //Skriver ut hjärtrytm och andningsrytm i programmet
-                textBlock.Text = "Hjärtrytm: " + System.Environment.NewLine + heartrate + System.Environment.NewLine +
-                    "Andningsrytm: " + System.Environment.NewLine + breathingrate;
+                //Skriver ut hjärtrytm i programmet
+                textBlock.Text = "Hjärtrytm: " + System.Environment.NewLine + heartrate;
 
             }
             catch
@@ -586,28 +612,29 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             List<double> pixelDepthList = new List<double>();
 
                             //for-loop för att hämta djupvärdet i punkter utgående från midSpine
-                            for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 5);
-                                    ix <= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 5); ix++)
+                            for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 10);
+                                    ix <= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 10); ix++)
                             {
-                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y));
+                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y) - 10);
                                     iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 10); iy++)
                                 {
                                     pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                                 }
                             }
+                            pixelDepthList.Sort();
 
                             //Filtrera pixelDepthList från extremvärden
-                            for (int i = 0; i < pixelDepthList.Count / 5; i++)
+                            for (int i = 0; i < pixelDepthList.Count / 3; i++)
                             {
                                 pixelDepthList.RemoveAt(0);
                             }
-                            for (int i = pixelDepthList.Count * (4 / 5); i <= pixelDepthList.Count; i++)
+                            for (int i = pixelDepthList.Count * (2 / 3); i <= pixelDepthList.Count; i++)
                             {
                                 pixelDepthList.RemoveAt(pixelDepthList.Count - 1);
                             }
 
 
-                            //for-loop följt av division för att ta fram medelvärdet över djupvärdena
+                            //for-loop följt av division för att ta fram medelvärdet över de intressanta djupvärdena
                             for (int i = 0; i < pixelDepthList.Count; i++)
                             {
                                 average += pixelDepthList[i];
@@ -626,7 +653,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 listDepthMatlab.Add(average);
                             }
                             //NYTT
-                         //   textBlock3.Text = "Element i andningslistan: " + listDepthMatlab.Count;
+                            textBlock5.Text = "Element i andningslistan: " + listDepthMatlab.Count;
 
                             if (listDepthMatlab.Count >= 900)
                             {
