@@ -11,7 +11,7 @@
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
     </Window.Resources>
     <Grid Margin="0,0,-6.4,0.4">
-        <Viewbox HorizontalAlignment="Right" Margin="0,10,166,215" Width="385">
+        <Viewbox HorizontalAlignment="Right" Margin="0,10,10,267" Width="331">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="262,416,0,0" TextWrapping="Wrap" Text="Pixel values" VerticalAlignment="Top" Height="86" Width="153"/>
@@ -27,6 +27,6 @@
         </Slider>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="472,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="86" Width="175"><Run Text="Hjärtrytm:"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Andningsrytm:"/></TextBlock>
         <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="42,337,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
-        <Image x:Name="image1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"/>
+        <Image x:Name="image1" HorizontalAlignment="Left" Height="293" Margin="10,10,0,0" VerticalAlignment="Top" Width="315" Source="matlab/pulseplot.png"/>
     </Grid>
 </Window>
