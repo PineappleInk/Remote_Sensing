@@ -11,8 +11,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 {
     public class ViewModel
     {
+        private PlotModel plotModel;
+
         public ViewModel()
         {
+            this.plotModel = new PlotModel();
+            plotModel.LegendTitle = "Legend";
+            plotModel.LegendOrientation = LegendOrientation.Horizontal;
+            plotModel.LegendPlacement = LegendPlacement.Outside;
+            plotModel.LegendPosition = LegendPosition.TopRight;
+            plotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
+            plotModel.LegendBorder = OxyColors.Black;
             this.Title = "Puls";
             this.Points = new List<DataPoint>();
         }
@@ -23,7 +32,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         public void AddDatapoint(double x, double y)
         {
-            this.Points.Add(new DataPoint(x, y));
+            if(Points.Count < 10)
+            {
+                this.Points.Add(new DataPoint(x, y));
+            }
+            else
+            {
+                this.Points.RemoveAt(0);
+                this.Points.Add(new DataPoint(x, y));
+            }
         }
        
     }

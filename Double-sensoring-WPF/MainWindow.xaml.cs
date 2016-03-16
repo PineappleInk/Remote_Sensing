@@ -104,11 +104,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             //Graf
+            viewModel = new ViewModel();
             listTest = new List<double> { 1, 2, 3 };
-            matlabCommand("hej", listTest);
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            CompositionTarget.Rendering += CompositionTargetRendering;
+        }
+
+        private void CompositionTargetRendering(object sender, EventArgs e)
+        {
+            Plot1.InvalidatePlot(true);
         }
 
         /// <summary>
@@ -138,6 +145,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        public IList<DataPoint> Points
+        {
+            get
+            {
+                return viewModel.Points;
+            }
+        }
         /// <summary>
         /// Gets or sets the current status text to display
         /// </summary>
@@ -230,15 +244,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Change to the directory  where the function is located 
             matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
             //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
-
-            //Graf
-            viewModel = new ViewModel();
-            DataContext = viewModel;
-
-            for (int i = 0; i < measurements.Count(); i++)
-            {
-                viewModel.AddDatapoint(measurements[i], i);
-            }
 
             // Define the output 
             object result = null;
@@ -628,6 +633,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 matlabCommand("breathing", listDepthMatlab);
                             }
+
+                            for (int i = 0; i < listDepthMatlab.Count(); i++)
+                            {
+                                viewModel.AddDatapoint(i, listDepthMatlab[i]);
+                            }
                             //INTE NYTT
 
                         }
@@ -665,13 +675,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             listDepthMatlab.Clear();
             matlabPulsLista.Clear();
-        }
-
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            var r = new Random();
-            this.listTest.Add(4);
-            matlabCommand("hej", listTest);
         }
     }
 }

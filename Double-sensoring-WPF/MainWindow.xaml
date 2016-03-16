@@ -29,11 +29,10 @@
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="472,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="86" Width="175"><Run Text="Hjärtrytm:"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Andningsrytm:"/></TextBlock>
         <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="42,337,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
         
-        <oxy:Plot x:Name="plot" Title="{Binding Title}" Margin="480,32,10.2,329">
+        <oxy:Plot x:Name="Plot1" Title="{Binding Title}" Margin="480,10,10.2,350" AxisTierDistance="3">
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding Points}"/>
             </oxy:Plot.Series>
         </oxy:Plot>
-        <Button x:Name="button1" Content="Add value" HorizontalAlignment="Left" Margin="518,336,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
     </Grid>
 </Window>
