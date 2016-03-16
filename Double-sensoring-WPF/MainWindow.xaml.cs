@@ -100,9 +100,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             // initialize the components (controls) of the window
-            this.InitializeComponent();
+            this.InitializeComponent()
+
+        CompositionTarget.Rendering += CompositionTargetRendering;
         }
 
+        private void CompositionTargetRendering(object sender, EventArgs e)
+        {
+            image1.InvalidateVisual();
+        }
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
         /// </summary>
@@ -359,7 +365,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
-                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();      
+                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
 
                             // ----- Värden från gröna kanalerna, för tester
                             //Här tar vi ut alla gröna värden i de intressanta pixlarna
@@ -444,7 +450,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 biglist.Add(new List<double>());
                                 biglist.Add(new List<double>());
                             }
- 
+
                             biglist[0].Add(redcoloraverage);
                             Console.WriteLine("Röd: " + redcoloraverage.ToString());
                             biglist[1].Add(greencoloraverage);
@@ -626,7 +632,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 listDepthMatlab.Add(average);
                             }
                             //NYTT
-                         //   textBlock3.Text = "Element i andningslistan: " + listDepthMatlab.Count;
+                            //   textBlock3.Text = "Element i andningslistan: " + listDepthMatlab.Count;
 
                             if (listDepthMatlab.Count >= 900)
                             {
