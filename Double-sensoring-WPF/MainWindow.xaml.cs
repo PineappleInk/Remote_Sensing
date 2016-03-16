@@ -61,6 +61,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Puls
         List<double> matlabPulsLista = new List<double>();
+        List<List<double>> biglist = new List<List<double>>();
 
         //Andning
         List<double> listDepthMatlab = new List<double>();
@@ -216,7 +217,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
         /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
         int antalFel = 0;
-        private void matlabCommand(string codeString, List<double> measurements)
+        private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
             // Change to the directory  where the function is located 
             matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
@@ -230,14 +231,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av puls i matlab
                 if (codeString == "pulse")
                 {
-                    matlab.Feval("pulse_instant", 1, out result, measurements.ToArray());
+                    matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
-                    matlab.Feval("breathing_instant", 1, out result, measurements.ToArray());
+                    matlab.Feval("breath", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
                     breathingrate = Math.Round(Convert.ToDouble(res[0]));
                 }
@@ -318,8 +319,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-        System.Drawing.Bitmap bmp;
-        Image image;
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -359,8 +359,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
-                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
+                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();      
 
+                            // ----- Värden från gröna kanalerna, för tester
+                            //Här tar vi ut alla gröna värden i de intressanta pixlarna
+
+                            List<int> grönapixlar = null;
+                            grönapixlar = new List<int>();
+
+                            List<int> blåapixlar = null;
+                            blåapixlar = new List<int>();
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -373,40 +381,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
                                     j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
                                 {
-                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
+                                    rödapixlar.Add(getcolorfrompixel(i, j, pixels, "red"));
+                                    blåapixlar.Add(getcolorfrompixel(i, j, pixels, "blue"));
+                                    grönapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
                             }
 
-                            // ----- Värden från gröna kanalerna, för tester
-                            //Här tar vi ut alla gröna värden i de intressanta pixlarna
-                            /*
-                            List<int> grönapixlar = null;
-                            grönapixlar = new List<int>();
-
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpacePoint.X)) - 5); i <= (Convert.ToInt32(Math.Round(colorSpacePoint.X)) + 5); ++i)
-                            {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) - 5); j <= (Convert.ToInt32(Math.Round(colorSpacePoint.Y)) + 5); ++j)
-                                {
-                                    grönapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
-                                }
-                            }
-                            */
-
                             //Filtrering av högsta/lägsta värden
-
                             rödapixlar.Sort();
+                            grönapixlar.Sort();
+                            blåapixlar.Sort();
 
                             //Ta bort alla lägsta värden
                             for (int i = 0; i < rödapixlar.Count / 5; i++)
                             {
                                 rödapixlar.RemoveAt(0);
+                                grönapixlar.RemoveAt(0);
+                                blåapixlar.RemoveAt(0);
                             }
 
                             //Ta bort alla högsta värden
                             for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
                             {
                                 rödapixlar.RemoveAt(rödapixlar.Count - 1);
+                                grönapixlar.RemoveAt(rödapixlar.Count - 1);
+                                blåapixlar.RemoveAt(rödapixlar.Count - 1);
                             }
 
                             //Medelvärde av de röda kanalerna i intressanta pixlar
@@ -414,14 +414,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             for (int i = 0; i < rödapixlar.Count; i++)
                             {
-
                                 redcoloraverage += rödapixlar[i];
                             }
-
                             redcoloraverage = (redcoloraverage / rödapixlar.Count);
 
-                            //Medelvärde av de gröna kanalerna i intressanta pixlar
-                            /*
+                            //Medelvärde av de röda kanalerna i intressanta pixlar
                             double greencoloraverage = 0;
 
                             for (int i = 0; i < grönapixlar.Count; i++)
@@ -429,54 +426,73 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                                 greencoloraverage += grönapixlar[i];
                             }
-                            */
+                            greencoloraverage = (greencoloraverage / grönapixlar.Count);
 
-                            //greencoloraverage = (greencoloraverage / grönapixlar.Count);
+                            //Medelvärde av de röda kanalerna i intressanta pixlar
+                            double bluecoloraverage = 0;
 
-                            //rött medel minus grönt medel
-                            double coloraverage = redcoloraverage; // - greencoloraverage;
-
-                            if (matlabPulsLista.Count >= 900)
+                            for (int i = 0; i < blåapixlar.Count; i++)
                             {
-                                matlabPulsLista.RemoveAt(0);
-                                matlabPulsLista.Add(coloraverage);
+
+                                bluecoloraverage += blåapixlar[i];
                             }
-                            else
+                            bluecoloraverage = (bluecoloraverage / blåapixlar.Count);
+
+                            if (biglist.Count == 0)
                             {
-                                matlabPulsLista.Add(coloraverage);
+                                biglist.Add(new List<double>());
+                                biglist.Add(new List<double>());
+                                biglist.Add(new List<double>());
+                            }
+ 
+                            biglist[0].Add(redcoloraverage);
+                            Console.WriteLine("Röd: " + redcoloraverage.ToString());
+                            biglist[1].Add(greencoloraverage);
+                            Console.WriteLine("Grön: " + greencoloraverage.ToString());
+                            biglist[2].Add(bluecoloraverage);
+                            Console.WriteLine("Blå: " + bluecoloraverage.ToString());
+                            if (biglist[1].Count >= 900)
+                            {
+                                biglist[0].RemoveAt(0);
+                                biglist[1].RemoveAt(0);
+                                biglist[2].RemoveAt(0);
                             }
 
                             rödapixlar.Clear();
-                            //grönapixlar.Clear();
+                            grönapixlar.Clear();
+                            blåapixlar.Clear();
 
                             //Rensa listan från de X äldsta värdena om listan är över en viss längd
-                            if (matlabPulsLista.Count >= 900)
+                            if (biglist[1].Count >= 900)
                             {
                                 for (int i = 0; i < 30; ++i)
                                 {
-                                    matlabPulsLista.RemoveAt(0);
+                                    biglist[0].RemoveAt(0);
+                                    biglist[1].RemoveAt(0);
+                                    biglist[2].RemoveAt(0);
                                 }
                             }
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            if (matlabPulsLista.Count % 30 == 0)
+                            if (biglist[1].Count % 30 == 0)
                             {
-                                matlabCommand("pulse", matlabPulsLista);
-                                /*
-                                MemoryStream ms = new MemoryStream();
-                                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                ms.Position = 0;
-                                BitmapImage bi = new BitmapImage();
-                                bi.BeginInit();
-                                bi.StreamSource = ms;
-                                bi.EndInit();
+                                // Change to the directory  where the function is located 
+                                matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
+                                //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
 
-                                image1.Source = bi;
-                                */
+                                // Define the output 
+                                object result = null;
+
+                                //Analys av puls i matlab
+                                matlabCommand("pulse", biglist[0], biglist);
+
+                                //matlab.Feval("pulse", 1, out result, biglist[0].ToArray(), biglist[1].ToArray(), biglist[2].ToArray());
+                                //object[] res = result as object[];
+                                //heartrate = Math.Round(Convert.ToDouble(res[0]));
+
                             }
                         }
-
                         catch
                         { }
 
@@ -610,6 +626,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 listDepthMatlab.Add(average);
                             }
                             //NYTT
+                         //   textBlock3.Text = "Element i andningslistan: " + listDepthMatlab.Count;
+
                             if (listDepthMatlab.Count >= 900)
                             {
                                 for (int i = 0; i < 30; ++i)
@@ -622,7 +640,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 matlabCommand("breathing", listDepthMatlab);
                             }
-                            //INTE NYTT
+                            ////INTE NYTT
 
                         }
                         catch (System.IndexOutOfRangeException)
@@ -658,7 +676,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void button_Click(object sender, RoutedEventArgs e)
         {
             listDepthMatlab.Clear();
-            matlabPulsLista.Clear();
+            biglist.Clear();
         }
     }
 }
