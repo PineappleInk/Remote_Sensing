@@ -26,9 +26,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        //Graf
-        private ViewModel viewModel;
-        private List<double> listTest;
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
@@ -103,10 +100,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
-            //Graf
-            viewModel = new ViewModel();
-            listTest = new List<double> { 1, 2, 3 };
-
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
@@ -115,7 +108,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void CompositionTargetRendering(object sender, EventArgs e)
         {
-            Plot1.InvalidatePlot(true);
+            image1.InvalidateVisual();
         }
 
         /// <summary>
@@ -142,14 +135,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             get
             {
                 return colorSensing.getColorBitmap();
-            }
-        }
-
-        public IList<DataPoint> Points
-        {
-            get
-            {
-                return viewModel.Points;
             }
         }
         /// <summary>
@@ -632,11 +617,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (listDepthMatlab.Count % 30 == 0)
                             {
                                 matlabCommand("breathing", listDepthMatlab);
-                            }
-
-                            for (int i = 0; i < listDepthMatlab.Count(); i++)
-                            {
-                                viewModel.AddDatapoint(i, listDepthMatlab[i]);
                             }
                             //INTE NYTT
 

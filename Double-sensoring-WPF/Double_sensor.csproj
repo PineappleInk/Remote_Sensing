@@ -110,7 +110,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BodySensing.cs" />
-    <Compile Include="ViewModel.cs" />
     <Compile Include="ColorSensing.cs" />
     <Compile Include="DepthSensing.cs" />
     <Compile Include="MainWindow.xaml.cs">
