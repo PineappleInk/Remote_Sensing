@@ -65,7 +65,6 @@ title({'Andetag per minut:', meanBreath}, 'color', 'blue', 'FontWeight', 'bold')
 xlabel('tid [s/30]')
 ylabel('Andningskurva')
 % Slut plot
-
 end
 
 

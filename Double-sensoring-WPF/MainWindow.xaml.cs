@@ -60,7 +60,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Puls
         List<double> matlabPulsLista = new List<double>();
-        List<List<double>> biglist = new List<List<double>>();
 
         //Andning
         /// <summary>
@@ -246,7 +245,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Define the output 
             object result = null;
-            hej
             try
             {
                 //Analys av puls i matlab
@@ -432,90 +430,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 }
                             }
 
-                            //Filtrering av högsta/lägsta värden
-                            rödapixlar.Sort();
-                            grönapixlar.Sort();
-                            blåapixlar.Sort();
-
-                            //Ta bort alla lägsta värden
-                            for (int i = 0; i < rödapixlar.Count / 5; i++)
-                            {
-                                rödapixlar.RemoveAt(0);
-                                grönapixlar.RemoveAt(0);
-                                blåapixlar.RemoveAt(0);
-                            }
-
-                            //Ta bort alla högsta värden
-                            for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
-                            {
-                                rödapixlar.RemoveAt(rödapixlar.Count - 1);
-                                grönapixlar.RemoveAt(rödapixlar.Count - 1);
-                                blåapixlar.RemoveAt(rödapixlar.Count - 1);
-                            }
-
-                            //Medelvärde av de röda kanalerna i intressanta pixlar
-                            double redcoloraverage = 0;
-
-                            for (int i = 0; i < rödapixlar.Count; i++)
-                            {
-                                redcoloraverage += rödapixlar[i];
-                            }
-                            redcoloraverage = (redcoloraverage / rödapixlar.Count);
-
-                            //Medelvärde av de röda kanalerna i intressanta pixlar
-                            double greencoloraverage = 0;
-
-                            for (int i = 0; i < grönapixlar.Count; i++)
-                            {
-
-                                greencoloraverage += grönapixlar[i];
-                            }
-                            greencoloraverage = (greencoloraverage / grönapixlar.Count);
-
-                            //Medelvärde av de röda kanalerna i intressanta pixlar
-                            double bluecoloraverage = 0;
-
-                            for (int i = 0; i < blåapixlar.Count; i++)
-                            {
-
-                                bluecoloraverage += blåapixlar[i];
-                            }
-                            bluecoloraverage = (bluecoloraverage / blåapixlar.Count);
-
-                            if (biglist.Count == 0)
-                            {
-                                biglist.Add(new List<double>());
-                                biglist.Add(new List<double>());
-                                biglist.Add(new List<double>());
-                            }
- 
-                            biglist[0].Add(redcoloraverage);
-                            Console.WriteLine("Röd: " + redcoloraverage.ToString());
-                            biglist[1].Add(greencoloraverage);
-                            Console.WriteLine("Grön: " + greencoloraverage.ToString());
-                            biglist[2].Add(bluecoloraverage);
-                            Console.WriteLine("Blå: " + bluecoloraverage.ToString());
-                            if (biglist[1].Count >= 900)
-                            {
-                                biglist[0].RemoveAt(0);
-                                biglist[1].RemoveAt(0);
-                                biglist[2].RemoveAt(0);
-                            }
-
-                            rödapixlar.Clear();
-                            grönapixlar.Clear();
-                            blåapixlar.Clear();
-
-                            //Rensa listan från de X äldsta värdena om listan är över en viss längd
-                            if (biglist[1].Count >= 900)
-                            {
-                                for (int i = 0; i < 30; ++i)
-                                {
-                                    biglist[0].RemoveAt(0);
-                                    biglist[1].RemoveAt(0);
-                                    biglist[2].RemoveAt(0);
-                                }
-                            }
+                            List<List<double>> biglist = colorSensing.createBigList(rödapixlar, grönapixlar, blåapixlar);
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
@@ -617,9 +532,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-                            double average = 0;
-                            DepthSpacePoint depthSpacePoint =
-                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getBellyJoint().Position);
+
 
                             //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
                             //OBS spineShoulder eller dylikt måste skapas
@@ -627,49 +540,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
-                            List<double> pixelDepthList = new List<double>();
+                            List<double> listDepthMatlab = depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData);
 
-                            //for-loop för att hämta djupvärdet i punkter utgående från midSpine
-                            for (int ix = Convert.ToInt32(Math.Round(depthSpacePoint.X) - 10);
-                                    ix <= Convert.ToInt32(Math.Round(depthSpacePoint.X) + 10); ix++)
-                            {
-                                for (int iy = Convert.ToInt32(Math.Round(depthSpacePoint.Y) - 10);
-                                    iy <= Convert.ToInt32(Math.Round(depthSpacePoint.Y) + 10); iy++)
-                                {
-                                    pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
-                                }
-                            }
-                            pixelDepthList.Sort();
-
-                            //Filtrera pixelDepthList från extremvärden
-                            for (int i = 0; i < pixelDepthList.Count / 3; i++)
-                            {
-                                pixelDepthList.RemoveAt(0);
-                            }
-                            for (int i = pixelDepthList.Count * (2 / 3); i <= pixelDepthList.Count; i++)
-                            {
-                                pixelDepthList.RemoveAt(pixelDepthList.Count - 1);
-                            }
-
-
-                            //for-loop följt av division för att ta fram medelvärdet över de intressanta djupvärdena
-                            for (int i = 0; i < pixelDepthList.Count; i++)
-                            {
-                                average += pixelDepthList[i];
-                            }
-                            average = average / pixelDepthList.Count;
-
-                            //lägg till average i listan med alla djupvärden
-                            //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count >= 900)
-                            {
-                                listDepthMatlab.RemoveAt(0);
-                                listDepthMatlab.Add(average);
-                            }
-                            else
-                            {
-                                listDepthMatlab.Add(average);
-                            }
                             //NYTT
                             textBlock5.Text = "Element i andningslistan: " + listDepthMatlab.Count;
 
@@ -681,7 +553,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 }
                             }
 
-                            if (listDepthMatlab.Count % 30 == 0)
+                            if (listDepthMatlab.Count % 10 == 0)
                             {
                                 matlabCommand("breathing", listDepthMatlab);
                             }
@@ -721,7 +593,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void button_Click(object sender, RoutedEventArgs e)
         {
             listDepthMatlab.Clear();
-            biglist.Clear();
+            colorSensing.biglist.Clear();
         }
     }
 }

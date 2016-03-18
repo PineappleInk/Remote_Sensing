@@ -25,6 +25,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private KinectSensor kinectSensor;
 
+        public List<List<double>> biglist = new List<List<double>>();
+
         public ColorSensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
@@ -106,8 +108,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             bluecoloraverage = (bluecoloraverage / blåapixlar.Count);
 
-            List<List<double>> biglist = new List<List<double>>();
-
             if (biglist.Count == 0)
             {
                 biglist.Add(new List<double>());
@@ -118,6 +118,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             biglist[0].Add(redcoloraverage);
             biglist[1].Add(greencoloraverage);
             biglist[2].Add(bluecoloraverage);
+
             if (biglist[1].Count >= 900)
             {
                 biglist[0].RemoveAt(0);
