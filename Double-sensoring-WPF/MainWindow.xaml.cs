@@ -246,7 +246,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Define the output 
             object result = null;
-
+            hej
             try
             {
                 //Analys av puls i matlab
