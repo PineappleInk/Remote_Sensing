@@ -53,6 +53,94 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public WriteableBitmap getColorBitmap()
         {
             return colorBitmap;
-        }        
+        }
+
+        public List<List<double>> createBigList(List<int> rödapixlar, List<int> grönapixlar, List<int> blåapixlar)
+        {
+            rödapixlar.Sort();
+            grönapixlar.Sort();
+            blåapixlar.Sort();
+
+            //Ta bort alla lägsta värden
+            for (int i = 0; i < rödapixlar.Count / 5; i++)
+            {
+                rödapixlar.RemoveAt(0);
+                grönapixlar.RemoveAt(0);
+                blåapixlar.RemoveAt(0);
+            }
+
+            //Ta bort alla högsta värden
+            for (int i = (rödapixlar.Count / 5) * 4; i < rödapixlar.Count; i++)
+            {
+                rödapixlar.RemoveAt(rödapixlar.Count - 1);
+                grönapixlar.RemoveAt(rödapixlar.Count - 1);
+                blåapixlar.RemoveAt(rödapixlar.Count - 1);
+            }
+
+            //Medelvärde av de röda kanalerna i intressanta pixlar
+            double redcoloraverage = 0;
+
+            for (int i = 0; i < rödapixlar.Count; i++)
+            {
+                redcoloraverage += rödapixlar[i];
+            }
+            redcoloraverage = (redcoloraverage / rödapixlar.Count);
+
+            //Medelvärde av de röda kanalerna i intressanta pixlar
+            double greencoloraverage = 0;
+
+            for (int i = 0; i < grönapixlar.Count; i++)
+            {
+
+                greencoloraverage += grönapixlar[i];
+            }
+            greencoloraverage = (greencoloraverage / grönapixlar.Count);
+
+            //Medelvärde av de röda kanalerna i intressanta pixlar
+            double bluecoloraverage = 0;
+
+            for (int i = 0; i < blåapixlar.Count; i++)
+            {
+
+                bluecoloraverage += blåapixlar[i];
+            }
+            bluecoloraverage = (bluecoloraverage / blåapixlar.Count);
+
+            List<List<double>> biglist = new List<List<double>>();
+
+            if (biglist.Count == 0)
+            {
+                biglist.Add(new List<double>());
+                biglist.Add(new List<double>());
+                biglist.Add(new List<double>());
+            }
+
+            biglist[0].Add(redcoloraverage);
+            biglist[1].Add(greencoloraverage);
+            biglist[2].Add(bluecoloraverage);
+            if (biglist[1].Count >= 900)
+            {
+                biglist[0].RemoveAt(0);
+                biglist[1].RemoveAt(0);
+                biglist[2].RemoveAt(0);
+            }
+
+            rödapixlar.Clear();
+            grönapixlar.Clear();
+            blåapixlar.Clear();
+
+            //Rensa listan från de X äldsta värdena om listan är över en viss längd
+            if (biglist[1].Count >= 900)
+            {
+                for (int i = 0; i < 30; ++i)
+                {
+                    biglist[0].RemoveAt(0);
+                    biglist[1].RemoveAt(0);
+                    biglist[2].RemoveAt(0);
+                }
+            }
+            return biglist;
+        }
+        
     }
 }
