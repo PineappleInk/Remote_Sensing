@@ -121,7 +121,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             _image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
             _image.EndInit();
             image1.Source = _image;
-            Console.WriteLine("hej");
         }
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -248,7 +247,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 //Analys av puls i matlab
-                if (codeString == "pulse")
+                if (codeString == "both")
+                {
+                    matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
+                    object[] res = result as object[];
+                    Console.WriteLine("Puls: " + res[0].ToString());
+                    Console.WriteLine("Andning: " + res[1].ToString());
+                }
+
+                //Analys av puls i matlab
+                else if (codeString == "pulse")
                 {
                     matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
                     object[] res = result as object[];
@@ -259,6 +267,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     matlab.Feval("breath", 1, out result, measurements.ToArray());
                     object[] res = result as object[];
+
 
                     //lägg till frekvensvärdet i listan
                     if (calculatedBreaths.Count >= 30)
@@ -279,14 +288,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         averageBreathing += calculatedBreaths[i];
                     }
                     averageBreathing = (averageBreathing / calculatedBreaths.Count);
-                    averageBreathingLabel.Content = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
+                    averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
 
-
+                    //Kontrollera om larm ska köras
+                    breathingAlarm(averageBreathing);
                 }
                 else
                 {
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
                 }
+                //Uppdatering av plot i användargränssittet
                 CompositionTargetRendering();
 
 
@@ -300,6 +311,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Console.WriteLine("antal kastade matlabfel: " + antalFel.ToString());
             }
 
+        }
+
+        //Larm för andning
+        private void breathingAlarm(double average)
+        {
+            if (average < 10)
+            {
+                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                beep.SoundLocation = "beep-07.wav";
+                beep.Play();
+            }
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
@@ -436,20 +458,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //definiera hur ofta och hur stor listan är här innan.
                             if (biglist[1].Count % 30 == 0)
                             {
-                                // Change to the directory  where the function is located 
-                                matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
-                                //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
-
-                                // Define the output 
-                                object result = null;
-
                                 //Analys av puls i matlab
-                                matlabCommand("pulse", biglist[0], biglist);
-
-                                //matlab.Feval("pulse", 1, out result, biglist[0].ToArray(), biglist[1].ToArray(), biglist[2].ToArray());
-                                //object[] res = result as object[];
-                                //heartrate = Math.Round(Convert.ToDouble(res[0]));
-
+                                matlabCommand("both", listDepthMatlab, biglist);
                             }
                         }
                         catch
@@ -540,11 +550,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
-                            List<double> listDepthMatlab = depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData);
-
+                            listDepthMatlab.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
+                            
                             //NYTT
                             textBlock5.Text = "Element i andningslistan: " + listDepthMatlab.Count;
 
+                            //lägg till average i listan med alla djupvärden
+                            //skicka listan om den blivit tillräckligt stor
+                            if (listDepthMatlab.Count % 30 == 0)
+                            {
+                                //matlabCommand("breathing", listDepthMatlab);
+                            }
                             if (listDepthMatlab.Count >= 900)
                             {
                                 for (int i = 0; i < 30; ++i)
@@ -552,17 +568,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     listDepthMatlab.RemoveAt(0);
                                 }
                             }
-
-                            if (listDepthMatlab.Count % 10 == 0)
-                            {
-                                matlabCommand("breathing", listDepthMatlab);
-                            }
-                            ////INTE NYTT
-
                         }
                         catch (System.IndexOutOfRangeException)
                         {
-                            MessageBox.Show("Baby has escaped, he can't be far");
+                            MessageBox.Show("Baby has escaped, baby can't be far");
                         }
                     }
                 }

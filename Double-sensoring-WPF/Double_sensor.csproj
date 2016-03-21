@@ -133,8 +133,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="beep-07.wav" />
     <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
+    <Content Include="matlab\matlabHandler.m" />
     <Content Include="matlab\RGB_Shadinrakar.m" />
     <Resource Include="matlab\pulseplot.png" />
     <Content Include="matlab\pulse.m" />

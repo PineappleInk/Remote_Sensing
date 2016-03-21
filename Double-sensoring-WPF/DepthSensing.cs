@@ -48,11 +48,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthFrameReader = depthFrameReader;
         }
 
-        public List<double> createDepthListAvarage(CoordinateMapper coordinateMapper, Joint bellyJoint, ushort[] pixelData)
+        public double createDepthListAvarage(CoordinateMapper coordinateMapper, Joint bellyJoint, ushort[] pixelData)
         {
             double average = 0;
             List<double> pixelDepthList = new List<double>();
-            List<double> listDepthMatlab = new List<double>();
+           // List<double> listDepthMatlab = new List<double>();
 
             DepthSpacePoint depthSpacePoint =
                 coordinateMapper.MapCameraPointToDepthSpace(bellyJoint.Position);
@@ -61,7 +61,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     ix <= (int)depthSpacePoint.X + 10; ix++)
             {
                 for (int iy = (int)depthSpacePoint.Y - 10;
-                    iy <= (int)depthSpacePoint.X + 10; iy++)
+                    iy <= (int)depthSpacePoint.Y + 10; iy++)
                 {
                     pixelDepthList.Add(pixelData[((iy - 1) * 512 + ix)]);
                 }
@@ -87,27 +87,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 average += pixelDepthList[i];
             }
             average = average / pixelDepthList.Count;
-
-            //lägg till average i listan med alla djupvärden
-            //skicka listan om den blivit tillräckligt stor
-            if (listDepthMatlab.Count >= 900)
-            {
-                listDepthMatlab.RemoveAt(0);
-                listDepthMatlab.Add(average);
-            }
-            else
-            {
-                listDepthMatlab.Add(average);
-            }
-
-            if (listDepthMatlab.Count >= 900)
-            {
-                for (int i = 0; i < 30; ++i)
-                {
-                    listDepthMatlab.RemoveAt(0);
-                }
-            }
-            return listDepthMatlab;
+            
+            return average;
         }
     }
 }

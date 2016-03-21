@@ -54,10 +54,9 @@ meanBreath = round(bpmBreath);
 % Slut utskrifter
 
 % Plot av filtrerad data
-figure('visible', 'off')
 subplot(2,1,2)
 hold off
-plot(filteredZList, 'blue' );
+plot(filteredZList, 'blue');
 hold on
 plot(peakLocationBreath, heightOfPeaksBreath, 'black o');
 grid on
@@ -65,6 +64,7 @@ title({'Andetag per minut:', meanBreath}, 'color', 'blue', 'FontWeight', 'bold')
 xlabel('tid [s/30]')
 ylabel('Andningskurva')
 % Slut plot
+
 end
 
 
