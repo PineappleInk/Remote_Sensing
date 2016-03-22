@@ -27,10 +27,10 @@ save puls1.mat
 for i = 1:4
     colorList = colorList5(:,:,i);
 % Inställningar; välj dina inställnignar för koden här
-samplesPerSecPulse = 30;
+samplesPerSecPulse = 26;
 % Slut inställningar
 
-d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 30/60, 100/60, 30);
+d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 40/60, 160/60, 30);
 hd = design(d,'butter');
 filtcolorList = filtfilt(hd.sosMatrix,hd.ScaleValues,colorList);
 

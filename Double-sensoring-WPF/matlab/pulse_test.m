@@ -6,44 +6,26 @@ for i=1:length(fh)
      clo(fh(i));
 end
 
-colorList5 = colorList3;
+colorList5 = colorList1;
 colorList5(:,:,2) = colorList2;
-colorList5(:,:,3) = colorList1;
+colorList5(:,:,3) = colorList3;
 
-%HB = (0.2126*colorList1+0.7152*colorList2+0.0722*colorList3);
+% Här väljs vilken input man vill se på.
+colorList = colorList5(:,:,1);
 
-GdivR = double(colorList2)./double(colorList1);
-colorList5(:,:,4) = GdivR;
+sampleRate = 26;
 
-d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 50/60, 70/60, 26);
+d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 50/60, 70/60, sampleRate);
 hd = design(d,'butter');
-fvtool(hd)
-filtcolorList = filtfilt(hd.sosMatrix,hd.ScaleValues,colorList5(:,:,4));
+filtcolorList = filtfilt(hd.sosMatrix,hd.ScaleValues,colorList);
 
 samplesPerSecPulse = 26;
 
-numberOfSamplesPulse = length(colorList1);
+numberOfSamplesPulse = length(colorList);
 timeOfMeasurementPulse = numberOfSamplesPulse/samplesPerSecPulse;
 
 [heightOfPeaksPulse, peakLocationPulse]=findpeaks(filtcolorList);
 numberOfPeaksPulse=length(peakLocationPulse);
-
-for j = 1:numberOfPeaksPulse
-   if (heightOfPeaksPulse(j) <= 0)
-      heightOfPeaksPulse(j) = 0;
-      peakLocationPulse(j) = 0;
-   end
-end
-
-% for j = 1:(numberOfPeaksPulse - 1)
-%     if (peakLocationPulse(j) - peakLocationPulse(j + 1) >= -5)
-%         heightOfPeaksPulse(j) = 0;
-%       peakLocationPulse(j) = 0;
-%    end
-% end
-heightOfPeaksPulse(heightOfPeaksPulse == 0) = [];
-peakLocationPulse(peakLocationPulse == 0) = [];
-numberOfPeaksPulse = length(peakLocationPulse);
 
 bpmPulse = (numberOfPeaksPulse/timeOfMeasurementPulse)*60;
 meanPulse = round(bpmPulse);
