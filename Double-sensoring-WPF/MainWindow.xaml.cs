@@ -18,6 +18,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using Microsoft.Kinect;
     using System.Linq;
     using System.Drawing;
+    using MathNet.Filtering;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -51,7 +52,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //BODY-instans
         private BodySensing bodySensning;
 
-        ////----------------------
+        ////----------------------------------------Våra egna---------------------
         ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
@@ -69,7 +70,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         List<double> listDepthMatlab = new List<double>();
         List<double> calculatedBreaths = new List<double>();
-        //----------------------
+
+        //Filter
+        //OnlineFilter FilteringCreateBandpass(ImpulseResponse finite, 60, ) 
+        //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
@@ -106,8 +110,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-        //Om man vill rendera hela tiden!
-        //CompositionTarget.Rendering += CompositionTargetRendering;
+            //Om man vill rendera hela tiden!
+            //CompositionTarget.Rendering += CompositionTargetRendering;
         }
 
         private void CompositionTargetRendering() //object sender, EventArgs e
@@ -265,9 +269,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
-                    matlab.Feval("breath", 1, out result, measurements.ToArray());
-                    object[] res = result as object[];
+                    OnlineFilter bandpassFilter = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 0.01, 0.7, 10);
+                    double[] measurementsFilt = bandpassFilter.ProcessSamples(measurements.ToArray());
+                    List<double> measurementsFiltList = measurementsFilt.ToList();
+                    measurementsFiltList.RemoveRange(0, 10);
 
+                    matlab.Feval("breath_simons", 1, out result, measurements.ToArray(), measurementsFiltList.ToArray());
+                    object[] res = result as object[];
 
                     //lägg till frekvensvärdet i listan
                     if (calculatedBreaths.Count >= 30)
@@ -423,7 +431,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
-                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();      
+                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
 
                             // ----- Värden från gröna kanalerna, för tester
                             //Här tar vi ut alla gröna värden i de intressanta pixlarna
@@ -464,7 +472,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (biglist[1].Count % 30 == 0)
                             {
                                 //Analys av puls i matlab
-                                matlabCommand("both", listDepthMatlab, biglist);
+                                matlabCommand("pulse", listDepthMatlab, biglist);
                             }
                         }
                         catch
@@ -556,7 +564,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
                             listDepthMatlab.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
-                            
+
                             //NYTT
                             textBlock5.Text = "Element i andningslistan: " + listDepthMatlab.Count;
 
@@ -564,14 +572,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //skicka listan om den blivit tillräckligt stor
                             if (listDepthMatlab.Count % 30 == 0)
                             {
-                                //matlabCommand("breathing", listDepthMatlab);
+                                matlabCommand("breathing", listDepthMatlab);
                             }
-                            if (listDepthMatlab.Count >= 900)
+                            if (listDepthMatlab.Count >= 300)
                             {
-                                for (int i = 0; i < 30; ++i)
-                                {
-                                    listDepthMatlab.RemoveAt(0);
-                                }
+                                listDepthMatlab.RemoveRange(0, 30);
                             }
                         }
                         catch (System.IndexOutOfRangeException)

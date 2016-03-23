@@ -87,7 +87,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 average += pixelDepthList[i];
             }
             average = average / pixelDepthList.Count;
-            
+
             return average;
         }
     }
