@@ -160,12 +160,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < rödapixlar.Count; i++)
             {
-                gDrPb.Add(grönapixlar[i]/(rödapixlar[i]+grönapixlar[i]));
-                gDr.Add(grönapixlar[i] / rödapixlar[i]);
+                gDrPb.Add((double)grönapixlar[i]/((double)rödapixlar[i]+(double)blåapixlar[i]));
+                gDr.Add((double)grönapixlar[i] / (double)rödapixlar[i]);
 
                 shraRödGrön.Add(rödapixlar[i] - grönapixlar[i]);
                 shraAlla.Add(rödapixlar[i] + grönapixlar[i] - 2 * blåapixlar[i]);
             }
+            Console.WriteLine("röda: " + rödapixlar[20] + ", gröna: " + grönapixlar[20] + ", blåa: " + blåapixlar[20] + ", gDrPb: " + gDrPb[20] + ", gDr: " + gDr[20]);
 
             // SHRADINKAR BÖRJAR
 
@@ -230,13 +231,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             gDr.RemoveRange(0, gDr.Count / 5);
             shraHB.RemoveRange(0, shraHB.Count / 5);
             
-            for (int i = (gDrPb.Count / 5) * 4; i < gDrPb.Count; i++)
+            for (int i = (gDrPb.Count / 4) * 2; i < gDrPb.Count; i++)
             {
                 gDrPb.RemoveAt(gDrPb.Count - 1);
                 gDr.RemoveAt(gDr.Count - 1);
                 shraHB.RemoveAt(shraHB.Count - 1);
             }
-            
+
             double gDrPbAverage = 0;
             double gDrAverage = 0;
             double shraHBAverage = 0;

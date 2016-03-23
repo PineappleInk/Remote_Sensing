@@ -9,13 +9,15 @@ end
 colorList5 = colorList1;
 colorList5(:,:,2) = colorList2;
 colorList5(:,:,3) = colorList3;
+colorList5(:,:,4) = colorList1/std(colorList1);
+colorList5(:,:,5) = colorList2/std(colorList2);
 
 % Här väljs vilken input man vill se på.
-colorList = colorList5(:,:,1);
+colorList = colorList5(:,:,4);
 
 sampleRate = 26;
 
-d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 50/60, 70/60, sampleRate);
+d = fdesign.bandpass('N,F3dB1,F3dB2', 10, 50/60, 170/60, sampleRate);
 hd = design(d,'butter');
 filtcolorList = filtfilt(hd.sosMatrix,hd.ScaleValues,colorList);
 
@@ -33,9 +35,8 @@ meanPulse = round(bpmPulse);
 
 puls_t=colorList5;
 save puls_t.mat
-
-    figure(1)
-    subplot(2,1,1)
+figure(2)
+    %subplot(2,1,1)
     %hold off
     plot(filtcolorList, 'red');
     hold on
