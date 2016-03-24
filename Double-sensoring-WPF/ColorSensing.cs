@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Kinect;
-using System.Collections.Generic;
 
 namespace Microsoft.Samples.Kinect.BodyBasics
 {
@@ -166,7 +165,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 shraRödGrön.Add(rödapixlar[i] - grönapixlar[i]);
                 shraAlla.Add(rödapixlar[i] + grönapixlar[i] - 2 * blåapixlar[i]);
             }
-            Console.WriteLine("röda: " + rödapixlar[20] + ", gröna: " + grönapixlar[20] + ", blåa: " + blåapixlar[20] + ", gDrPb: " + gDrPb[20] + ", gDr: " + gDr[20]);
+            //Console.WriteLine("röda: " + rödapixlar[20] + ", gröna: " + grönapixlar[20] + ", blåa: " + blåapixlar[20] + ", gDrPb: " + gDrPb[20] + ", gDr: " + gDr[20]);
 
             // SHRADINKAR BÖRJAR
 
@@ -283,7 +282,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 biglist[2].RemoveRange(0, 30);
             }
 
-            Console.WriteLine("1: " + gDrPbAverage + ", 2: " + gDrAverage + ", 3: " + shraHBAverage);
+            //Console.WriteLine("1: " + gDrPbAverage + ", 2: " + gDrAverage + ", 3: " + shraHBAverage);
             return biglist;
         }
 
