@@ -522,13 +522,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
                                     j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
                                 {
-                                    if (getcolorfrompixel(i, j, pixels, "red") != 255 || getcolorfrompixel(i, j, pixels, "green") != 255 ||
-                                        getcolorfrompixel(i, j, pixels, "blue") != 255 || getcolorfrompixel(i, j, pixels, "red") != 0 ||
-                                        getcolorfrompixel(i, j, pixels, "green") != 0 || getcolorfrompixel(i, j, pixels, "blue") != 0)
+                                    int r = getcolorfrompixel(i, j, pixels, "red");
+                                    int g = getcolorfrompixel(i, j, pixels, "green");
+                                    int b = getcolorfrompixel(i, j, pixels, "blue");
+
+                                    if ((0 < r && r < 255) && (0 < g && g < 255) && (0 < b && b < 255))
                                     {
-                                        rödapixlar.Add(getcolorfrompixel(i, j, pixels, "red"));
-                                        blåapixlar.Add(getcolorfrompixel(i, j, pixels, "green"));
-                                        grönapixlar.Add(getcolorfrompixel(i, j, pixels, "blue"));
+                                        rödapixlar.Add(r);
+                                        blåapixlar.Add(g);
+                                        grönapixlar.Add(b);
                                     }
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
