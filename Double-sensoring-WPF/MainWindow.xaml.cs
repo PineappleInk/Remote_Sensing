@@ -529,8 +529,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     if ((0 < r && r < 255) && (0 < g && g < 255) && (0 < b && b < 255))
                                     {
                                         rödapixlar.Add(r);
-                                        blåapixlar.Add(g);
-                                        grönapixlar.Add(b);
+                                        grönapixlar.Add(g);
+                                        blåapixlar.Add(b);
                                     }
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
