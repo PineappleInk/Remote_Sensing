@@ -238,13 +238,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Lokalisera toppen i lista för andning
         //Returvärdet är en lista med listor för [0] - positioner och [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
-        private List<List<double>> locatePeaks(List<double> measurements)
+        private List<List<double>> locatePeaksBreath(List<double> measurements)
         {
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>());
             topLocations.Add(new List<double>());
-            //double topPosition = 0;
-            //double topPositionValue = 0;
             int upCounter = 0;
             int downCounter = 0;
 
@@ -339,7 +337,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (measurementsFiltList.Count > 100)
                     {
                         List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaks(measurementsFiltList);
+                        peaks = locatePeaksBreath(measurementsFiltList);
                         matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
                     }
 
