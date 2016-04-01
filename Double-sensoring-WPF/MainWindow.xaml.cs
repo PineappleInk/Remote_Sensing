@@ -72,8 +72,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //Filter
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 0.01, 0.7, 10);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 120/60, 10);
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 10);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 10);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -397,7 +397,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         peaks = locatePeaksPulse(measurementsFiltList);
 
                         //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count();
+                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                            + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
                     }
 
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
@@ -432,7 +433,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         peaks = locatePeaksBreath(measurementsFiltList);
                         
                         //Skriver ut andningspeakar i programmet
-                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count();
+                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
+                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
 
                     }
 
@@ -624,11 +626,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             rödapixlar = new List<int>();
 
                             // Rutan som följer HeadJoint
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 10);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 10); ++i)
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 40);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 40); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 30);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 60); ++j)
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
