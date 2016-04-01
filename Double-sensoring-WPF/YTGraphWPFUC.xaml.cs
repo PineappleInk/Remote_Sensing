@@ -51,7 +51,8 @@ namespace Module_Graphs
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
-            //chart1.ChartAreas[0].AxisY.
+            chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
+            
 
             //set legend position and properties as required
             chart1.Legends[0].LegendStyle = LegendStyle.Table;

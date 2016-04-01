@@ -57,7 +57,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
         //MATLAB-instans 
-        MLApp.MLApp matlab = new MLApp.MLApp();
+        //MLApp.MLApp matlab = new MLApp.MLApp();
 
         //Puls
         List<double> matlabPulsLista = new List<double>();
@@ -313,7 +313,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av puls i matlab
                 if (codeString == "both")
                 {
-                    matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
+                    //matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
                     object[] res = result as object[];
                     Console.WriteLine("Puls: " + res[0].ToString());
                     Console.WriteLine("Andning: " + res[1].ToString());
@@ -322,7 +322,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av puls i matlab
                 else if (codeString == "pulse")
                 {
-                    matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
+                    //matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
                 }
@@ -338,12 +338,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //{
                     //    List<List<double>> peaks = new List<List<double>>();
                     //    peaks = locatePeaksBreath(measurementsFiltList);
-                        chartTest.CheckAndAddSeriesToGraph("hejsan", "fps");
-                        chartTest.AddPointToLine("hejsan", measurements[measurements.Count()-1], measurements.Count());
+                    chartTest.CheckAndAddSeriesToGraph("hejsan", "fps");
+                    chartTest.ClearCurveDataPointsFromGraph();
+                    for (int i = 0; i < measurements.Count(); i++)
+                    {
+                        chartTest.AddPointToLine("hejsan", measurements[i], i);
+                    }
                     if(measurements.Count() >= 600)
                     {
-                        chartTest.ClearCurveDataPointsFromGraph();
-                        listDepthMatlab.Clear();
+                        listDepthMatlab.RemoveAt(0);
 
                     }
                         //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
