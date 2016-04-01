@@ -73,6 +73,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Filter
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 0.01, 0.7, 10);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 120/60, 10);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -290,6 +291,64 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
+        //Lokalisera toppen i lista för andning
+        //Returvärdet är en lista med listor för [0] - positioner och [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        private List<List<double>> locatePeaksPulse(List<double> measurements)
+        {
+            List<List<double>> topLocations = new List<List<double>>();
+            topLocations.Add(new List<double>());
+            topLocations.Add(new List<double>());
+            int upCounter = 0;
+            int downCounter = 0;
+
+            for (int i = 0; i < measurements.Count - 4; i++)
+            {
+                //Påväg uppåt
+                if (measurements[i] < measurements[i + 1])
+                {
+                    if (downCounter < 5)
+                    {
+                        upCounter += 1;
+                        downCounter = 0;
+                    }
+                }
+                //Vid topp
+                else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (upCounter > 5)
+                    {
+                        topLocations[0].Add(Convert.ToDouble(i));
+                        topLocations[1].Add(measurements[i]);
+                        upCounter = 0;
+                        downCounter = 1;
+                    }
+                }
+                //Påväg nedåt
+                else if (measurements[i] > measurements[i + 1])
+                {
+                    if (upCounter < 5)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
+                }
+                //Vid dal
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (downCounter > 5)
+                    {
+                        upCounter = 0;
+                        downCounter = 0;
+                    }
+                }
+            }
+            return topLocations;
+        }
+
+
+
+
+
         ///MATLAB-funktionen: Härifrån köra alla kommandon som har med matlab att göra.
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
         /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
@@ -321,15 +380,35 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
                     */
+                    //Konvertera en av listorna till en temporär lista
                     List<double> templist = new List<double>();
                     templist = rgbList[0];
+
+                    //filtrering
+                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(templist.ToArray());
+                    List<double> measurementsFiltList = measurementsFilt.ToList();
+
+                    measurementsFiltList.RemoveRange(0, 10);
+
+                    //toppdetektering
+                    if (measurementsFiltList.Count > 100)
+                    {
+                        List<List<double>> peaks = new List<List<double>>();
+                        peaks = locatePeaksPulse(measurementsFiltList);
+
+                        //Skriver ut pulspeakar i programmet
+                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count();
+                    }
+
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                     chartPulse.ClearCurveDataPointsFromGraph();
-                    for (int i = 0; i < templist.Count(); i++)
+
+                    for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
-                        chartPulse.AddPointToLine("Pulse", templist[i], i);
+                        chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
-                    if (rgbList[0].Count() >= 300)
+
+                    if (rgbList[0].Count() >= 610)
                     {
                         rgbList[0].RemoveAt(0);
                         rgbList[1].RemoveAt(0);
@@ -351,6 +430,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
+                        
+                        //Skriver ut andningspeakar i programmet
+                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count();
+
                     }
 
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
@@ -360,11 +443,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-
-                    if(measurements.Count() >= 310)
+                    if(measurements.Count() >= 610)
                     {
                         listDepthMatlab.RemoveAt(0);
                     }
+
+
                         //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
                     //}
 
@@ -403,8 +487,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 CompositionTargetRendering();
 
 
-                //Skriver ut hjärtrytm i programmet
-                textBlock.Text = "Hjärtrytm: " + System.Environment.NewLine + heartrate;
+                
 
             }
             catch

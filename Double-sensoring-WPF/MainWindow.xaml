@@ -27,13 +27,13 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="910,432,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="68" Width="175" Grid.Column="1"><Run Text="Hjärtrytm:"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Andningsrytm:"/></TextBlock>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="1062,474,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="40" Width="183" Grid.Column="1" Text="Hjärtrytm::"/>
         <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="1105,536,0,0" VerticalAlignment="Top" Width="74" Click="button_Click" Grid.Column="1"/>
         <Viewbox HorizontalAlignment="Right" Margin="0,0,10.4,372.2" Width="529" Grid.Column="1">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
         <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="910,576,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="193" Grid.Column="1"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
-        <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="923,385,0,0" TextWrapping="Wrap" Text="averageBreathing" VerticalAlignment="Top" Height="22" Width="230"/>
+        <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="1062,405,0,0" TextWrapping="Wrap" Text="averageBreathing" VerticalAlignment="Top" Height="42" Width="183"/>
         <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Margin="0,26,597.5,369.5" Grid.Column="1"/>
         <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Column="1" Margin="0,350,597.5,45.5"/>
 
