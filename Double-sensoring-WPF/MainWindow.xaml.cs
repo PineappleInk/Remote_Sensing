@@ -315,7 +315,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (upCounter > 5)
+                    if (upCounter > 8)
                     {
                         topLocations[0].Add(Convert.ToDouble(i));
                         topLocations[1].Add(measurements[i]);
@@ -335,7 +335,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 5)
+                    if (downCounter > 8)
                     {
                         upCounter = 0;
                         downCounter = 0;
@@ -410,10 +410,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     if (rgbList[0].Count() >= 610)
                     {
-                        rgbList[0].RemoveAt(0);
-                        rgbList[1].RemoveAt(0);
-                        rgbList[2].RemoveAt(0);
-                        templist.RemoveAt(0);
+                        rgbList[0].RemoveRange(0, 10);
+                        rgbList[1].RemoveRange(0, 10);
+                        rgbList[2].RemoveRange(0, 10);
+                        //templist.RemoveRange(0, 10);
                     }
                 }
                 //Analys av andning i matlab
@@ -445,7 +445,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                     if(measurements.Count() >= 610)
                     {
-                        listDepthMatlab.RemoveAt(0);
+                        listDepthMatlab.RemoveRange(0, 10);
                     }
 
 
