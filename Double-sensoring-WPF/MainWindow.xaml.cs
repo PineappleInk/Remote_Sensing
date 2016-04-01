@@ -15,11 +15,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
+    using System.Windows.Forms.DataVisualization.Charting;
     using Microsoft.Kinect;
     using System.Linq;
     using System.Drawing;
     using MathNet.Filtering;
-
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -76,7 +76,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-
+        
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -109,7 +109,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
-
+            
             //Om man vill rendera hela tiden!
             //CompositionTarget.Rendering += CompositionTargetRendering;
         }
@@ -124,7 +124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             _image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             _image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
             _image.EndInit();
-            image1.Source = _image;
+            //image1.Source = _image;
         }
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -303,7 +303,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
             // Change to the directory  where the function is located 
-            matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
+            //matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
             //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
 
             // Define the output 
@@ -330,16 +330,24 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (codeString == "breathing")
                 {
                     //filtrering
-                    double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
-                    measurementsFiltList.RemoveRange(0, 10);
+                    //double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
+                    //List<double> measurementsFiltList = measurementsFilt.ToList();
+                    //measurementsFiltList.RemoveRange(0, 10);
                     //toppdetektering
-                    if (measurementsFiltList.Count > 100)
+                    //if (measurementsFiltList.Count > 100)
+                    //{
+                    //    List<List<double>> peaks = new List<List<double>>();
+                    //    peaks = locatePeaksBreath(measurementsFiltList);
+                        chartTest.CheckAndAddSeriesToGraph("hejsan", "fps");
+                        chartTest.AddPointToLine("hejsan", measurements[measurements.Count()-1], measurements.Count());
+                    if(measurements.Count() >= 600)
                     {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
-                        matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
+                        chartTest.ClearCurveDataPointsFromGraph();
+                        listDepthMatlab.Clear();
+
                     }
+                        //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
+                    //}
 
                     
                     /*object[] res = result as object[];
@@ -535,6 +543,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
 
                             List<List<double>> biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
+                            
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
@@ -639,18 +648,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count % 30 == 0)
-                            {
-                                matlabCommand("breathing", listDepthMatlab);
-                            }
-                            if (listDepthMatlab.Count >= 300)
-                            {
-                                listDepthMatlab.RemoveRange(0, 30);
-                            }
+                            
+                            matlabCommand("breathing", listDepthMatlab);
+                            //if (listDepthMatlab.Count >= 300)
+                            //{
+                            //    listDepthMatlab.RemoveRange(0, 30);
+                            //}
                         }
                         catch (System.IndexOutOfRangeException)
                         {
-                            MessageBox.Show("Baby has escaped, baby can't be far");
+                            System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
                         }
                     }
                 }
