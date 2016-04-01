@@ -119,27 +119,27 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             biglist[1].Add(greencoloraverage);
             biglist[2].Add(bluecoloraverage);
 
-            if (biglist[1].Count >= 900)
-            {
-                biglist[0].RemoveAt(0);
-                biglist[1].RemoveAt(0);
-                biglist[2].RemoveAt(0);
-            }
+            //if (biglist[1].Count >= 900)
+            //{
+            //    biglist[0].RemoveAt(0);
+            //    biglist[1].RemoveAt(0);
+            //    biglist[2].RemoveAt(0);
+            //}
 
             rödapixlar.Clear();
             grönapixlar.Clear();
             blåapixlar.Clear();
 
             //Rensa listan från de X äldsta värdena om listan är över en viss längd
-            if (biglist[1].Count >= 900)
-            {
-                for (int i = 0; i < 30; ++i)
-                {
-                    biglist[0].RemoveAt(0);
-                    biglist[1].RemoveAt(0);
-                    biglist[2].RemoveAt(0);
-                }
-            }
+            //if (biglist[1].Count >= 900)
+            //{
+            //    for (int i = 0; i < 30; ++i)
+            //    {
+            //        biglist[0].RemoveAt(0);
+            //        biglist[1].RemoveAt(0);
+            //        biglist[2].RemoveAt(0);
+            //    }
+            //}
             return biglist;
         }
 

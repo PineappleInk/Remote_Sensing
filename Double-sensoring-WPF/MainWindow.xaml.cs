@@ -316,6 +316,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av puls i matlab
                 else if (codeString == "pulse")
                 {
+                    /*
                     //matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
@@ -323,34 +324,41 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     List<double> templist = new List<double>();
                     templist = rgbList[0];
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                    chartPulse.AddPointToLine("Pulse", templist[templist.Count() - 1], templist.Count());
+                    chartPulse.ClearCurveDataPointsFromGraph();
+                    for (int i = 0; i < templist.Count(); i++)
+                    {
+                        chartPulse.AddPointToLine("Pulse", templist[i], i);
+                    }
                     if (rgbList[0].Count() >= 600)
                     {
-                        chartPulse.ClearCurveDataPointsFromGraph();
-                        rgbList[0].Clear();
-                        templist.Clear();
-
+                        rgbList[0].RemoveAt(0);
+                        rgbList[1].RemoveAt(0);
+                        rgbList[2].RemoveAt(0);
+                        templist.RemoveAt(0);
                     }
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
                     //filtrering
-                    //double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
-                    //List<double> measurementsFiltList = measurementsFilt.ToList();
-                    //measurementsFiltList.RemoveRange(0, 10);
+                    double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
+                    List<double> measurementsFiltList = measurementsFilt.ToList();
+                    
+                    measurementsFiltList.RemoveRange(0, 10);
+                    
                     //toppdetektering
-                    //if (measurementsFiltList.Count > 100)
-                    //{
-                    //    List<List<double>> peaks = new List<List<double>>();
-                    //    peaks = locatePeaksBreath(measurementsFiltList);
-                    chartTest.CheckAndAddSeriesToGraph("Breath", "fps");
-                    chartTest.ClearCurveDataPointsFromGraph();
-                    for (int i = 0; i < measurements.Count(); i++)
+                    if (measurementsFiltList.Count > 100)
                     {
-                        chartTest.AddPointToLine("Breath", measurements[i], i);
+                        List<List<double>> peaks = new List<List<double>>();
+                        peaks = locatePeaksBreath(measurementsFiltList);
                     }
-                    if(measurements.Count() >= 600)
+                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
+                    chartBreath.ClearCurveDataPointsFromGraph();
+                    for (int i = 0; i < measurementsFiltList.Count(); i++)
+                    {
+                        chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
+                    }
+                    if(measurements.Count() >= 610)
                     {
                         listDepthMatlab.RemoveAt(0);
 
@@ -556,11 +564,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            //if (biglist[1].Count % 30 == 0)
-                            //{
+                            if (biglist[0].Count % 10 == 0)
+                            {
                                 //Analys av puls i matlab
                                 matlabCommand("pulse", listDepthMatlab, biglist);
-                            //}
+                            }
                         }
                         catch
                         { }
@@ -657,8 +665,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            
-                            matlabCommand("breathing", listDepthMatlab);
+                            if (listDepthMatlab.Count % 10 == 0)
+                            {
+                                matlabCommand("breathing", listDepthMatlab);
+                            }
                             //if (listDepthMatlab.Count >= 300)
                             //{
                             //    listDepthMatlab.RemoveRange(0, 30);
