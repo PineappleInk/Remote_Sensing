@@ -11,7 +11,7 @@
         <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f" />
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
     </Window.Resources>
-    <Grid Margin="0,0,-6.4,0.4">
+    <Grid Margin="0,0, 0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="9*"/>
             <ColumnDefinition Width="286*"/>
@@ -34,7 +34,8 @@
         </Viewbox>
         <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="910,576,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="193" Grid.Column="1"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
         <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="923,385,0,0" TextWrapping="Wrap" Text="averageBreathing" VerticalAlignment="Top" Height="22" Width="230"/>
-        <WindowsFormsHost x:Name="TestWindow" Grid.Column="1" HorizontalAlignment="Left" Height="100" Margin="1259,455,0,0" VerticalAlignment="Top" Width="100"/>
-        <Module_Graphs:YTGraphWPFUC x:Name="chartTest" Grid.Column="1" HorizontalAlignment="Left" Margin="96,133,0,0" VerticalAlignment="Top" Height="466" Width="492"/>
+        <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Margin="0,26,597.5,369.5" Grid.Column="1"/>
+        <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Column="1" Margin="0,350,597.5,45.5"/>
+
     </Grid>
 </Window>
