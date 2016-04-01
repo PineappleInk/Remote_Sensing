@@ -275,14 +275,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             blåapixlar.Clear();
 
             //Rensa listan från de X äldsta värdena om listan är över en viss längd
-            if (biglist[1].Count >= 900)
-            {
-                biglist[0].RemoveRange(0, 30);
-                biglist[1].RemoveRange(0, 30);
-                biglist[2].RemoveRange(0, 30);
-            }
+            //if (biglist[1].Count >= 900)
+            //{
+            //    biglist[0].RemoveRange(0, 30);
+            //    biglist[1].RemoveRange(0, 30);
+            //    biglist[2].RemoveRange(0, 30);
+            //}
 
-            //Console.WriteLine("1: " + gDrPbAverage + ", 2: " + gDrAverage + ", 3: " + shraHBAverage);
+            ////Console.WriteLine("1: " + gDrPbAverage + ", 2: " + gDrAverage + ", 3: " + shraHBAverage);
             return biglist;
         }
 

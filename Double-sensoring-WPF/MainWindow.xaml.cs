@@ -329,7 +329,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         chartPulse.AddPointToLine("Pulse", templist[i], i);
                     }
-                    if (rgbList[0].Count() >= 600)
+                    if (rgbList[0].Count() >= 300)
                     {
                         rgbList[0].RemoveAt(0);
                         rgbList[1].RemoveAt(0);
@@ -352,16 +352,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
                     }
+
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.ClearCurveDataPointsFromGraph();
+
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-                    if(measurements.Count() >= 610)
+
+                    if(measurements.Count() >= 310)
                     {
                         listDepthMatlab.RemoveAt(0);
-
                     }
                         //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
                     //}

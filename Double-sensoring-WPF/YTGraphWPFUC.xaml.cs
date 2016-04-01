@@ -47,12 +47,12 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 300; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
-            
+            chart1.BackColor = Color.GhostWhite;
 
             //set legend position and properties as required
             chart1.Legends[0].LegendStyle = LegendStyle.Table;
