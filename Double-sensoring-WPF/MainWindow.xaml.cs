@@ -287,12 +287,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-            Console.WriteLine("Start");
-            for(int i = 0; i < topLocations.Count; i++)
-            {
-                Console.WriteLine(topLocations[i].ToString());
-            }
-            Console.WriteLine("Slut");
             return topLocations;
         }
 
@@ -325,6 +319,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
+                    */
+                    List<double> templist = new List<double>();
+                    templist = rgbList[0];
+                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                    chartPulse.AddPointToLine("Pulse", templist[templist.Count() - 1], templist.Count());
+                    if (rgbList[0].Count() >= 600)
+                    {
+                        chartPulse.ClearCurveDataPointsFromGraph();
+                        rgbList[0].Clear();
+                        templist.Clear();
+
+                    }
                 }
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
@@ -338,11 +344,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //{
                     //    List<List<double>> peaks = new List<List<double>>();
                     //    peaks = locatePeaksBreath(measurementsFiltList);
-                    chartTest.CheckAndAddSeriesToGraph("hejsan", "fps");
+                    chartTest.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartTest.ClearCurveDataPointsFromGraph();
                     for (int i = 0; i < measurements.Count(); i++)
                     {
-                        chartTest.AddPointToLine("hejsan", measurements[i], i);
+                        chartTest.AddPointToLine("Breath", measurements[i], i);
                     }
                     if(measurements.Count() >= 600)
                     {
@@ -550,11 +556,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            if (biglist[1].Count % 30 == 0)
-                            {
+                            //if (biglist[1].Count % 30 == 0)
+                            //{
                                 //Analys av puls i matlab
-                                //matlabCommand("pulse", listDepthMatlab, biglist);
-                            }
+                                matlabCommand("pulse", listDepthMatlab, biglist);
+                            //}
                         }
                         catch
                         { }
