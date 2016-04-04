@@ -113,6 +113,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             
             //Om man vill rendera hela tiden!
             //CompositionTarget.Rendering += CompositionTargetRendering;
+
+            Console.WriteLine("Här är vi! " + path);
         }
 
         private void CompositionTargetRendering() //object sender, EventArgs e
@@ -229,7 +231,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.getDepthFrameReader().Dispose();
                 this.depthSensing.setDepthFrameReader(null);
             }
-
             if (this.kinectSensor != null)
             {
                 this.kinectSensor.Close();
@@ -433,7 +434,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     List<double> measurementsFiltList = measurementsFilt.ToList();
                     
                     measurementsFiltList.RemoveRange(0, 10);
-
+                    
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
                     chartBreath.ClearCurveDataPointsFromGraph();
@@ -526,7 +527,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             if (average < 40 || average > 60)
             {
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = "beep-07.wav";
+                beep.SoundLocation = @"cd " + path + @"\..\..\..\beep-07.wav";
                 beep.Play();
             }
         }
