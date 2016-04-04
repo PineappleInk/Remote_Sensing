@@ -390,19 +390,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     measurementsFiltList.RemoveRange(0, 10);
 
+                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                    chartPulse.ClearCurveDataPointsFromGraph();
+
                     //toppdetektering
                     if (measurementsFiltList.Count > 100)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksPulse(measurementsFiltList);
+                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "none");
+
 
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                             + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
                     }
 
-                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                    chartPulse.ClearCurveDataPointsFromGraph();
+
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
