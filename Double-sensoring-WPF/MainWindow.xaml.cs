@@ -20,6 +20,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Linq;
     using System.Drawing;
     using MathNet.Filtering;
+    using System.Windows.Resources;
+     
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -56,6 +58,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
+
         //MATLAB-instans 
         //MLApp.MLApp matlab = new MLApp.MLApp();
 
@@ -457,8 +460,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
 
                         //Average är antalet peakar * 3 (20 sek) till larmet.
-                        //average = peaks[0].Count() * 3;
-                        //breathingAlarm(average);
+                        average = peaks[0].Count() * 3;
+                        breathingAlarm(average);
 
                     }
 
@@ -507,10 +510,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
                 }
                 //Uppdatering av plot i användargränssittet
-                CompositionTargetRendering();
-
-
-                
+                CompositionTargetRendering();                
 
             }
             catch
@@ -524,10 +524,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double average)
         {
-            if (average < 40 || average > 60)
+            if (average < 10 || average > 60)
             {
+                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = @"cd " + path + @"\..\..\..\beep-07.wav";
+                beep.SoundLocation = soundpath;
                 beep.Play();
             }
         }

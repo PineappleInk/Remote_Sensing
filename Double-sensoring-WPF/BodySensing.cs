@@ -352,8 +352,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         List<float> list1 = new List<float>();
 
-        // Create the MATLAB instance 
-        MLApp.MLApp matlab = new MLApp.MLApp();
 
         private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point>
             jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
