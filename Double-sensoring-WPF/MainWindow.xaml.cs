@@ -110,9 +110,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
-            
+
             //Om man vill rendera hela tiden!
             //CompositionTarget.Rendering += CompositionTargetRendering;
+
+            Console.WriteLine("Här är vi! " + path);
         }
 
         private void CompositionTargetRendering() //object sender, EventArgs e
@@ -229,7 +231,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.getDepthFrameReader().Dispose();
                 this.depthSensing.setDepthFrameReader(null);
             }
-
             if (this.kinectSensor != null)
             {
                 this.kinectSensor.Close();
@@ -432,7 +433,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
                         //Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * 3; 
+                        breathingAlarm(peaks[0].Count()); 
                         //Skriver ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
@@ -507,7 +508,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             if (average < 40 || average > 60)
             {
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = "beep-07.wav";
+                beep.SoundLocation = @"cd " + path + @"\..\..\..\beep-07.wav";
                 beep.Play();
             }
         }
