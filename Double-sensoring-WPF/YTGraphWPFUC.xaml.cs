@@ -83,7 +83,7 @@ namespace Module_Graphs
                 }
             }
             Series s = chart1.Series.Add(strPinDescription);
-            s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
             s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
             s.ShadowOffset = 1;
