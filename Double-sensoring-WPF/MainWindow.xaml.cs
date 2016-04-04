@@ -37,7 +37,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double bellyJointXPosition = 2 / 3;
 
         double heartrate = 0;
-
+        double average = 0;
         /// <summary>
         /// Current status text to display
         /// </summary>
@@ -431,10 +431,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
-                        
+                        //Average är antalet peakar * 3 (20 sek) till larmet.
+                        average = peaks[0].Count() * 3; 
                         //Skriver ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
-                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                               + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
 
                     }
 
@@ -503,7 +504,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double average)
         {
-            if (average < 10)
+            if (average < 40 || average > 60)
             {
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = "beep-07.wav";
