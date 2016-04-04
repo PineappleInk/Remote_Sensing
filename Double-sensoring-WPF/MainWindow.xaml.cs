@@ -391,6 +391,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     measurementsFiltList.RemoveRange(0, 10);
 
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                    chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
                     chartPulse.ClearCurveDataPointsFromGraph();
 
                     //toppdetektering
@@ -398,7 +399,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksPulse(measurementsFiltList);
-                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "none");
+                        for (int i = 0; i < peaks[0].Count(); i++)
+                        {
+                            chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                        }
 
 
                         //Skriver ut pulspeakar i programmet
@@ -429,22 +433,33 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     List<double> measurementsFiltList = measurementsFilt.ToList();
                     
                     measurementsFiltList.RemoveRange(0, 10);
-                    
+
+                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
+                    chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
+                    chartBreath.ClearCurveDataPointsFromGraph();
+
                     //toppdetektering
                     if (measurementsFiltList.Count > 100)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
-                        //Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * 3; 
+
+                        //Rita ut peakar 
+                        for (int i = 0; i < peaks[0].Count(); i++)
+                        {
+                            chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+
+                        }
+
                         //Skriver ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
 
-                    }
+                        //Average är antalet peakar * 3 (20 sek) till larmet.
+                        //average = peaks[0].Count() * 3;
+                        //breathingAlarm(average);
 
-                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                    chartBreath.ClearCurveDataPointsFromGraph();
+                    }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {

@@ -82,15 +82,24 @@ namespace Module_Graphs
                     return; //already exists
                 }
             }
-            Series s = chart1.Series.Add(strPinDescription);
-            s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
-            s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
-            s.ShadowOffset = 1;
-            s.IsVisibleInLegend = true;
-            //s.IsValueShownAsLabel = true;                       
-            s.LegendText = strPinDescription + " (" + strUnit + ")";
-            s.LegendToolTip = strPinDescription + " (" + strUnit + ")";
+            if (strUnit == "marker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.BorderWidth = 3;
+            }
+            else
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+                s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
+                s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
+                s.ShadowOffset = 1;
+                s.IsVisibleInLegend = true;
+                //s.IsValueShownAsLabel = true;                       
+                s.LegendText = strPinDescription + " (" + strUnit + ")";
+                s.LegendToolTip = strPinDescription + " (" + strUnit + ")";
+            }
         }
 
         internal void ClearSeriesFromGraph()
