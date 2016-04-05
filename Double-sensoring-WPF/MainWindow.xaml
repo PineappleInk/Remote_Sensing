@@ -27,7 +27,7 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="910,352,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="265" Width="183" Grid.Column="1" Text="Hjärtrytm::"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="910,352,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="265" Width="183" Grid.Column="1" Text="Hjärtrytm:"/>
         <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="1105,536,0,0" VerticalAlignment="Top" Width="74" Click="button_Click" Grid.Column="1"/>
         <Viewbox HorizontalAlignment="Right" Margin="0,0,10.4,372.2" Width="529" Grid.Column="1">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />

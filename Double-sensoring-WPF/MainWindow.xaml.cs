@@ -521,7 +521,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                         //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls G/(R+B): " + System.Environment.NewLine + peaks0[0].Count()
+                        textBlock.Text = System.Environment.NewLine + "Antal peaks i puls G/(R+B): " + System.Environment.NewLine + peaks0[0].Count()
                             + System.Environment.NewLine + "Uppskattad BPM G/(R+B): " + peaks0[0].Count() * 3 + System.Environment.NewLine + System.Environment.NewLine +
                             "Antal peaks i puls G/R: " + System.Environment.NewLine + peaks1[0].Count()
                             + System.Environment.NewLine + "Uppskattad BPM G/R: " + peaks1[0].Count() * 3 + System.Environment.NewLine + System.Environment.NewLine +
