@@ -20,6 +20,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Linq;
     using System.Drawing;
     using MathNet.Filtering;
+    using System.Windows.Resources;
+     
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -37,7 +39,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double bellyJointXPosition = 2 / 3;
 
         double heartrate = 0;
-
+        double average = 0;
         /// <summary>
         /// Current status text to display
         /// </summary>
@@ -59,6 +61,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
+
         //MATLAB-instans 
         //MLApp.MLApp matlab = new MLApp.MLApp();
 
@@ -123,6 +126,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             
             //Om man vill rendera hela tiden!
             //CompositionTarget.Rendering += CompositionTargetRendering;
+
+            Console.WriteLine("Här är vi! " + path);
         }
 
         private void CompositionTargetRendering() //object sender, EventArgs e
@@ -171,7 +176,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 return irSensing.getInfraredBitmap();
             }
         }
-        
+
 
         /// <summary>
         /// Gets or sets the current status text to display
@@ -223,7 +228,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             if (irSensing.getInfraredFrameReader() != null)
             {
                 irSensing.getInfraredFrameReader().FrameArrived += Reader_IR;
-            }
+        }
         }
 
         //Försök att få in infraröd sensor
@@ -452,19 +457,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     measurementsFiltList.RemoveRange(0, 10);
 
+                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                    chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+                    chartPulse.ClearCurveDataPointsFromGraph();
+
                     //toppdetektering
                     if (measurementsFiltList.Count > 100)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksPulse(measurementsFiltList);
+                        for (int i = 0; i < peaks[0].Count(); i++)
+                        {
+                            chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                        }
+
 
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                             + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+
+                        //Average är antalet andningar under 20 sekunder
+                        average = peaks[0].Count() * 3;
+                        pulseAlarm(average);
+           
                     }
 
-                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                    chartPulse.ClearCurveDataPointsFromGraph();
+
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
@@ -488,20 +506,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     
                     measurementsFiltList.RemoveRange(0, 10);
                     
+                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
+                    chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
+                    chartBreath.ClearCurveDataPointsFromGraph();
+
                     //toppdetektering
                     if (measurementsFiltList.Count > 100)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
                         
+                        //Rita ut peakar 
+                        for (int i = 0; i < peaks[0].Count(); i++)
+                        {
+                            chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+
+                        }
+
                         //Skriver ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
-                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                               + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+
+                        //Average är antalet peakar * 3 (20 sek) till larmet.
+                        average = peaks[0].Count() * 3;
+                        breathingAlarm(average);
 
                     }
-
-                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                    chartBreath.ClearCurveDataPointsFromGraph();
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
@@ -582,9 +612,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Uppdatering av plot i användargränssittet
                 CompositionTargetRendering();
 
-
-                
-
             }
             catch
             {
@@ -595,12 +622,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Larm för andning
-        private void breathingAlarm(double average)
+        private void breathingAlarm(double averageBreathing)
         {
-            if (average < 10)
+            if (averageBreathing < 20 || averageBreathing > 60)
             {
+                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = "beep-07.wav";
+                beep.SoundLocation = soundpath;
+                beep.Play();
+            }
+        }
+
+        //Larm för pulsen
+        private void pulseAlarm(double averagePulse)
+        {
+            if (averagePulse < 30 || averagePulse > 120)
+            {
+                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                beep.SoundLocation = soundpath;
                 beep.Play();
             }
         }
@@ -701,7 +741,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
-                            
+
 
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
                                 Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
