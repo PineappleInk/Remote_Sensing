@@ -412,6 +412,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                             + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+
+                        //Average är antalet andningar under 20 sekunder
+                        average = peaks[0].Count() * 3;
+                        pulseAlarm(average);
+           
                     }
 
 
@@ -522,10 +527,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Larm för andning
-        private void breathingAlarm(double average)
+        private void breathingAlarm(double averageBreathing)
         {
-            if (average < 10 || average > 60)
+            if (averageBreathing < 20 || averageBreathing > 60)
             {
+                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                beep.SoundLocation = soundpath;
+                beep.Play();
+            }
+        }
+
+        //Larm för pulsen
+        private void pulseAlarm(double averagePulse)
+        {
+            if (averagePulse < 30 || averagePulse > 120)
+            {   
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = soundpath;
