@@ -61,12 +61,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
-
-        //MATLAB-instans 
-        //MLApp.MLApp matlab = new MLApp.MLApp();
-
-        //Puls
-        List<double> matlabPulsLista = new List<double>();
+    
 
         //Andning
         /// <summary>
@@ -80,9 +75,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //TEST Intensity
         List<double> listIntensity = new List<double>();
 
+        //TEST Biglist utflyttad
+        List<List<double>> biglist = new List<List<double>>();
+
         //Filter
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 10);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 10);
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 27);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -425,11 +423,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Change to the directory  where the function is located 
             //matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
             //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
-
+            
             // Define the output 
             object result = null;
             try
             {
+                //Sätta ihop listor
+                List<double> bigtemp = new List<double>();
+
+                //for (int i = 0; i < listIntensity.Count; i++)
+                //{
+                //    bigtemp.Add(listIntensity[i] * biglist[0][i]);
+                //}
+
                 //Analys av puls i matlab
                 if (codeString == "both")
                 {
@@ -448,48 +454,96 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
                     */
                     //Konvertera en av listorna till en temporär lista
-                    List<double> templist = new List<double>();
-                    templist = rgbList[0];
+                    List<double> templist0 = new List<double>();
+                    templist0 = rgbList[0];
+
+                    //TEST
+                    List<double> templist1 = new List<double>();
+                    templist1 = rgbList[1];
+
+                    //TEST
+                    List<double> templist2 = new List<double>();
+                    templist2 = rgbList[2];
 
                     //filtrering
-                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(templist.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
+                    double[] measurementsFilt0 = bpFiltPulse.ProcessSamples(templist0.ToArray());
+                    List<double> measurementsFiltList0 = measurementsFilt0.ToList();
 
-                    measurementsFiltList.RemoveRange(0, 10);
+                    //TEST
+                    double[] measurementsFilt1 = bpFiltPulse.ProcessSamples(templist1.ToArray());
+                    List<double> measurementsFiltList1 = measurementsFilt1.ToList();
 
-                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                    chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                    chartPulse.ClearCurveDataPointsFromGraph();
+                    //TEST
+                    double[] measurementsFilt2 = bpFiltPulse.ProcessSamples(templist2.ToArray());
+                    List<double> measurementsFiltList2 = measurementsFilt2.ToList();
+
+                    if (measurementsFiltList0.Count > 27)
+                    {
+                        measurementsFiltList0.RemoveRange(0, 27);
+                        measurementsFiltList1.RemoveRange(0, 27);
+                        measurementsFiltList2.RemoveRange(0, 27);
+                    }
+
+                    chartPulse0.CheckAndAddSeriesToGraph("Pulse G/(R+B)", "fps");
+                    chartPulse0.CheckAndAddSeriesToGraph("Pulsemarkers G/(R+B)", "marker");
+                    chartPulse1.CheckAndAddSeriesToGraph("Pulse G/R", "fps");
+                    chartPulse1.CheckAndAddSeriesToGraph("Pulsemarkers G/R", "marker");
+                    chartPulse2.CheckAndAddSeriesToGraph("Pulse SHA", "fps");
+                    chartPulse2.CheckAndAddSeriesToGraph("Pulsemarkers SHA", "marker");
+                    chartPulse0.ClearCurveDataPointsFromGraph();
+                    chartPulse1.ClearCurveDataPointsFromGraph();
+                    chartPulse2.ClearCurveDataPointsFromGraph();
 
                     //toppdetektering
-                    if (measurementsFiltList.Count > 100)
+                    if (measurementsFiltList0.Count > 100)
                     {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksPulse(measurementsFiltList);
-                        for (int i = 0; i < peaks[0].Count(); i++)
+                        List<List<double>> peaks0 = new List<List<double>>();
+                        peaks0 = locatePeaksPulse(measurementsFiltList0);
+                        List<List<double>> peaks1 = new List<List<double>>();
+                        peaks1 = locatePeaksPulse(measurementsFiltList1);
+                        List<List<double>> peaks2 = new List<List<double>>();
+                        peaks2 = locatePeaksPulse(measurementsFiltList2);
+
+                        for (int i = 0; i < peaks0[0].Count(); i++)
                         {
-                            chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                            chartPulse0.AddPointToLine("Pulsemarkers G/(R+B)", peaks0[1][i], peaks0[0][i]);
+                        }
+
+                        for (int i = 0; i < peaks1[0].Count(); i++)
+                        {
+                            chartPulse1.AddPointToLine("Pulsemarkers G/R", peaks1[1][i], peaks1[0][i]);
+                        }
+
+                        for (int i = 0; i < peaks2[0].Count(); i++)
+                        {
+                            chartPulse2.AddPointToLine("Pulsemarkers SHA", peaks2[1][i], peaks2[0][i]);
                         }
 
 
                         //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                            + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                        textBlock.Text = "Antal peaks i puls G/(R+B): " + System.Environment.NewLine + peaks0[0].Count()
+                            + System.Environment.NewLine + "Uppskattad BPM G/(R+B): " + peaks0[0].Count() * 3 + System.Environment.NewLine + System.Environment.NewLine +
+                            "Antal peaks i puls G/R: " + System.Environment.NewLine + peaks1[0].Count()
+                            + System.Environment.NewLine + "Uppskattad BPM G/R: " + peaks1[0].Count() * 3 + System.Environment.NewLine + System.Environment.NewLine +
+                            "Antal peaks i puls SHA: " + System.Environment.NewLine + peaks2[0].Count()
+                            + System.Environment.NewLine + "Uppskattad BPM SHA: " + peaks2[0].Count() * 3;
 
                         //Average är antalet andningar under 20 sekunder
-                        average = peaks[0].Count() * 3;
-                        pulseAlarm(average);
+                        //average = peaks[0].Count() * 3;
+                        //pulseAlarm(average);
            
                     }
 
 
 
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
+                    for (int i = 0; i < measurementsFiltList0.Count(); i++)
                     {
-                        chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
+                        chartPulse0.AddPointToLine("Pulse G/(R+B)", measurementsFiltList0[i], i);
+                        chartPulse1.AddPointToLine("Pulse G/R", measurementsFiltList1[i], i);
+                        chartPulse2.AddPointToLine("Pulse SHA", measurementsFiltList2[i], i);
                     }
 
-                    if (rgbList[0].Count() >= 610)
+                    if (rgbList[0].Count() >= 627)
                     {
                         rgbList[0].RemoveRange(0, 10);
                         rgbList[1].RemoveRange(0, 10);
@@ -500,110 +554,124 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av andning i matlab
                 else if (codeString == "breathing")
                 {
-                    //filtrering
-                    double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
-                    
-                    measurementsFiltList.RemoveRange(0, 10);
-                    
-                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                    chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
-                    chartBreath.ClearCurveDataPointsFromGraph();
+                    ////filtrering
+                    //double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
+                    //List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    //toppdetektering
-                    if (measurementsFiltList.Count > 100)
-                    {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
-                        
-                        //Rita ut peakar 
-                        for (int i = 0; i < peaks[0].Count(); i++)
-                        {
-                            chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
-
-                        }
-
-                        //Skriver ut andningspeakar i programmet
-                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
-                               + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
-
-                        //Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * 3;
-                        breathingAlarm(average);
-
-                    }
-
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
-                    {
-                        chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
-                    }
-                    if(measurements.Count() >= 610)
-                    {
-                        listDepthMatlab.RemoveRange(0, 10);
-                    }
-
-
-                        //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
+                    //if (measurementsFiltList.Count > 27)
+                    //{
+                    //    measurementsFiltList.RemoveRange(0, 27);
                     //}
 
+                    //chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
+                    //chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
+                    //chartBreath.ClearCurveDataPointsFromGraph();
+
+                    ////toppdetektering
+                    //if (measurementsFiltList.Count > 100)
+                    //{
+                    //    List<List<double>> peaks = new List<List<double>>();
+                    //    peaks = locatePeaksBreath(measurementsFiltList);
+                        
+                    //    //Rita ut peakar 
+                    //    for (int i = 0; i < peaks[0].Count(); i++)
+                    //    {
+                    //        chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+
+                    //    }
+
+                    //    //Skriver ut andningspeakar i programmet
+                    //    averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
+                    //           + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+
+                    //    //Average är antalet peakar * 3 (20 sek) till larmet.
+                    //    average = peaks[0].Count() * 3;
+                    //    breathingAlarm(average);
+
+                    //}
+
+                    //for (int i = 0; i < measurementsFiltList.Count(); i++)
+                    //{
+                    //    chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
+                    //}
+                    //if(measurements.Count() >= 627)
+                    //{
+                    //    listDepthMatlab.RemoveRange(0, 10);
+                    //}
+
+
+                    //    //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
+                    ////}
+
                     
-                    /*object[] res = result as object[];
+                    ///*object[] res = result as object[];
 
-                    //lägg till frekvensvärdet i listan
-                    if (calculatedBreaths.Count >= 30)
-                    {
-                        calculatedBreaths.RemoveAt(0);
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-                    else
-                    {
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
+                    ////lägg till frekvensvärdet i listan
+                    //if (calculatedBreaths.Count >= 30)
+                    //{
+                    //    calculatedBreaths.RemoveAt(0);
+                    //    calculatedBreaths.Add(Convert.ToDouble(res[0]));
+                    //}
+                    //else
+                    //{
+                    //    calculatedBreaths.Add(Convert.ToDouble(res[0]));
+                    //}
 
-                    //ta fram medelvärde och visa för användaren
-                    double averageBreathing = 0;
+                    ////ta fram medelvärde och visa för användaren
+                    //double averageBreathing = 0;
 
-                    for (int i = 0; i < calculatedBreaths.Count; i++)
-                    {
-                        averageBreathing += calculatedBreaths[i];
-                    }
-                    averageBreathing = (averageBreathing / calculatedBreaths.Count);
-                    averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
+                    //for (int i = 0; i < calculatedBreaths.Count; i++)
+                    //{
+                    //    averageBreathing += calculatedBreaths[i];
+                    //}
+                    //averageBreathing = (averageBreathing / calculatedBreaths.Count);
+                    //averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
 
-                    //Kontrollera om larm ska köras
-                    breathingAlarm(averageBreathing);*/
+                    ////Kontrollera om larm ska köras
+                    //breathingAlarm(averageBreathing);*/
                 }
                 else if (codeString == "Intensity")
                 {
-                    //filtrering
-                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(measurements.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
+                    ////filtrering
+                    //double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[0].ToArray());
+                    //List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    measurementsFiltList.RemoveRange(0, 10);
+                    //if (measurementsFiltList.Count > 27)
+                    //{
+                    //    measurementsFiltList.RemoveRange(0, 27);
+                    //}
 
-                    //toppdetektering
-                    if (measurementsFiltList.Count > 100)
-                    {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
+                    ////toppdetektering
+                    //if (measurementsFiltList.Count > 100)
+                    //{
+                    //    List<List<double>> peaks = new List<List<double>>();
+                    //    peaks = locatePeaksBreath(measurementsFiltList);
 
-                      //Skriver ut andningspeakar i programmet
-                        textBlock6.Text = "Antal peaks i intensitet: " + System.Environment.NewLine + peaks[0].Count()
-                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                    //    //Rita ut peakar 
+                    //    for (int i = 0; i < peaks[0].Count(); i++)
+                    //    {
+                    //        chartIntensity.AddPointToLine("Intensitymarkers", peaks[1][i], peaks[0][i]);
 
-                    }
+                    //    }
 
-                    chartIntensity.CheckAndAddSeriesToGraph("Intensity", "fps");
-                    chartIntensity.ClearCurveDataPointsFromGraph();
+                    //    //Skriver ut andningspeakar i programmet
+                    //    textBlock6.Text = "Antal peaks i intensitet: " + System.Environment.NewLine + peaks[0].Count()
+                    //           + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
 
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
-                    {
-                        chartIntensity.AddPointToLine("Intensity", measurementsFiltList[i], i);
-                    }
-                    if (measurements.Count() >= 610)
-                    {
-                        listIntensity.RemoveRange(0, 10);
-                    }
+                    //}
+
+                    //chartIntensity.CheckAndAddSeriesToGraph("Intensity", "fps");
+                    //chartIntensity.CheckAndAddSeriesToGraph("Intensitymarkers", "marker");
+                    //chartIntensity.ClearCurveDataPointsFromGraph();
+
+                    //for (int i = 0; i < measurementsFiltList.Count(); i++)
+                    //{
+                    //    chartIntensity.AddPointToLine("Intensity", measurementsFiltList[i], i);
+                    //}
+                    //if (measurements.Count() >= 627)
+                    //{
+                    //    listIntensity.RemoveRange(0, 10);
+                    //}
                 }
                 else
                 {
@@ -780,7 +848,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 }
                             }
 
-                            List<List<double>> biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
+                            biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
                             
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
