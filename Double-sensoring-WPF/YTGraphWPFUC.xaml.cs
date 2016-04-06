@@ -87,6 +87,7 @@ namespace Module_Graphs
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Cross;
+                s.MarkerSize = 10;
                 s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
                 s.BorderWidth = 3;
             }
@@ -106,9 +107,13 @@ namespace Module_Graphs
                 {
                     s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
                 }
-                else
+                else if (strPinDescription == "Pulse")
                 {
                     s.Color = System.Drawing.Color.FromArgb(255, 255, 0, 0);
+                }
+                else
+                {
+                    s.Color = System.Drawing.Color.FromArgb(255, 0, 255, 0);
                 }
             }
         }

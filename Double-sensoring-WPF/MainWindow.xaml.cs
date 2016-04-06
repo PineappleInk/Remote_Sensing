@@ -21,6 +21,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Drawing;
     using MathNet.Filtering;
     using System.Windows.Resources;
+    using System.Windows.Markup;
+    using System.Windows.Data;
      
     /// <summary>
     /// Interaction logic for MainWindow
@@ -510,18 +512,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         for (int i = 0; i < peaks[0].Count(); i++)
                         {
                             chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
-
                         }
 
-                        //Average är antalet peakar i andningen under 60 sekunder.
+                        // Average är antalet peakar i andningen under 60 sekunder.
                         average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
-                        //Skriver ut andningspeakar i programmet
+                        // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         breathingAlarm(average, lowNumBreathing);
-
                     }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -534,37 +534,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
                     }
 
-
-                        //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
-                    //}
-
-                    
-                    /*object[] res = result as object[];
-
-                    //lägg till frekvensvärdet i listan
-                    if (calculatedBreaths.Count >= 30)
-                    {
-                        calculatedBreaths.RemoveAt(0);
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
                     }
-                    else
-                    {
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-
-                    //ta fram medelvärde och visa för användaren
-                    double averageBreathing = 0;
-
-                    for (int i = 0; i < calculatedBreaths.Count; i++)
-                    {
-                        averageBreathing += calculatedBreaths[i];
-                    }
-                    averageBreathing = (averageBreathing / calculatedBreaths.Count);
-                    averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
-
-                    //Kontrollera om larm ska köras
-                    breathingAlarm(averageBreathing);*/
-                }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
@@ -599,15 +569,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
+                    Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
                 }
-                //Uppdatering av plot i användargränssittet
-                //CompositionTargetRendering();                
+
             }
             catch
             {
                 antalFel += 1;
-                Console.WriteLine("antal kastade matlabfel: " + antalFel.ToString());
+                Console.WriteLine("Antal kastade fel: " + antalFel.ToString());
             }
 
         }
@@ -971,11 +940,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
-        //Slider som ändrar positionen på bellyJointen
-        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            this.bellyJointYPosition = Slider.Value;
-        }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -1017,5 +981,34 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
             }
         }
+    }
+}
+
+namespace MyApp.Tools
+{
+
+    [System.Windows.Data.ValueConversion(typeof(string), typeof(string))]
+    public class RatioConverter : System.Windows.Markup.MarkupExtension, System.Windows.Data.IValueConverter
+    {
+        private static RatioConverter _instance;
+
+        public RatioConverter() { }
+
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        { // do not let the culture default to local to prevent variable outcome re decimal syntax
+            double size = System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter, System.Globalization.CultureInfo.InvariantCulture);
+            return size.ToString("G0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        { // read only converter...
+            throw new System.NotImplementedException();
+        }
+
+        public override object ProvideValue(System.IServiceProvider serviceProvider)
+        {
+            return _instance ?? (_instance = new RatioConverter());
+        }
+
     }
 }
