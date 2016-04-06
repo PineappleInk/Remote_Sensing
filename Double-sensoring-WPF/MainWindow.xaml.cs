@@ -423,39 +423,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
 
-        ///MATLAB-funktionen: Härifrån köra alla kommandon som har med matlab att göra.
+        /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
         /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
         int antalFel = 0;
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
-            // Change to the directory  where the function is located 
-            //matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
-            //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
-
             // Define the output 
             object result = null;
             try
             {
-                //Analys av puls i matlab
-                if (codeString == "both")
-                {
-                    //matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
-                    //object[] res = result as object[];
-                    //Console.WriteLine("Puls: " + res[0].ToString());
-                    //Console.WriteLine("Andning: " + res[1].ToString());
-                }
-
-                //Analys av puls i matlab
+                // Analys av puls
                 else if (codeString == "pulse")
                 {
-                    /*
-                    //matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
-                    object[] res = result as object[];
-                    heartrate = Math.Round(Convert.ToDouble(res[0]));
-                    */
-
-                    //filtrering
+                    // Filtrering
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
@@ -468,7 +449,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
                     chartPulse.ClearCurveDataPointsFromGraph();
 
-                    //toppdetektering
+                    //Toppdetektering
                     if (measurementsFiltList.Count > 10)
                     {
                         List<List<double>> peaks = new List<List<double>>();
@@ -488,7 +469,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
            
                         pulseAlarm(average, lowNumPulse);
-           
                     }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -507,7 +487,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av andning
                 else if (codeString == "breathing")
                 {
-                    //filtrering
+                    // Filtrering av djupvärden (andning)
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
@@ -520,13 +500,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
                     chartBreath.ClearCurveDataPointsFromGraph();
 
-                    //toppdetektering
+                    // Toppdetektering
                     if (measurementsFiltList.Count > 10)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
 
-                        //Rita ut peakar 
+                        // Rita ut peakar i andningen (= utandning)
                         for (int i = 0; i < peaks[0].Count(); i++)
                         {
                             chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
