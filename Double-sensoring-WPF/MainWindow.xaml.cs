@@ -628,23 +628,27 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
+                inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = soundpath;
                 beep.Play();
             }
+            else inputTextBreathing.Background = System.Windows.Media.Brushes.White;
         }
 
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
             if (averagePulse < lowNum)
-            {   
+            {
+                inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = soundpath;
                 beep.Play();
             }
+            else inputTextPulse.Background = System.Windows.Media.Brushes.White;
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
