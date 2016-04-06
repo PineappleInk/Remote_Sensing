@@ -430,11 +430,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
             // Define the output 
-            object result = null;
+            //object result = null;
             try
             {
                 // Analys av puls
-                else if (codeString == "pulse")
+                if (codeString == "pulse")
                 {
                     // Filtrering
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
@@ -603,7 +603,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 //Uppdatering av plot i användargränssittet
                 //CompositionTargetRendering();                
-
             }
             catch
             {
