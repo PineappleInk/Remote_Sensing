@@ -647,11 +647,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
-                inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
+                else
+                {
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
+                }
+
             }
             else inputTextBreathing.Background = System.Windows.Media.Brushes.White;
         }
@@ -661,11 +673,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averagePulse < lowNum)
             {
-                inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
+                else
+                {
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
+                }
             }
             else inputTextPulse.Background = System.Windows.Media.Brushes.White;
         }
