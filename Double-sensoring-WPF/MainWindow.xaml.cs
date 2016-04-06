@@ -37,7 +37,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         private double bellyJointYPosition = 2 / 3;
         private double bellyJointXPosition = 2 / 3;
-
+        int lowNumPulse = 20;
+        int lowNumBreathing = 10;
         double heartrate = 0;
         double average = 0;
         /// <summary>
@@ -415,7 +416,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Average är antalet andningar under 20 sekunder
                         average = peaks[0].Count() * 3;
-                        pulseAlarm(average);
+                        
+                        pulseAlarm(average, lowNumPulse);
            
                     }
 
@@ -466,7 +468,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Average är antalet peakar * 3 (20 sek) till larmet.
                         average = peaks[0].Count() * 3;
-                        breathingAlarm(average);
+                        int lowNum = 30;
+                        breathingAlarm(average, lowNumBreathing);
 
                     }
 
@@ -527,9 +530,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Larm för andning
-        private void breathingAlarm(double averageBreathing)
+        private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < 20 || averageBreathing > 60)
+            if (averageBreathing < lowNum)
             {
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -539,9 +542,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Larm för pulsen
-        private void pulseAlarm(double averagePulse)
+        private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < 30 || averagePulse > 120)
+            if (averagePulse < lowNum)
             {   
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -834,6 +837,41 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             listDepthMatlab.Clear();
             colorSensing.biglist.Clear();
+        }
+
+        private void retrieveInputPulse_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int inputnumber = Convert.ToInt32(inputTextPulse.Text);
+                if (inputnumber > 30 && inputnumber < 200)
+                {
+                    lowNumPulse = inputnumber;
+                }
+                else inputTextPulse.Text = Convert.ToString(lowNumPulse);
+            }
+            catch (System.FormatException)
+            {
+                inputTextPulse.Text = Convert.ToString(lowNumPulse);
+            }
+        
+        }
+
+        private void retrieveInputBreathing_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int inputnumber = Convert.ToInt32(inputTextBreathing.Text);
+                if (inputnumber > 2 && inputnumber < 40)
+                {
+                    lowNumBreathing = inputnumber;
+                }
+                else inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
+            }
+            catch (System.FormatException)
+            {
+                inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
+            }
         }
     }
 }
