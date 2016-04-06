@@ -80,7 +80,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Filter
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 27);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -365,44 +365,60 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             topLocations.Add(new List<double>());
             int upCounter = 0;
             int downCounter = 0;
+            // Lägger till dalarna i lista
+            List<List<double>> bottomLocations = new List<List<double>>();
+            bottomLocations.Add(new List<double>());
+            bottomLocations.Add(new List<double>());
 
-            for (int i = 0; i < measurements.Count - 4; i++)
+            for (int i = 0; i < measurements.Count - 4; i++) //tills 4:e sista talet
             {
                 //Påväg uppåt
-                if (measurements[i] < measurements[i + 1])
+                if (measurements[i] < measurements[i + 1]) //Här nöjer man sig med att kolla om 1 element är större
                 {
-                    if (downCounter < 5)
+                    //if (downCounter < 5)
+                    if (downCounter < 4) //om det inte gått nedåt i 0,1 s kan det gå uppåt
                     {
                         upCounter += 1;
                         downCounter = 0;
                     }
                 }
                 //Vid topp
+                // Ska vara större än medel av nästkommande 4 värden
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (upCounter > 8)
+                    // if (upCounter > 8)
+                    if (upCounter > 4) // Måste ha minst 5 uppåtvärden i rad för att lägga till värde i peaks
                     {
-                        topLocations[0].Add(Convert.ToDouble(i));
-                        topLocations[1].Add(measurements[i]);
+                        topLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
+                        topLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
                         upCounter = 0;
-                        downCounter = 1;
+                        //downCounter = 1;//Fundera över om ska vara 0 ist (lika som vid dal)
+                        downCounter = 0;
                     }
                 }
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 5)
+                    //if (upCounter < 5)
+                    if (upCounter < 4) //om det inte gått uppåt i 0,1 s kan det gå nedåt
                     {
                         downCounter += 1;
                         upCounter = 0;
                     }
                 }
                 //Vid dal
+                //else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                //Ska vara mindre än medel av nästkommande 4 värden
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 8)
+                    //if (downCounter > 8)
+                    if (downCounter > 4)
                     {
-                        upCounter = 0;
+                        // Lägger till dalarna i dubbel lista över deras läge och höjd
+                        bottomLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
+                        bottomLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
+                        // Reset
+                        upCounter = 0; // Fundera om ska vara 1 ist, som för dal
                         downCounter = 0;
                     }
                 }
@@ -572,7 +588,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //{
                     //    List<List<double>> peaks = new List<List<double>>();
                     //    peaks = locatePeaksBreath(measurementsFiltList);
-                        
+
                     //    //Rita ut peakar 
                     //    for (int i = 0; i < peaks[0].Count(); i++)
                     //    {
@@ -594,16 +610,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //{
                     //    chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     //}
-                    //if(measurements.Count() >= 627)
-                    //{
-                    //    listDepthMatlab.RemoveRange(0, 10);
-                    //}
+                    if (measurements.Count() >= 627)
+                    {
+                        listDepthMatlab.RemoveRange(0, 10);
+                    }
 
 
                     //    //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
                     ////}
 
-                    
+
                     ///*object[] res = result as object[];
 
                     ////lägg till frekvensvärdet i listan
