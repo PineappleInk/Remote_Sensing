@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Filter
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 27);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -453,7 +453,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    measurementsFiltList.RemoveRange(0, 10);
+                    if (measurementsFiltList.Count > 27)
+                    {
+                        measurementsFiltList.RemoveRange(0, 27);
+                    }
 
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                     chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
@@ -488,7 +491,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
 
-                    if (rgbList[0].Count() >= 610)
+                    if (rgbList[0].Count() >= 627)
                     {
                         rgbList[0].RemoveRange(0, 10);
                         rgbList[1].RemoveRange(0, 10);
@@ -502,9 +505,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //filtrering
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
-                    
-                    measurementsFiltList.RemoveRange(0, 10);
-                    
+
+                    if (measurementsFiltList.Count > 27)
+                    {
+                        measurementsFiltList.RemoveRange(0, 27);
+                    }
+
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
                     chartBreath.ClearCurveDataPointsFromGraph();
@@ -536,7 +542,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-                    if(measurements.Count() >= 610)
+                    if(measurements.Count() >= 627)
                     {
                         listDepthMatlab.RemoveRange(0, 10);
                     }
