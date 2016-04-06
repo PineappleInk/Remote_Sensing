@@ -39,8 +39,9 @@
 
         <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="1105,536,0,0" VerticalAlignment="Top" Width="74" Click="button_Click" Grid.Column="1"/>
         <Button x:Name="retrieveInputBreathing" Content="Enter" Grid.Column="1" HorizontalAlignment="Left" Margin="753,541,0,0" VerticalAlignment="Top" Width="74" Click="retrieveInputBreathing_Click"/>
-        <Button x:Name="retrieveInputPulse" Content="Enter" Grid.Column="1" HorizontalAlignment="Left" Margin="753,403,0,0" VerticalAlignment="Top" Width="75" Click="retrieveInputPulse_Click"/>
-
+        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="1" HorizontalAlignment="Left" Margin="753,638,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.452,0.469" IsChecked="True"/>
+        <TextBlock x:Name="textBlockSound" Grid.Column="1" HorizontalAlignment="Left" Margin="731,611,0,0" TextWrapping="Wrap" Text="Ljud för larm" VerticalAlignment="Top"/>
+        
         <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Column="1" HorizontalAlignment="Left" Margin="-250,-120,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.8' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.9' }"/>
         <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Column="1" HorizontalAlignment="Left" Margin="-250,230,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.8' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.9' }"/>
 

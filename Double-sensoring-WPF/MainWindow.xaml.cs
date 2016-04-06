@@ -41,7 +41,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double bellyJointXPosition = 2 / 3;
         int lowNumPulse = 30;
         int lowNumBreathing = 10;
-        double heartrate = 0;
+        //double heartrate = 0;
         double average = 0;
         /// <summary>
         /// Current status text to display
@@ -55,7 +55,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        private IRSensing irSensing;
+        //private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -84,6 +84,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> listIntensity = new List<double>();
 
         //Filter
+        int orderOfFilter = 27;
+        int samplesOfMeasurement = 900;
+        int runPlotModulo = 5;
+        int fps = 30;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
         //----------------------------------------------------------------------------------------
@@ -122,7 +126,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             //IR
-            this.irSensing = new IRSensing(kinectSensor);
+            //this.irSensing = new IRSensing(kinectSensor);
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -133,18 +137,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Console.WriteLine("Här är vi! " + path);
         }
 
-        private void CompositionTargetRendering() //object sender, EventArgs e
-        {
-            BitmapImage _image = new BitmapImage();
-            _image.BeginInit();
-            _image.CacheOption = BitmapCacheOption.None;
-            _image.UriCachePolicy = new System.Net.Cache.RequestCachePolicy();
-            _image.CacheOption = BitmapCacheOption.OnLoad;
-            _image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+        //private void CompositionTargetRendering() //object sender, EventArgs e
+        //{
+            //BitmapImage _image = new BitmapImage();
+            //_image.BeginInit();
+            //_image.CacheOption = BitmapCacheOption.None;
+            //_image.UriCachePolicy = new System.Net.Cache.RequestCachePolicy();
+            //_image.CacheOption = BitmapCacheOption.OnLoad;
+            //_image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             //_image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
             //_image.EndInit();
             //image1.Source = _image;
-        }
+        //}
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
         /// </summary>
@@ -172,13 +176,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-        public ImageSource ImageSource3
-        {
-            get
-            {
-                return irSensing.getInfraredBitmap();
-            }
-        }
+        //public ImageSource ImageSource3
+        //{
+        //    get
+        //    {
+        //        return irSensing.getInfraredBitmap();
+        //    }
+        //}
 
 
         /// <summary>
@@ -228,10 +232,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
 
-            if (irSensing.getInfraredFrameReader() != null)
-            {
-                irSensing.getInfraredFrameReader().FrameArrived += Reader_IR;
-        }
+            //if (irSensing.getInfraredFrameReader() != null)
+            //{
+            //    irSensing.getInfraredFrameReader().FrameArrived += Reader_IR;
+            //}
         }
 
         //Försök att få in infraröd sensor
@@ -294,11 +298,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.setDepthFrameReader(null);
             }
 
-            if (this.irSensing.getInfraredFrameReader() != null)
-            {
-                this.irSensing.getInfraredFrameReader().Dispose();
-                this.irSensing.setInfraredFrameReader(null);
-            }
+            //if (this.irSensing.getInfraredFrameReader() != null)
+            //{
+            //    this.irSensing.getInfraredFrameReader().Dispose();
+            //    this.irSensing.setInfraredFrameReader(null);
+            //}
 
             if (this.kinectSensor != null)
             {
@@ -361,8 +365,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
-        //Lokalisera toppen i lista för puls
-        //Returvärdet är en lista med listor för [0] - positioner och [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        //Lokalisera topparna i lista för puls
+        // Returvärdet är en lista med listor för [0]=positioner och 
+        // [1]=toppvärde till respektive position av topp (alltså från tidsaxeln)
         private List<List<double>> locatePeaksPulse(List<double> measurements)
         {
             List<List<double>> topLocations = new List<List<double>>();
@@ -370,60 +375,45 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             topLocations.Add(new List<double>());
             int upCounter = 0;
             int downCounter = 0;
-            // Lägger till dalarna i lista
-            List<List<double>> bottomLocations = new List<List<double>>();
-            bottomLocations.Add(new List<double>());
-            bottomLocations.Add(new List<double>());
 
-            for (int i = 0; i < measurements.Count - 4; i++) //tills 4:e sista talet
+            for (int i = 0; i < measurements.Count - 4; i++)
             {
                 //Påväg uppåt
-                if (measurements[i] < measurements[i + 1]) //Här nöjer man sig med att kolla om 1 element är större
+                if (measurements[i] < measurements[i + 1])
                 {
-                    //if (downCounter < 5)
-                    if (downCounter < 4) //om det inte gått nedåt i 0,1 s kan det gå uppåt
+                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
                     {
                         upCounter += 1;
                         downCounter = 0;
                     }
                 }
                 //Vid topp
-                // Ska vara större än medel av nästkommande 4 värden
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    // if (upCounter > 8)
-                    if (upCounter > 4) // Måste ha minst 5 uppåtvärden i rad för att lägga till värde i peaks
+                    if (upCounter > 4)
                     {
-                        topLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
-                        topLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
+                        topLocations[0].Add(Convert.ToDouble(i)); //Positionen läggs till i listan
+                        topLocations[1].Add(measurements[i]); // Värdet på toppen läggs till i listan
                         upCounter = 0;
-                        //downCounter = 1;//Fundera över om ska vara 0 ist (lika som vid dal)
                         downCounter = 0;
                     }
                 }
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    //if (upCounter < 5)
-                    if (upCounter < 4) //om det inte gått uppåt i 0,1 s kan det gå nedåt
+                    if (upCounter < 4)
                     {
                         downCounter += 1;
                         upCounter = 0;
                     }
                 }
                 //Vid dal
-                //else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                //Ska vara mindre än medel av nästkommande 4 värden
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    //if (downCounter > 8)
                     if (downCounter > 4)
                     {
-                        // Lägger till dalarna i dubbel lista över deras läge och höjd
-                        bottomLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
-                        bottomLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
                         // Reset
-                        upCounter = 0; // Fundera om ska vara 1 ist, som för dal
+                        upCounter = 0;
                         downCounter = 0;
                     }
                 }
@@ -435,53 +425,34 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
 
-        ///MATLAB-funktionen: Härifrån köra alla kommandon som har med matlab att göra.
+        /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
         /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
         int antalFel = 0;
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
-            // Change to the directory  where the function is located 
-            //matlab.Execute(@"cd " + path + @"\..\..\..\matlab");
-            //System.IO.File.WriteAllLines(@path + "data.text", measurements.ToString());
-
             // Define the output 
             object result = null;
             try
             {
-                //Analys av puls i matlab
-                if (codeString == "both")
+                // Analys av puls
+                if (codeString == "pulse")
                 {
-                    //matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
-                    object[] res = result as object[];
-                    Console.WriteLine("Puls: " + res[0].ToString());
-                    Console.WriteLine("Andning: " + res[1].ToString());
-                }
-
-                //Analys av puls i matlab
-                else if (codeString == "pulse")
-                {
-                    /*
-                    //matlab.Feval("pulse", 1, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray());
-                    object[] res = result as object[];
-                    heartrate = Math.Round(Convert.ToDouble(res[0]));
-                    */
-
-                    //filtrering
+                    // Filtrering
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    if (measurementsFiltList.Count > 27)
+                    if (measurementsFiltList.Count > orderOfFilter)
                     {
-                        measurementsFiltList.RemoveRange(0, 27);
+                        measurementsFiltList.RemoveRange(0, orderOfFilter);
                     }
 
                     chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                     chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
                     chartPulse.ClearCurveDataPointsFromGraph();
 
-                    //toppdetektering
-                    if (measurementsFiltList.Count > 100)
+                    //Toppdetektering
+                    if (measurementsFiltList.Count > 10)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksPulse(measurementsFiltList);
@@ -491,110 +462,78 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
 
+                        //Average är antalet pulsslag under 60 sekunder
+                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                            + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                            + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Average är antalet andningar under 20 sekunder
-                        average = peaks[0].Count() * 3;
            
                         pulseAlarm(average, lowNumPulse);
-           
                     }
-
-
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
                         chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
 
-                    if (rgbList[0].Count() >= 627)
+                    if (rgbList[0].Count() >= samplesOfMeasurement + orderOfFilter)
                     {
-                        rgbList[0].RemoveRange(0, 10);
-                        rgbList[1].RemoveRange(0, 10);
-                        rgbList[2].RemoveRange(0, 10);
-                        //templist.RemoveRange(0, 10);
+                        rgbList[0].RemoveRange(0, runPlotModulo);
+                        rgbList[1].RemoveRange(0, runPlotModulo);
+                        rgbList[2].RemoveRange(0, runPlotModulo);
                     }
                 }
-                //Analys av andning i matlab
+
+                //Analys av andning
                 else if (codeString == "breathing")
                 {
-                    //filtrering
+                    // Filtrering av djupvärden (andning)
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    if (measurementsFiltList.Count > 27)
+                    if (measurementsFiltList.Count > orderOfFilter)
                     {
-                        measurementsFiltList.RemoveRange(0, 27);
+                        measurementsFiltList.RemoveRange(0, orderOfFilter);
                     }
 
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
                     chartBreath.ClearCurveDataPointsFromGraph();
 
-                    //toppdetektering
-                    if (measurementsFiltList.Count > 100)
+                    // Toppdetektering
+                    if (measurementsFiltList.Count > 10)
                     {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
 
-                        //Rita ut peakar 
+                        // Rita ut peakar i andningen (= utandning)
                         for (int i = 0; i < peaks[0].Count(); i++)
                         {
                             chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
-
                         }
 
-                        //Skriver ut andningspeakar i programmet
+                        // Average är antalet peakar i andningen under 60 sekunder.
+                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+
+                        // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
-                               + Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+                               + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * 3;
                         breathingAlarm(average, lowNumBreathing);
-
                     }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-                    if(measurements.Count() >= 627)
+
+                    if(measurements.Count() >= samplesOfMeasurement + orderOfFilter)
                     {
-                        listDepthMatlab.RemoveRange(0, 10);
+                        listDepthMatlab.RemoveRange(0, runPlotModulo);
                     }
 
-
-                        //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
-                    //}
-
-                    
-                    /*object[] res = result as object[];
-
-                    //lägg till frekvensvärdet i listan
-                    if (calculatedBreaths.Count >= 30)
-                    {
-                        calculatedBreaths.RemoveAt(0);
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-                    else
-                    {
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-
-                    //ta fram medelvärde och visa för användaren
-                    double averageBreathing = 0;
-
-                    for (int i = 0; i < calculatedBreaths.Count; i++)
-                    {
-                        averageBreathing += calculatedBreaths[i];
-                    }
-                    averageBreathing = (averageBreathing / calculatedBreaths.Count);
-                    averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
-
-                    //Kontrollera om larm ska köras
-                    breathingAlarm(averageBreathing);*/
                 }
                 else if (codeString == "Intensity")
                 {
@@ -630,16 +569,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
-                }
-                //Uppdatering av plot i användargränssittet
-                CompositionTargetRendering();                
+                    Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
+                }              
 
             }
             catch
             {
                 antalFel += 1;
-                Console.WriteLine("antal kastade matlabfel: " + antalFel.ToString());
+                Console.WriteLine("Antal kastade fel: " + antalFel.ToString());
             }
 
         }
@@ -649,11 +586,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
-                inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
+                else
+                {
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
+                }
+
             }
             else inputTextBreathing.Background = System.Windows.Media.Brushes.White;
         }
@@ -663,11 +612,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averagePulse < lowNum)
             {
-                inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
+                else
+                {
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
+                }
             }
             else inputTextPulse.Background = System.Windows.Media.Brushes.White;
         }
@@ -812,7 +772,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            if (biglist[0].Count % 10 == 0)
+                            if (biglist[0].Count % runPlotModulo == 0)
                             {
                                 //Analys av puls i matlab
                                 matlabCommand("pulse", listDepthMatlab, biglist);
@@ -883,37 +843,37 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //------------------------------------IR, test--------------------------------------------------------------------
-        private void Reader_IR(object sender, InfraredFrameArrivedEventArgs e)
-        {
-            using (InfraredFrame infraredFrame = e.FrameReference.AcquireFrame())
-            {
-                if (infraredFrame != null)
-                {
-                    ushort[] pixelData = new ushort[infraredFrame.FrameDescription.Width * infraredFrame.FrameDescription.Height];
+        //private void Reader_IR(object sender, InfraredFrameArrivedEventArgs e)
+        //{
+        //    using (InfraredFrame infraredFrame = e.FrameReference.AcquireFrame())
+        //    {
+        //        if (infraredFrame != null)
+        //        {
+        //            ushort[] pixelData = new ushort[infraredFrame.FrameDescription.Width * infraredFrame.FrameDescription.Height];
 
-                    infraredFrame.CopyFrameDataToArray(pixelData);
-                    //Console.WriteLine(pixelData[0] + " Nästa: " + pixelData[1] + " Ännu en nästa: " + pixelData[1] + " Längd: " + pixelData.Length);
+        //            infraredFrame.CopyFrameDataToArray(pixelData);
+        //            //Console.WriteLine(pixelData[0] + " Nästa: " + pixelData[1] + " Ännu en nästa: " + pixelData[1] + " Längd: " + pixelData.Length);
 
-                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
-                    {
-                        try
-                        {
-                            listIntensity.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getHeadJoint(), pixelData));
+        //            if (bodySensning.getHeadJoint().JointType == JointType.Head)
+        //            {
+        //                try
+        //                {
+        //                    listIntensity.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getHeadJoint(), pixelData));
                             
-                            if (listIntensity.Count % 10 == 0)
-                            {
-                                matlabCommand("Intensity", listIntensity);
-                            }
-                        }
+        //                    if (listIntensity.Count % 10 == 0)
+        //                    {
+        //                        matlabCommand("Intensity", listIntensity);
+        //                    }
+        //                }
 
-                        catch (System.IndexOutOfRangeException)
-                        {
-                            System.Windows.MessageBox.Show("Baby's head has escaped, baby can't be far");
-                        }
-                    }
-                }
-            }
-        }
+        //                catch (System.IndexOutOfRangeException)
+        //                {
+        //                    System.Windows.MessageBox.Show("Baby's head has escaped, baby can't be far");
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
 
         //------------------------------------Andning, flera punkter-------------------------------------------------------
@@ -947,7 +907,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count % 10 == 0)
+                            if (listDepthMatlab.Count % runPlotModulo == 0)
                             {
                                 matlabCommand("breathing", listDepthMatlab);
                             }
