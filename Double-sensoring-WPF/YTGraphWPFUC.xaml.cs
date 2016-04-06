@@ -86,6 +86,7 @@ namespace Module_Graphs
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.Color = System.Drawing.Color.FromArgb(180, 200, 5, 5);
                 s.BorderWidth = 3;
             }
             else
