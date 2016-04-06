@@ -21,6 +21,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Drawing;
     using MathNet.Filtering;
     using System.Windows.Resources;
+    using System.Windows.Markup;
+    using System.Windows.Data;
      
     /// <summary>
     /// Interaction logic for MainWindow
@@ -978,11 +980,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
-        //Slider som ändrar positionen på bellyJointen
-        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            this.bellyJointYPosition = Slider.Value;
-        }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -1024,5 +1021,34 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
             }
         }
+    }
+}
+
+namespace MyApp.Tools
+{
+
+    [System.Windows.Data.ValueConversion(typeof(string), typeof(string))]
+    public class RatioConverter : System.Windows.Markup.MarkupExtension, System.Windows.Data.IValueConverter
+    {
+        private static RatioConverter _instance;
+
+        public RatioConverter() { }
+
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        { // do not let the culture default to local to prevent variable outcome re decimal syntax
+            double size = System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter, System.Globalization.CultureInfo.InvariantCulture);
+            return size.ToString("G0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        { // read only converter...
+            throw new System.NotImplementedException();
+        }
+
+        public override object ProvideValue(System.IServiceProvider serviceProvider)
+        {
+            return _instance ?? (_instance = new RatioConverter());
+        }
+
     }
 }
