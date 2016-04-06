@@ -434,7 +434,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 // Analys av puls
-                else if (codeString == "pulse")
+                if (codeString == "pulse")
                 {
                     // Filtrering
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
@@ -516,7 +516,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Average är antalet peakar * 3 (20 sek) till larmet.
                         average = peaks[0].Count() * fps * 60 / timeOfMeasurement;
 
-                        //Skriver ut andningspeakar i programmet
+                        // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                + Environment.NewLine + "Uppskattad BPM: " + average;
 
@@ -534,36 +534,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         listDepthMatlab.RemoveRange(0, runPlotModulu);
                     }
 
-
-                        //matlab.Feval("breath_simons", 0, out result, measurements.ToArray(), measurementsFiltList.ToArray(), peaks[0].ToArray(), peaks[1].ToArray());
-                    //}
-
-                    
-                    /*object[] res = result as object[];
-
-                    //lägg till frekvensvärdet i listan
-                    if (calculatedBreaths.Count >= 30)
-                    {
-                        calculatedBreaths.RemoveAt(0);
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-                    else
-                    {
-                        calculatedBreaths.Add(Convert.ToDouble(res[0]));
-                    }
-
-                    //ta fram medelvärde och visa för användaren
-                    double averageBreathing = 0;
-
-                    for (int i = 0; i < calculatedBreaths.Count; i++)
-                    {
-                        averageBreathing += calculatedBreaths[i];
-                    }
-                    averageBreathing = (averageBreathing / calculatedBreaths.Count);
-                    averageBreathingTextBlock.Text = "Medelfrekvens andning: " + Math.Round(averageBreathing).ToString() + " BPM";
-
-                    //Kontrollera om larm ska köras
-                    breathingAlarm(averageBreathing);*/
                 }
                 else if (codeString == "Intensity")
                 {
@@ -600,15 +570,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
-                }
-                //Uppdatering av plot i användargränssittet
-                //CompositionTargetRendering();                
+                }              
 
             }
             catch
             {
                 antalFel += 1;
-                Console.WriteLine("antal kastade matlabfel: " + antalFel.ToString());
+                Console.WriteLine("Antal kastade fel: " + antalFel.ToString());
             }
 
         }
