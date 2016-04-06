@@ -510,10 +510,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         for (int i = 0; i < peaks[0].Count(); i++)
                         {
                             chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
-
                         }
 
-                        //Average är antalet peakar i andningen under 60 sekunder.
+                        // Average är antalet peakar i andningen under 60 sekunder.
                         average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
                         // Ritar ut andningspeakar i programmet
@@ -521,7 +520,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         breathingAlarm(average, lowNumBreathing);
-
                     }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -569,7 +567,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    Console.WriteLine("Matlabfunktionen kördes inte, kontrollera att codeString var korrekt");
+                    Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
                 }              
 
             }
