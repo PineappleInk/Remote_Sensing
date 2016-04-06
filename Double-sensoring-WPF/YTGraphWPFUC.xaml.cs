@@ -86,6 +86,8 @@ namespace Module_Graphs
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Cross;
+                s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
                 s.BorderWidth = 3;
             }
             else
@@ -99,6 +101,15 @@ namespace Module_Graphs
                 //s.IsValueShownAsLabel = true;                       
                 s.LegendText = strPinDescription + " (" + strUnit + ")";
                 s.LegendToolTip = strPinDescription + " (" + strUnit + ")";
+
+                if (strPinDescription == "Breath")
+                {
+                    s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
+                }
+                else
+                {
+                    s.Color = System.Drawing.Color.FromArgb(255, 255, 0, 0);
+                }
             }
         }
 
