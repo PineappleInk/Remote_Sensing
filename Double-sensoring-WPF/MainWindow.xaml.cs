@@ -83,8 +83,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Filter
         int orderOfFilter = 27;
-        int timeOfMeasurement = 900;
-        int runPlotModulu = 5;
+        int samplesOfMeasurement = 900;
+        int runPlotModulo = 5;
         int fps = 30;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
@@ -461,7 +461,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                         //Average är antalet pulsslag under 60 sekunder
-                        average = peaks[0].Count() * 60 * fps / timeOfMeasurement;
+                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
@@ -476,11 +476,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
 
-                    if (rgbList[0].Count() >= timeOfMeasurement + orderOfFilter)
+                    if (rgbList[0].Count() >= samplesOfMeasurement + orderOfFilter)
                     {
-                        rgbList[0].RemoveRange(0, runPlotModulu);
-                        rgbList[1].RemoveRange(0, runPlotModulu);
-                        rgbList[2].RemoveRange(0, runPlotModulu);
+                        rgbList[0].RemoveRange(0, runPlotModulo);
+                        rgbList[1].RemoveRange(0, runPlotModulo);
+                        rgbList[2].RemoveRange(0, runPlotModulo);
                     }
                 }
 
@@ -513,8 +513,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         }
 
-                        // Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * fps * 60 / timeOfMeasurement;
+                        //Average är antalet peakar i andningen under 60 sekunder.
+                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
                         // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
@@ -529,9 +529,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
 
-                    if(measurements.Count() >= timeOfMeasurement + orderOfFilter)
+                    if(measurements.Count() >= samplesOfMeasurement + orderOfFilter)
                     {
-                        listDepthMatlab.RemoveRange(0, runPlotModulu);
+                        listDepthMatlab.RemoveRange(0, runPlotModulo);
                     }
 
                 }
@@ -592,12 +592,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)checkBoxSound.IsChecked)
                 {
-                inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
-            }
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
                 else
                 {
                     inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
@@ -618,12 +618,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)checkBoxSound.IsChecked)
                 {
-                inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                beep.SoundLocation = soundpath;
-                beep.Play();
-            }
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+                    beep.SoundLocation = soundpath;
+                    beep.Play();
+                }
                 else
                 {
                     inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
@@ -772,7 +772,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            if (biglist[0].Count % runPlotModulu == 0)
+                            if (biglist[0].Count % runPlotModulo == 0)
                             {
                                 //Analys av puls i matlab
                                 matlabCommand("pulse", listDepthMatlab, biglist);
@@ -907,7 +907,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count % runPlotModulu == 0)
+                            if (listDepthMatlab.Count % runPlotModulo == 0)
                             {
                                 matlabCommand("breathing", listDepthMatlab);
                             }
