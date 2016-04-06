@@ -53,7 +53,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        private IRSensing irSensing;
+        //private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -84,7 +84,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Filter
         int orderOfFilter = 27;
         int timeOfMeasurement = 900;
-        int runPlotModulu = 10;
+        int runPlotModulu = 5;
         int fps = 30;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
@@ -124,7 +124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             //IR
-            this.irSensing = new IRSensing(kinectSensor);
+            //this.irSensing = new IRSensing(kinectSensor);
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -296,11 +296,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.setDepthFrameReader(null);
             }
 
-            if (this.irSensing.getInfraredFrameReader() != null)
-            {
-                this.irSensing.getInfraredFrameReader().Dispose();
-                this.irSensing.setInfraredFrameReader(null);
-            }
+            //if (this.irSensing.getInfraredFrameReader() != null)
+            //{
+            //    this.irSensing.getInfraredFrameReader().Dispose();
+            //    this.irSensing.setInfraredFrameReader(null);
+            //}
 
             if (this.kinectSensor != null)
             {
@@ -460,7 +460,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
 
-                        //Average är antalet andningar under 60 sekunder
+                        //Average är antalet pulsslag under 60 sekunder
                         average = peaks[0].Count() * 60 * fps / timeOfMeasurement;
 
                         //Skriver ut pulspeakar i programmet
@@ -476,14 +476,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
 
-                    if (rgbList[0].Count() >= timeOfMeasurement + runPlotModulu)
+                    if (rgbList[0].Count() >= timeOfMeasurement + orderOfFilter)
                     {
                         rgbList[0].RemoveRange(0, runPlotModulu);
                         rgbList[1].RemoveRange(0, runPlotModulu);
                         rgbList[2].RemoveRange(0, runPlotModulu);
                     }
                 }
-                // Analys av andning
+
+                //Analys av andning
                 else if (codeString == "breathing")
                 {
                     // Filtrering av djupvärden (andning)
@@ -527,7 +528,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-                    if(measurements.Count() >= timeOfMeasurement + runPlotModulu)
+
+                    if(measurements.Count() >= timeOfMeasurement + orderOfFilter)
                     {
                         listDepthMatlab.RemoveRange(0, runPlotModulu);
                     }
@@ -616,11 +618,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
                 inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = soundpath;
                 beep.Play();
+            }
+                else
+                {
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
+                }
+
             }
             else inputTextBreathing.Background = System.Windows.Media.Brushes.White;
         }
@@ -630,11 +644,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averagePulse < lowNum)
             {
+                if (!checkBoxSound.HasContent)
+                {
+                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
+                }
+                if ((bool)checkBoxSound.IsChecked)
+                {
                 inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                 System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                 beep.SoundLocation = soundpath;
                 beep.Play();
+            }
+                else
+                {
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
+                }
             }
             else inputTextPulse.Background = System.Windows.Media.Brushes.White;
         }
