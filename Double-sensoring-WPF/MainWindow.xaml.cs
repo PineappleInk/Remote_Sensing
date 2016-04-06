@@ -363,8 +363,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
-        //Lokalisera toppen i lista för puls
-        //Returvärdet är en lista med listor för [0] - positioner och [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        //Lokalisera topparna i lista för puls
+        // Returvärdet är en lista med listor för [0]=positioner och 
+        // [1]=toppvärde till respektive position av topp (alltså från tidsaxeln)
         private List<List<double>> locatePeaksPulse(List<double> measurements)
         {
             List<List<double>> topLocations = new List<List<double>>();
@@ -372,60 +373,45 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             topLocations.Add(new List<double>());
             int upCounter = 0;
             int downCounter = 0;
-            // Lägger till dalarna i lista
-            List<List<double>> bottomLocations = new List<List<double>>();
-            bottomLocations.Add(new List<double>());
-            bottomLocations.Add(new List<double>());
 
-            for (int i = 0; i < measurements.Count - 4; i++) //tills 4:e sista talet
+            for (int i = 0; i < measurements.Count - 4; i++)
             {
                 //Påväg uppåt
-                if (measurements[i] < measurements[i + 1]) //Här nöjer man sig med att kolla om 1 element är större
+                if (measurements[i] < measurements[i + 1])
                 {
-                    //if (downCounter < 5)
-                    if (downCounter < 4) //om det inte gått nedåt i 0,1 s kan det gå uppåt
+                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
                     {
                         upCounter += 1;
                         downCounter = 0;
                     }
                 }
                 //Vid topp
-                // Ska vara större än medel av nästkommande 4 värden
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    // if (upCounter > 8)
-                    if (upCounter > 4) // Måste ha minst 5 uppåtvärden i rad för att lägga till värde i peaks
+                    if (upCounter > 4)
                     {
-                        topLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
-                        topLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
+                        topLocations[0].Add(Convert.ToDouble(i)); //Positionen läggs till i listan
+                        topLocations[1].Add(measurements[i]); // Värdet på toppen läggs till i listan
                         upCounter = 0;
-                        //downCounter = 1;//Fundera över om ska vara 0 ist (lika som vid dal)
                         downCounter = 0;
                     }
                 }
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    //if (upCounter < 5)
-                    if (upCounter < 4) //om det inte gått uppåt i 0,1 s kan det gå nedåt
+                    if (upCounter < 4)
                     {
                         downCounter += 1;
                         upCounter = 0;
                     }
                 }
                 //Vid dal
-                //else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                //Ska vara mindre än medel av nästkommande 4 värden
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    //if (downCounter > 8)
                     if (downCounter > 4)
                     {
-                        // Lägger till dalarna i dubbel lista över deras läge och höjd
-                        bottomLocations[0].Add(Convert.ToDouble(i));//Positionen läggs till i listan
-                        bottomLocations[1].Add(measurements[i]);// Värdet på toppen läggs till i listan
                         // Reset
-                        upCounter = 0; // Fundera om ska vara 1 ist, som för dal
+                        upCounter = 0;
                         downCounter = 0;
                     }
                 }
