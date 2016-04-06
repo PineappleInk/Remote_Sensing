@@ -81,7 +81,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //TEST Intensity
-        List<double> listIntensity = new List<double>();
+        //List<double> listIntensity = new List<double>();
 
         //Filter
         int orderOfFilter = 27;
@@ -584,7 +584,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < lowNum)
+            if (averageBreathing < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
@@ -610,7 +610,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < lowNum)
+            if (averagePulse < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
