@@ -37,7 +37,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         private double bellyJointYPosition = 2 / 3;
         private double bellyJointXPosition = 2 / 3;
-        int lowNumPulse = 20;
+        int lowNumPulse = 30;
         int lowNumBreathing = 10;
         double heartrate = 0;
         double average = 0;
@@ -82,8 +82,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> listIntensity = new List<double>();
 
         //Filter
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 10);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 10);
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 27);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -448,12 +448,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     object[] res = result as object[];
                     heartrate = Math.Round(Convert.ToDouble(res[0]));
                     */
-                    //Konvertera en av listorna till en temporär lista
-                    List<double> templist = new List<double>();
-                    templist = rgbList[0];
 
                     //filtrering
-                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(templist.ToArray());
+                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
                     measurementsFiltList.RemoveRange(0, 10);
@@ -577,7 +574,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else if (codeString == "Intensity")
                 {
-                    //filtrering
+                /*    //filtrering
                     double[] measurementsFilt = bpFiltPulse.ProcessSamples(measurements.ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
@@ -605,7 +602,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (measurements.Count() >= 610)
                     {
                         listIntensity.RemoveRange(0, 10);
-                    }
+                    }*/
                 }
                 else
                 {
@@ -972,7 +969,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 int inputnumber = Convert.ToInt32(inputTextPulse.Text);
-                if (inputnumber > 30 && inputnumber < 200)
+                if (inputnumber >= 30 && inputnumber <= 200)
                 {
                     lowNumPulse = inputnumber;
                 }
@@ -990,7 +987,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 int inputnumber = Convert.ToInt32(inputTextBreathing.Text);
-                if (inputnumber > 2 && inputnumber < 40)
+                if (inputnumber >= 2 && inputnumber <= 40)
                 {
                     lowNumBreathing = inputnumber;
                 }
