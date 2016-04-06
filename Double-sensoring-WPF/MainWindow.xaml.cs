@@ -52,6 +52,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //DEPTH-instans
         private DepthSensing depthSensing;
 
+        //IR-instans
+        private IRSensing irSensing;
+
         //BODY-instans
         private BodySensing bodySensning;
 
@@ -75,12 +78,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> listDepthMatlab = new List<double>();
         List<double> calculatedBreaths = new List<double>();
 
+        //TEST Intensity
+        List<double> listIntensity = new List<double>();
+
         //Filter
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 10);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 160/60, 10);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
+        //PixelFormat format = PixelFormats.Bgr32; // BEHÖVS DENNA?!?!?!
         
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -112,6 +119,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
+            //IR
+            this.irSensing = new IRSensing(kinectSensor);
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
             
@@ -129,8 +139,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             _image.UriCachePolicy = new System.Net.Cache.RequestCachePolicy();
             _image.CacheOption = BitmapCacheOption.OnLoad;
             _image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            _image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
-            _image.EndInit();
+            //_image.UriSource = new Uri(path + @"\..\..\..\matlab\pulseplot.png", UriKind.RelativeOrAbsolute);
+            //_image.EndInit();
             //image1.Source = _image;
         }
         /// <summary>
@@ -159,6 +169,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 return colorSensing.getColorBitmap();
             }
         }
+
+        public ImageSource ImageSource3
+        {
+            get
+            {
+                return irSensing.getInfraredBitmap();
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the current status text to display
@@ -206,7 +225,44 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
+
+            if (irSensing.getInfraredFrameReader() != null)
+            {
+                irSensing.getInfraredFrameReader().FrameArrived += Reader_IR;
         }
+        }
+
+        //Försök att få in infraröd sensor
+        //private ImageSource ToBitmap(InfraredFrame frame)
+        //{
+        //    int width = frame.FrameDescription.Width;
+        //    int height = frame.FrameDescription.Height;
+
+        //    ushort[] infraredData = new ushort[width * height];
+        //    byte[] pixels = new byte[width * height * Bgr32BytesPerPixel];
+        //    byte[] pixelData = new byte[width * height * (PixelFormats.Bgr32.BitsPerPixel + 7) / 8];
+
+        //    frame.CopyFrameDataToArray(infraredData);
+
+        //    int colorIndex = 0;
+        //    for (int infraredIndex = 0; infraredIndex < infraredData.Length; ++infraredIndex)
+        //    {
+        //        ushort ir = infraredData[infraredIndex];
+        //        byte intensity = (byte)(ir >> 8);
+
+        //        pixelData[colorIndex++] = intensity; // Blue
+        //        pixelData[colorIndex++] = intensity; // Green   
+        //        pixelData[colorIndex++] = intensity; // Red
+
+        //        ++colorIndex;
+        //    }
+
+        //    int stride = width * format.BitsPerPixel / 8;
+
+        //    //Console.WriteLine(pixels[0] + pixelData[0] + " Nästa: " + pixels[1] + pixelData[1]);
+
+        //    return BitmapSource.Create(width, height, 96, 96, format, null, pixels, stride);
+        //}
 
         /// <summary>
         /// Execute shutdown tasks
@@ -235,6 +291,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.getDepthFrameReader().Dispose();
                 this.depthSensing.setDepthFrameReader(null);
             }
+
+            if (this.irSensing.getInfraredFrameReader() != null)
+            {
+                this.irSensing.getInfraredFrameReader().Dispose();
+                this.irSensing.setInfraredFrameReader(null);
+            }
+
             if (this.kinectSensor != null)
             {
                 this.kinectSensor.Close();
@@ -416,7 +479,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Average är antalet andningar under 20 sekunder
                         average = peaks[0].Count() * 3;
-                        
+           
                         pulseAlarm(average, lowNumPulse);
            
                     }
@@ -468,7 +531,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Average är antalet peakar * 3 (20 sek) till larmet.
                         average = peaks[0].Count() * 3;
-                        int lowNum = 30;
                         breathingAlarm(average, lowNumBreathing);
 
                     }
@@ -512,6 +574,38 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     //Kontrollera om larm ska köras
                     breathingAlarm(averageBreathing);*/
+                }
+                else if (codeString == "Intensity")
+                {
+                    //filtrering
+                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(measurements.ToArray());
+                    List<double> measurementsFiltList = measurementsFilt.ToList();
+
+                    measurementsFiltList.RemoveRange(0, 10);
+
+                    //toppdetektering
+                    if (measurementsFiltList.Count > 100)
+                    {
+                        List<List<double>> peaks = new List<List<double>>();
+                        peaks = locatePeaksBreath(measurementsFiltList);
+
+                      //Skriver ut andningspeakar i programmet
+                        textBlock6.Text = "Antal peaks i intensitet: " + System.Environment.NewLine + peaks[0].Count()
+                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
+
+                    }
+
+                    chartIntensity.CheckAndAddSeriesToGraph("Intensity", "fps");
+                    chartIntensity.ClearCurveDataPointsFromGraph();
+
+                    for (int i = 0; i < measurementsFiltList.Count(); i++)
+                    {
+                        chartIntensity.AddPointToLine("Intensity", measurementsFiltList[i], i);
+                    }
+                    if (measurements.Count() >= 610)
+                    {
+                        listIntensity.RemoveRange(0, 10);
+                    }
                 }
                 else
                 {
@@ -647,9 +741,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
+
 
                             textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
                                 Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
@@ -762,6 +856,40 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
+
+        //------------------------------------IR, test--------------------------------------------------------------------
+        private void Reader_IR(object sender, InfraredFrameArrivedEventArgs e)
+        {
+            using (InfraredFrame infraredFrame = e.FrameReference.AcquireFrame())
+            {
+                if (infraredFrame != null)
+                {
+                    ushort[] pixelData = new ushort[infraredFrame.FrameDescription.Width * infraredFrame.FrameDescription.Height];
+
+                    infraredFrame.CopyFrameDataToArray(pixelData);
+                    //Console.WriteLine(pixelData[0] + " Nästa: " + pixelData[1] + " Ännu en nästa: " + pixelData[1] + " Längd: " + pixelData.Length);
+
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    {
+                        try
+                        {
+                            listIntensity.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getHeadJoint(), pixelData));
+                            
+                            if (listIntensity.Count % 10 == 0)
+                            {
+                                matlabCommand("Intensity", listIntensity);
+                            }
+                        }
+
+                        catch (System.IndexOutOfRangeException)
+                        {
+                            System.Windows.MessageBox.Show("Baby's head has escaped, baby can't be far");
+                        }
+                    }
+                }
+            }
+        }
+
 
         //------------------------------------Andning, flera punkter-------------------------------------------------------
         private void breathingDepthAverage(object sender, DepthFrameArrivedEventArgs e)
