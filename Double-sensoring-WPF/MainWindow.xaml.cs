@@ -53,7 +53,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        private IRSensing irSensing;
+        //private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -84,7 +84,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Filter
         int orderOfFilter = 27;
         int timeOfMeasurement = 900;
-        int runPlotModulu = 10;
+        int runPlotModulu = 5;
         int fps = 30;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
@@ -124,7 +124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.depthSensing = new DepthSensing(kinectSensor);
 
             //IR
-            this.irSensing = new IRSensing(kinectSensor);
+            //this.irSensing = new IRSensing(kinectSensor);
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -296,11 +296,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.depthSensing.setDepthFrameReader(null);
             }
 
-            if (this.irSensing.getInfraredFrameReader() != null)
-            {
-                this.irSensing.getInfraredFrameReader().Dispose();
-                this.irSensing.setInfraredFrameReader(null);
-            }
+            //if (this.irSensing.getInfraredFrameReader() != null)
+            //{
+            //    this.irSensing.getInfraredFrameReader().Dispose();
+            //    this.irSensing.setInfraredFrameReader(null);
+            //}
 
             if (this.kinectSensor != null)
             {
@@ -455,9 +455,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (codeString == "both")
                 {
                     //matlab.Feval("matlabHandler", 2, out result, rgbList[0].ToArray(), rgbList[1].ToArray(), rgbList[2].ToArray(), measurements.ToArray());
-                    object[] res = result as object[];
-                    Console.WriteLine("Puls: " + res[0].ToString());
-                    Console.WriteLine("Andning: " + res[1].ToString());
+                    //object[] res = result as object[];
+                    //Console.WriteLine("Puls: " + res[0].ToString());
+                    //Console.WriteLine("Andning: " + res[1].ToString());
                 }
 
                 //Analys av puls i matlab
@@ -493,7 +493,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
 
-                        //Average är antalet andningar under 60 sekunder
+                        //Average är antalet pulsslag under 60 sekunder
                         average = peaks[0].Count() * 60 * fps / timeOfMeasurement;
 
                         //Skriver ut pulspeakar i programmet
@@ -505,21 +505,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
            
                     }
 
-
-
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
                         chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                     }
 
-                    if (rgbList[0].Count() >= timeOfMeasurement + runPlotModulu)
+                    if (rgbList[0].Count() >= timeOfMeasurement + orderOfFilter)
                     {
                         rgbList[0].RemoveRange(0, runPlotModulu);
                         rgbList[1].RemoveRange(0, runPlotModulu);
                         rgbList[2].RemoveRange(0, runPlotModulu);
                     }
                 }
-                //Analys av andning i matlab
+
+                //Analys av andning
                 else if (codeString == "breathing")
                 {
                     //filtrering
@@ -548,8 +547,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         }
 
-                        //Average är antalet peakar * 3 (20 sek) till larmet.
-                        average = peaks[0].Count() * fps * 60 / timeOfMeasurement;
+                        //Average är antalet peakar i andningen under 60 sekunder.
+                        average = peaks[0].Count() * 60 * fps / timeOfMeasurement;
 
                         //Skriver ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
@@ -563,7 +562,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
-                    if(measurements.Count() >= timeOfMeasurement + runPlotModulu)
+
+                    if(measurements.Count() >= timeOfMeasurement + orderOfFilter)
                     {
                         listDepthMatlab.RemoveRange(0, runPlotModulu);
                     }
