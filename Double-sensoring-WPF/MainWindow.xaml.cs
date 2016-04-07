@@ -375,8 +375,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Lägger endast till dalar i listan för de senaste 40 sekundrarna
                         if(i > measurements.Count - sampleLimitForBreathAlarm)
                         {
-                            topLocations[2].Add(Convert.ToDouble(i));
-                            topLocations[3].Add(measurements[i]);
+                        topLocations[2].Add(Convert.ToDouble(i));
+                        topLocations[3].Add(measurements[i]);
                         }
                         
                     }
@@ -521,14 +521,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Analys av andning
                 else if (codeString == "breathing")
                 {
+                    if (measurements.Count >= samplesOfMeasurement + orderOfFilter)
+                    {
+                        double breathingWarningOverSamples = 40 * fps;
+
                     // Filtrering av djupvärden (andning)
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
                     List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    if (measurementsFiltList.Count > orderOfFilter)
-                    {
-                        measurementsFiltList.RemoveRange(0, orderOfFilter);
-                    }
+                        measurementsFiltList.RemoveRange(0, measurementsFiltList.Count - samplesOfMeasurement);
 
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
@@ -552,9 +553,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
                         // Ritar ut andningspeakar i programmet
-                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
-                               + Environment.NewLine + "Uppskattad BPM: " + average;
-                        // Alarm
+                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count();
+
                         breathingAlarm(average, lowNumBreathing);
                     }
 
@@ -563,11 +563,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
 
-                    if(measurements.Count() >= samplesOfMeasurement + orderOfFilter)
-                    {
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
+
+                        if (breathingAverage.Count >= breathingWarningOverSamples)
+                        {
+                            breathingAverage.RemoveAt(0);
+                        }
+                        breathingAverage.Add(average);
+
+                        double totalAverage = 0;
+                        for (int i = 0; i < breathingAverage.Count; i++)
+                    {
+                            totalAverage += breathingAverage[i];
                     }
 
+                        averageBreathingTextBlock.Text += Environment.NewLine + "Uppskattad BPM: " + totalAverage;
+                    }
                     }
                 else if (codeString == "Intensity")
                 {
