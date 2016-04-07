@@ -551,10 +551,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Kontrollera om många peakar i rad är för låga
                         // Detektion låg andning
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
-                        
 
-                        
-                            for(int i)
+                        for(int i > samplesOfMeasurement.Count - samplesForBreathAlarm)
+                            {
+
+                            }
+
 
                          
 
