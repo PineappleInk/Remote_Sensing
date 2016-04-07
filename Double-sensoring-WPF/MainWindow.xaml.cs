@@ -124,7 +124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
-            
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
         }
@@ -536,12 +536,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Kontrollera om många peakar i rad är för låga
                         // Detektion låg andning
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                        
+                        for (int i > samplesOfMeasurement.Count - samplesForBreathAlarm)
+                        {
+                            int distanceBwPeaks = peaks[0][i] - peaks[3][i];
+                            //if (distanceBwPeaks < )
 
-                        for (int i)
+                        }
+                        
 
                          
-
-
                         }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
