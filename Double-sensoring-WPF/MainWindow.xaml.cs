@@ -553,10 +553,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Detektion låg andning
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                        for(int i > samplesOfMeasurement.Count - samplesForBreathAlarm)
-                            {
-
-                            }
+                        for (int i > samplesOfMeasurement.Count - samplesForBreathAlarm)
+                        {
+                            int distanceBwPeaks = peaks[0][i] - peaks[3][i];
+                            //if (distanceBwPeaks < )
+                       
+                        }
 
 
                          
