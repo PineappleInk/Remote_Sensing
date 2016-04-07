@@ -90,9 +90,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int lowNumPulse = 30;
         int lowNumBreathing = 10;
 
-        // Detektion låg andning
-        int samplesForBreathAlarm = 40 * fps;
-
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
         int pulsWarningInSeconds = 10;
@@ -329,8 +326,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
-            //Abstrahera sen: sekunder(40)*antal_sampel_per_Sek(30)
-            int sampleLimitForBreathAlarm = 40 * 30; // Gräns för vilken toppar/dalar ej får vara för låg
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -519,6 +514,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (measurements.Count >= samplesOfMeasurement + orderOfFilter)
                     {
                         double breathingWarningOverSamples = breathingWarningInSeconds * fps;
+                    }
 
                     // Filtrering av djupvärden (andning)
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
@@ -563,8 +559,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
 
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
-                    }
-                    }
+                }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
