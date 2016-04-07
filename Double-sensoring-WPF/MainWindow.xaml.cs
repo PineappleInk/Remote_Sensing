@@ -345,7 +345,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         topLocations[0].Add(Convert.ToDouble(i));
                         topLocations[1].Add(measurements[i]);
                         upCounter = 0;
-                        downCounter = 1;
+                        downCounter = 0;
                     }
                 }
                 //Påväg nedåt
@@ -362,6 +362,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (downCounter > 15)
                     {
+                        topLocations[2].Add(Convert.ToDouble(i));
+                        topLocations[3].Add(measurements[i]);
                         upCounter = 0;
                         downCounter = 0;
                     }
