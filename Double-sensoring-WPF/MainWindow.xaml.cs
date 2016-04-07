@@ -39,8 +39,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         private double bellyJointYPosition = 2 / 3;
         private double bellyJointXPosition = 2 / 3;
-        int lowNumPulse = 30;
-        int lowNumBreathing = 10;
         //double heartrate = 0;
         //double average = 0;
         /// <summary>
@@ -87,6 +85,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
+
+        // Alarm parametrar
+        int lowNumPulse = 30;
+        int lowNumBreathing = 10;
+
+        // Detektion låg andning
+        int samplesForBreathAlarm = 40 * fps;
 
         //Listor för beräkningar för larm
         List<double> pulseAverage = new List<double>();
@@ -372,13 +377,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         upCounter = 0;
                         downCounter = 0;
-                        // Lägger endast till dalar i listan för de senaste 40 sekundrarna
-                        if(i > measurements.Count - sampleLimitForBreathAlarm)
-                        {
-                            topLocations[2].Add(Convert.ToDouble(i));
-                            topLocations[3].Add(measurements[i]);
-                        }
-                        
+                        // Lägger endast till dalar i listan                      
+                        topLocations[2].Add(Convert.ToDouble(i));
+                        topLocations[3].Add(measurements[i]);
                     }
                 }
             }
@@ -556,6 +557,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                + Environment.NewLine + "Uppskattad BPM: " + average;
                         // Alarm
                         breathingAlarm(average, lowNumBreathing);
+
+                        // Kontrollera om många peakar i rad är för låga
+
                     }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
