@@ -90,9 +90,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int lowNumPulse = 30;
         int lowNumBreathing = 10;
 
-        // Detektion låg andning
-        int samplesForBreathAlarm = 40 * fps;
-
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
         int pulsWarningInSeconds = 10;
@@ -329,8 +326,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
-            //Abstrahera sen: sekunder(40)*antal_sampel_per_Sek(30)
-            int sampleLimitForBreathAlarm = 40 * 30; // Gräns för vilken toppar/dalar ej får vara för låg
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -534,7 +529,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     // Toppdetektering
                     if (measurementsFiltList.Count > 10)
-                    {
+                {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
 
@@ -554,8 +549,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         breathingAlarm(average, lowNumBreathing);
 
                         // Kontrollera om många peakar i rad är för låga
+                        // Detektion låg andning
+                        int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                        
 
-                    }
+                        
+                            for(int i)
+
+                         
+
+
+                        }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
