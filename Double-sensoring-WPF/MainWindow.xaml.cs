@@ -541,7 +541,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             double distanceBwPeaks = peaks[0][j] - peaks[3][j];
                             //if (distanceBwPeaks < )
-                       
+                        
                         }
 
 
