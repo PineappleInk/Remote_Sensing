@@ -45,7 +45,7 @@
         <TextBlock x:Name="textBlock5" Margin="217.5,288,41.5,38" TextWrapping="Wrap" Grid.Column="2" Grid.Row="2"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
         <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="2" Grid.Row="2" Margin="283.5,13,41.5,304" TextWrapping="Wrap" Text="Andningsfrekvens:"/>
         <TextBlock x:Name="informationTextPulse" Grid.Column="2" Grid.Row="2" Margin="16.5,13,280.5,345" TextWrapping="Wrap" Background="White"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-        <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Grid.Row="2" Margin="16.5,153,280.5,205" TextWrapping="Wrap"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Grid.Row="2" Margin="16.5,177,280.5,181" TextWrapping="Wrap"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
         <TextBlock x:Name="textBlockSound" Grid.Column="2" Grid.Row="2" Margin="283.5,173,99.5,197" TextWrapping="Wrap" Text="Ljud för larm"/>
         <TextBox x:Name="inputTextPulse" Grid.Column="2" Grid.Row="2" Margin="46.5,61,339.5,304" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5"/>
         <TextBox x:Name="inputTextBreathing" Grid.Column="2" Grid.Row="2" Margin="46.5,212,339.5,153" TextWrapping="Wrap" MaxLines="1" Text="10"/>
