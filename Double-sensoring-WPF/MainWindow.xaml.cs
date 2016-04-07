@@ -76,7 +76,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //Globala variabler
-        int samplesOfMeasurement = 900;
+        int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
 
@@ -274,6 +274,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         topLocations[1].Add(measurements[i]);
                         upCounter = 0;
                         downCounter = 0;
+                        Console.WriteLine("Topp x: " + topLocations[0][topLocations[0].Count - 1] + " Topp y: " + topLocations[1][topLocations[1].Count - 1]);
                     }
                 }
                 //Påväg nedåt
@@ -288,14 +289,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 15)
+                    if (downCounter > 1)
                     {
-                        upCounter = 0;
-                        downCounter = 0;
-                        // Lägger endast till dalar i listan                      
+                        // Lägger endast till dalar i listan
                         topLocations[2].Add(Convert.ToDouble(i));
                         topLocations[3].Add(measurements[i]);
-                        }
+                        upCounter = 0;
+                        downCounter = 0;
+
+                        Console.WriteLine("Dal x: " + topLocations[2][topLocations[2].Count - 1] + " Dal y: " + topLocations[3][topLocations[3].Count - 1]);
+                     }
                 }
             }
             return topLocations;
