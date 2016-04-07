@@ -42,7 +42,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int lowNumPulse = 30;
         int lowNumBreathing = 10;
         //double heartrate = 0;
-        double average = 0;
+        //double average = 0;
         /// <summary>
         /// Current status text to display
         /// </summary>
@@ -83,11 +83,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //TEST Intensity
         //List<double> listIntensity = new List<double>();
 
-        //Filter
-        int orderOfFilter = 27;
-        int samplesOfMeasurement = 900;
+        //Globala variabler
+        int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
+
+        //Listor för beräkningar för larm
+        List<double> pulseAverage = new List<double>();
+        List<double> breathingAverage = new List<double>();
+
+        //Filter
+        int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
         //----------------------------------------------------------------------------------------
@@ -452,51 +458,63 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 // Analys av puls
                 if (codeString == "pulse")
                 {
-                    // Filtrering
-                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
-
-                    if (measurementsFiltList.Count > orderOfFilter)
+                    if (rgbList[1].Count >= samplesOfMeasurement + orderOfFilter)
                     {
-                        measurementsFiltList.RemoveRange(0, orderOfFilter);
-                    }
+                        double pulsWarningOverSamples = 10 * fps;
 
-                    chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                    chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                    chartPulse.ClearCurveDataPointsFromGraph();
+                        // Filtrering
+                        double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
+                        List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                    //Toppdetektering
-                    if (measurementsFiltList.Count > 10)
-                    {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksPulse(measurementsFiltList);
-                        for (int i = 0; i < peaks[0].Count(); i++)
+                        if (measurementsFiltList.Count > orderOfFilter)
                         {
-                            chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                            measurementsFiltList.RemoveRange(0, orderOfFilter);
                         }
 
+                        measurementsFiltList.RemoveRange(0, measurementsFiltList.Count - samplesOfMeasurement);
 
-                        //Average är antalet pulsslag under 60 sekunder
-                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+                        chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+                        chartPulse.ClearCurveDataPointsFromGraph();
 
-                        //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                            + System.Environment.NewLine + "Uppskattad BPM: " + average;
+                        double average = 0;
 
-           
-                        pulseAlarm(average, lowNumPulse);
-                    }
+                        //Toppdetektering
+                        if (measurementsFiltList.Count > 10)
+                        {
+                            List<List<double>> peaks = new List<List<double>>();
+                            peaks = locatePeaksPulse(measurementsFiltList);
+                            for (int i = 0; i < peaks[0].Count(); i++)
+                            {
+                                chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                            }
 
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
-                    {
-                        chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
-                    }
 
-                    if (rgbList[0].Count() >= samplesOfMeasurement + orderOfFilter)
-                    {
+                            //Average är antalet pulsslag under 60 sekunder
+                            average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+
+                            //Skriver ut pulspeakar i programmet
+                            textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                                + System.Environment.NewLine + "Uppskattad BPM: " + average;
+
+
+                            pulseAlarm(average, lowNumPulse);
+                        }
+
+                        for (int i = 0; i < measurementsFiltList.Count(); i++)
+                        {
+                            chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
+                        }
+                        
                         rgbList[0].RemoveRange(0, runPlotModulo);
                         rgbList[1].RemoveRange(0, runPlotModulo);
                         rgbList[2].RemoveRange(0, runPlotModulo);
+
+                        if (pulseAverage.Count >= pulsWarningOverSamples)
+                        {
+                            pulseAverage.RemoveAt(0);
+                        }
+                        pulseAverage.Add(average);
                     }
                 }
 
@@ -515,6 +533,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                     chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
                     chartBreath.ClearCurveDataPointsFromGraph();
+
+                    double average = 0;
 
                     // Toppdetektering
                     if (measurementsFiltList.Count > 10)

@@ -22,29 +22,30 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="9*"/>
             <ColumnDefinition Width="286*"/>
+            <ColumnDefinition Width="286*"/>
         </Grid.ColumnDefinitions>
 
-        <Viewbox HorizontalAlignment="Right" Margin="0,0,10.4,372.2" Width="529" Grid.Column="1">
+        <Viewbox Margin="164.5,0,4,389.5" Grid.Column="2">
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" />
         </Viewbox>
 
-        <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Column="1" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.2' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.2' }"/>
-        <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Column="1" HorizontalAlignment="Left" Margin="0,350,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.2' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.2' }"/>
+        <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" HorizontalAlignment="Left" Margin="-32,0,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.4' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.6' }" Grid.ColumnSpan="3"/>
+        <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" HorizontalAlignment="Left" Margin="-32,362,0,0" VerticalAlignment="Top" Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={tools:RatioConverter}, ConverterParameter='0.4' }" Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={tools:RatioConverter}, ConverterParameter='0.6' }" Grid.ColumnSpan="3"/>
 
-        <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="910,505,0,0" TextWrapping="Wrap" Text="Pixel values" VerticalAlignment="Top" Height="30" Width="153" Grid.Column="1" RenderTransformOrigin="0.498,1.1"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="910,427,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="73" Width="183" Grid.Column="1" Text="Hjärtrytm::"/>
-        <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="910,576,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="193" Grid.Column="1"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
-        <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="910,351,0,0" TextWrapping="Wrap" Text="averageBreathing" VerticalAlignment="Top" Height="71" Width="183"/>
-        <TextBlock x:Name="informationTextPulse" Grid.Column="1" HorizontalAlignment="Left" Margin="706,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" Height="36" Background="White"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-        <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="1" HorizontalAlignment="Left" Margin="706,439,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" Height="36"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-        <TextBlock x:Name="textBlockSound" Grid.Column="1" HorizontalAlignment="Left" Margin="731,611,0,0" TextWrapping="Wrap" Text="Ljud för larm" VerticalAlignment="Top"/>
-        <TextBox x:Name="inputTextPulse" Grid.Column="1" HorizontalAlignment="Left" Height="30" Margin="706,351,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" MaxLines="2"/>
-        <TextBox x:Name="inputTextBreathing" Grid.Column="1" HorizontalAlignment="Left" Height="30" Margin="706,490,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" Text="10"/>
+        <TextBlock x:Name="textBlock2" Margin="335.5,572,0,0" TextWrapping="Wrap" Text="Pixel values" Grid.Column="2" RenderTransformOrigin="0.498,1.1" HorizontalAlignment="Left" Width="153" Height="30" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock" Margin="345.5,424,76,199.5" TextWrapping="Wrap" Grid.Column="2" Text="Hjärtrytm:"/>
+        <TextBlock x:Name="textBlock5" Margin="335.5,626,36,43.5" TextWrapping="Wrap" Grid.Column="2"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
+        <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="2" Margin="341.5,346,76,275.5" TextWrapping="Wrap" Text="Andningsfrekvens:"/>
+        <TextBlock x:Name="informationTextPulse" Grid.Column="2" Margin="120.5,351,275,305.5" TextWrapping="Wrap" Background="White"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Margin="120.5,457,275,199.5" TextWrapping="Wrap"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="textBlockSound" Grid.Column="2" Margin="158.5,589,332,79.5" TextWrapping="Wrap" Text="Ljud för larm"/>
+        <TextBox x:Name="inputTextPulse" Grid.Column="2" Margin="120.5,389,275,273.5" TextWrapping="Wrap" MaxLines="1" Text="30"/>
+        <TextBox x:Name="inputTextBreathing" Grid.Column="2" Margin="120.5,498,275,164.5" TextWrapping="Wrap" MaxLines="1" Text="10"/>
 
-        <Button x:Name="button" Content="Clear Lists" HorizontalAlignment="Left" Margin="1105,536,0,0" VerticalAlignment="Top" Width="74" Click="button_Click" Grid.Column="1"/>
-        <Button x:Name="retrieveInputBreathing" Content="Enter" Grid.Column="1" HorizontalAlignment="Left" Margin="753,541,0,0" VerticalAlignment="Top" Width="74" Click="retrieveInputBreathing_Click"/>
-        <Button x:Name="retrieveInputPulse" Content="Enter" Grid.Column="1" HorizontalAlignment="Left" Margin="753,410,0,0" VerticalAlignment="Top" Width="74" Click="retrieveInputPulse_Click"/>
-        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="1" HorizontalAlignment="Left" Margin="753,638,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.452,0.469" IsChecked="True"/>
+        <Button x:Name="button" Content="Clear Lists" Margin="335.5,526,155,146.5" Click="button_Click" Grid.Column="2"/>
+        <Button x:Name="retrieveInputBreathing" Content="Enter" Grid.Column="2" Margin="158.5,537,332,135.5" Click="retrieveInputBreathing_Click"/>
+        <Button x:Name="retrieveInputPulse" Content="Enter" Grid.Column="2" Margin="158.5,424,332,248.5" Click="retrieveInputPulse_Click"/>
+        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="2" HorizontalAlignment="Left" Margin="182.5,614,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.452,0.469" IsChecked="False"/>
 
     </Grid>
 </Window>
