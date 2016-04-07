@@ -81,7 +81,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //TEST Intensity
-        List<double> listIntensity = new List<double>();
+        //List<double> listIntensity = new List<double>();
 
         //Filter
         int orderOfFilter = 27;
@@ -311,15 +311,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-        //Lokalisera toppen i lista för andning
-        //Returvärdet är en lista med listor för [0] - positioner och [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        // Lokalisera toppen i lista för andning
+        // Returvärdet är en lista med listor för [0] - positioner och 
+        // [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
         private List<List<double>> locatePeaksBreath(List<double> measurements)
         {
-            List<List<double>> topLocations = new List<List<double>>();
-            topLocations.Add(new List<double>());
-            topLocations.Add(new List<double>());
             int upCounter = 0;
             int downCounter = 0;
+            // Lista för peakar
+            List<List<double>> topLocations = new List<List<double>>();
+            topLocations.Add(new List<double>()); //[0] Topparnas position
+            topLocations.Add(new List<double>()); //[1] Topparnas värden 
+            // Lägger även till dalar
+            topLocations.Add(new List<double>()); //[2] Dalarnas position
+            topLocations.Add(new List<double>()); //[3] Dalarnas värden
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
@@ -340,7 +345,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         topLocations[0].Add(Convert.ToDouble(i));
                         topLocations[1].Add(measurements[i]);
                         upCounter = 0;
-                        downCounter = 1;
+                        downCounter = 0;
                     }
                 }
                 //Påväg nedåt
@@ -357,6 +362,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (downCounter > 15)
                     {
+                        topLocations[2].Add(Convert.ToDouble(i));
+                        topLocations[3].Add(measurements[i]);
                         upCounter = 0;
                         downCounter = 0;
                     }
@@ -432,7 +439,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
             // Define the output 
-            object result = null;
+            //object result = null;
             try
             {
                 // Analys av puls
@@ -534,7 +541,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
                     }
 
-                }
+                    }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
@@ -570,7 +577,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
-                }              
+                }
 
             }
             catch
@@ -584,7 +591,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < lowNum)
+            if (averageBreathing < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
@@ -610,7 +617,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < lowNum)
+            if (averagePulse < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
