@@ -63,11 +63,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
-        //MATLAB-instans 
-        //MLApp.MLApp matlab = new MLApp.MLApp();
-
         //Puls
-        List<double> matlabPulsLista = new List<double>();
+        List<double> pulseList = new List<double>();
 
         //Andning
         /// <summary>
@@ -75,18 +72,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// calculatedBreaths - lista med uträknade frekvenser från matlab, medelvärdesbildas och visas i användargränssnittet
         ///                     30 värden samlas in och medelvärdet visas för användaren (se matlabCommand)
         /// </summary>
-        List<double> listDepthMatlab = new List<double>();
+        List<double> depthList = new List<double>();
         List<double> calculatedBreaths = new List<double>();
-
-        //TEST Intensity
-        //List<double> listIntensity = new List<double>();
 
         //Globala variabler
         int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
 
-        // Alarm parametrar
+        // Alarmparametrar
         int lowNumPulse = 30;
         int lowNumBreathing = 10;
 
@@ -101,7 +95,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-        //PixelFormat format = PixelFormats.Bgr32; // BEHÖVS DENNA?!?!?!
         
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -125,7 +118,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                                             : Properties.Resources.NoSensorStatusText;
             //BODY
             this.bodySensning = new BodySensing(kinectSensor);
-            //bodySensning.createBodySensor();
 
             //COLOR
             this.colorSensing = new ColorSensing(kinectSensor);
@@ -133,16 +125,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
-            //IR
-            //this.irSensing = new IRSensing(kinectSensor);
-
             // initialize the components (controls) of the window
             this.InitializeComponent();
-            
-            //Om man vill rendera hela tiden!
-            //CompositionTarget.Rendering += CompositionTargetRendering;
-
-            //Console.WriteLine("Här är vi! " + path);
         }
 
         //private void CompositionTargetRendering() //object sender, EventArgs e
@@ -530,7 +514,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     // Toppdetektering
                     if (measurementsFiltList.Count > 10)
-                    {
+                {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
 
@@ -562,8 +546,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                          
-
-
                         }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -571,7 +553,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
                     }
 
-                        listDepthMatlab.RemoveRange(0, runPlotModulo);
+                        depthList.RemoveRange(0, runPlotModulo);
                 }
                 else if (codeString == "Intensity")
                 {
@@ -622,7 +604,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
+            if (averageBreathing < lowNum && depthList.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
@@ -648,7 +630,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
+            if (averagePulse < lowNum && depthList.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
@@ -813,7 +795,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (biglist[0].Count % runPlotModulo == 0)
                             {
                                 //Analys av puls i matlab
-                                matlabCommand("pulse", listDepthMatlab, biglist);
+                                matlabCommand("pulse", depthList, biglist);
                             }
                         }
                         catch
@@ -938,16 +920,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
-                            listDepthMatlab.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
+                            depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //NYTT
-                            textBlock5.Text = "Element i andningslistan: " + listDepthMatlab.Count;
+                            textBlock5.Text = "Element i andningslistan: " + depthList.Count;
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (listDepthMatlab.Count % runPlotModulo == 0)
+                            if (depthList.Count % runPlotModulo == 0)
                             {
-                                matlabCommand("breathing", listDepthMatlab);
+                                matlabCommand("breathing", depthList);
                             }
                             //if (listDepthMatlab.Count >= 300)
                             //{
@@ -981,7 +963,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            listDepthMatlab.Clear();
+            depthList.Clear();
             colorSensing.biglist.Clear();
         }
 
