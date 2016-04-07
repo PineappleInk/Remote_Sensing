@@ -318,6 +318,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
+            //Abstrahera sen: sekunder(40)*antal_sampel_per_Sek(30)
+            int sampleLimitForBreathAlarm = 40 * 30; // Gräns för vilken toppar/dalar ej får vara för låg
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -362,10 +364,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (downCounter > 15)
                     {
-                        topLocations[2].Add(Convert.ToDouble(i));
-                        topLocations[3].Add(measurements[i]);
                         upCounter = 0;
                         downCounter = 0;
+                        // Lägger endast till dalar i listan för de senaste 40 sekundrarna
+                        if(i > measurements.Count - sampleLimitForBreathAlarm)
+                        {
+                            topLocations[2].Add(Convert.ToDouble(i));
+                            topLocations[3].Add(measurements[i]);
+                        }
+                        
                     }
                 }
             }
@@ -527,7 +534,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                + Environment.NewLine + "Uppskattad BPM: " + average;
-
+                        // Alarm
                         breathingAlarm(average, lowNumBreathing);
                     }
 
