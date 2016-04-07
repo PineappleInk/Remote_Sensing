@@ -530,7 +530,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     // Toppdetektering
                     if (measurementsFiltList.Count > 10)
-                    {
+                {
                         List<List<double>> peaks = new List<List<double>>();
                         peaks = locatePeaksBreath(measurementsFiltList);
 
@@ -550,8 +550,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         breathingAlarm(average, lowNumBreathing);
 
                         // Kontrollera om många peakar i rad är för låga
+                        // Detektion låg andning
+                        int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                        
 
-                    }
+                        
+                            for(int i)
+
+                         
+
+
+                        }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
