@@ -483,38 +483,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         depthList.RemoveRange(0, runPlotModulo);
                     }
                 }
-                else if (codeString == "Intensity")
-                {
-                /*    //filtrering
-                    double[] measurementsFilt = bpFiltPulse.ProcessSamples(measurements.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
-
-                    measurementsFiltList.RemoveRange(0, 10);
-
-                    //toppdetektering
-                    if (measurementsFiltList.Count > 100)
-                    {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
-
-                      //Skriver ut andningspeakar i programmet
-                        textBlock6.Text = "Antal peaks i intensitet: " + System.Environment.NewLine + peaks[0].Count()
-                               + System.Environment.NewLine + "Uppskattad BPM: " + peaks[0].Count() * 3;
-
-                    }
-
-                    chartIntensity.CheckAndAddSeriesToGraph("Intensity", "fps");
-                    chartIntensity.ClearCurveDataPointsFromGraph();
-
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
-                    {
-                        chartIntensity.AddPointToLine("Intensity", measurementsFiltList[i], i);
-                    }
-                    if (measurements.Count() >= 610)
-                    {
-                        listIntensity.RemoveRange(0, 10);
-                    }*/
-                }
                 else
                 {
                     Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
