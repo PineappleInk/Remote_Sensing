@@ -514,6 +514,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (measurements.Count >= samplesOfMeasurement + orderOfFilter)
                     {
                         double breathingWarningOverSamples = breathingWarningInSeconds * fps;
+                    }
 
                     // Filtrering av djupvärden (andning)
                     double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
@@ -569,8 +570,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
 
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
-                    }
-                    }
+                }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
