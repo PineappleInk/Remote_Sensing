@@ -88,9 +88,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int runPlotModulo = 5;
         int fps = 30;
 
-        //Listor för beräkningar för larm
-        List<double> pulseAverage = new List<double>();
-        List<double> breathingAverage = new List<double>();
+        int breathingWarningInSeconds = 40;
+        int pulsWarningInSeconds = 10;
 
         //Filter
         int orderOfFilter = 27;
@@ -140,7 +139,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Om man vill rendera hela tiden!
             //CompositionTarget.Rendering += CompositionTargetRendering;
 
-            Console.WriteLine("Här är vi! " + path);
+            //Console.WriteLine("Här är vi! " + path);
         }
 
         //private void CompositionTargetRendering() //object sender, EventArgs e
@@ -460,7 +459,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (rgbList[1].Count >= samplesOfMeasurement + orderOfFilter)
                     {
-                        double pulsWarningOverSamples = 10 * fps;
+                        double pulsWarningOverSamples = pulsWarningInSeconds * fps;
 
                         // Filtrering
                         double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
@@ -509,12 +508,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         rgbList[0].RemoveRange(0, runPlotModulo);
                         rgbList[1].RemoveRange(0, runPlotModulo);
                         rgbList[2].RemoveRange(0, runPlotModulo);
-
-                        if (pulseAverage.Count >= pulsWarningOverSamples)
-                        {
-                            pulseAverage.RemoveAt(0);
-                        }
-                        pulseAverage.Add(average);
                     }
                 }
 
@@ -523,63 +516,50 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (measurements.Count >= samplesOfMeasurement + orderOfFilter)
                     {
-                        double breathingWarningOverSamples = 40 * fps;
+                        double breathingWarningOverSamples = breathingWarningInSeconds * fps;
 
-                    // Filtrering av djupvärden (andning)
-                    double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
-                    List<double> measurementsFiltList = measurementsFilt.ToList();
+                        // Filtrering av djupvärden (andning)
+                        double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
+                        List<double> measurementsFiltList = measurementsFilt.ToList();
 
                         measurementsFiltList.RemoveRange(0, measurementsFiltList.Count - samplesOfMeasurement);
 
-                    chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                    chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
-                    chartBreath.ClearCurveDataPointsFromGraph();
+                        chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
+                        chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
+                        chartBreath.ClearCurveDataPointsFromGraph();
 
-                    double average = 0;
+                        double average = 0;
 
-                    // Toppdetektering
-                    if (measurementsFiltList.Count > 10)
-                    {
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
-
-                        // Rita ut peakar i andningen (= utandning)
-                        for (int i = 0; i < peaks[0].Count(); i++)
+                        // Toppdetektering
+                        if (measurementsFiltList.Count > 10)
                         {
-                            chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+                            List<List<double>> peaks = new List<List<double>>();
+                            peaks = locatePeaksBreath(measurementsFiltList);
+
+                            // Rita ut peakar i andningen (= utandning)
+                            for (int i = 0; i < peaks[0].Count(); i++)
+                            {
+                                chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+                            }
+
+                            // Average är antalet peakar i andningen under 60 sekunder.
+                            average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+
+                            // Ritar ut andningspeakar i programmet
+                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
+                                + Environment.NewLine + "Uppskattad BPM: " + average;
+
+                            breathingAlarm(average, lowNumBreathing);
                         }
 
-                        // Average är antalet peakar i andningen under 60 sekunder.
-                        average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
-
-                        // Ritar ut andningspeakar i programmet
-                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count();
-
-                        breathingAlarm(average, lowNumBreathing);
-                    }
-
-                    for (int i = 0; i < measurementsFiltList.Count(); i++)
-                    {
-                        chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
-                    }
+                        for (int i = 0; i < measurementsFiltList.Count(); i++)
+                        {
+                            chartBreath.AddPointToLine("Breath", measurementsFiltList[i], i);
+                        }
 
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
-
-                        if (breathingAverage.Count >= breathingWarningOverSamples)
-                        {
-                            breathingAverage.RemoveAt(0);
-                        }
-                        breathingAverage.Add(average);
-
-                        double totalAverage = 0;
-                        for (int i = 0; i < breathingAverage.Count; i++)
-                    {
-                            totalAverage += breathingAverage[i];
                     }
-
-                        averageBreathingTextBlock.Text += Environment.NewLine + "Uppskattad BPM: " + totalAverage;
-                    }
-                    }
+                }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
