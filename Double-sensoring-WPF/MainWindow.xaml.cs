@@ -81,7 +81,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //TEST Intensity
-        List<double> listIntensity = new List<double>();
+        //List<double> listIntensity = new List<double>();
 
         //Filter
         int orderOfFilter = 27;
@@ -439,7 +439,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void matlabCommand(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
         {
             // Define the output 
-            object result = null;
+            //object result = null;
             try
             {
                 // Analys av puls
@@ -541,7 +541,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         listDepthMatlab.RemoveRange(0, runPlotModulo);
                     }
 
-                }
+                    }
                 else if (codeString == "Intensity")
                 {
                 /*    //filtrering
@@ -577,7 +577,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     Console.WriteLine(" Varken puls- eller andning-funktion kördes, kontrollera att codeString var korrekt");
-                }              
+                }
 
             }
             catch
@@ -591,7 +591,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < lowNum)
+            if (averageBreathing < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
@@ -617,7 +617,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < lowNum)
+            if (averagePulse < lowNum && listDepthMatlab.Count >= samplesOfMeasurement)
             {
                 if (!checkBoxSound.HasContent)
                 {
