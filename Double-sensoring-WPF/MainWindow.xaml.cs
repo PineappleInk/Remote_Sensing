@@ -533,20 +533,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         breathingAlarm(average, lowNumBreathing);
 
-                        // Kontrollera om många peakar i rad är för låga
+                        // Kontrollera om många peak-dal-avstånd i rad som är för låga
                         // Detektion låg andning
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
+                        //Lina
                         for (int j = 0; j > samplesOfMeasurement - samplesForBreathAlarm; ++j)
                         {
                             double distanceBwPeaks = peaks[0][j] - peaks[3][j];
-                            //if (distanceBwPeaks < )
-                        
+                            if (distanceBwPeaks < fps / 4) // Max 1/4 sekund mellan 
+
                         }
 
 
-                         
-                        }
+
+                    }
 
                     for (int i = 0; i < measurementsFiltList.Count(); i++)
                     {
