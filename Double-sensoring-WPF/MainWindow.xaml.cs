@@ -260,11 +260,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 5)
-                    {
+                    //if (downCounter < 5)
+                    //{
                         upCounter += 1;
                         downCounter = 0;
-                    }
+                    //}
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -280,11 +280,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 5)
-                    {
-                        downCounter += 1;
-                        upCounter = 0;
-                    }
+                    Console.WriteLine("På väg nedåt Breath");
+                //    if (upCounter < 5)
+                //    {
+                //        downCounter += 1;
+                //        upCounter = 0;
+                //    }
                 }
             }
 
@@ -315,12 +316,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 else if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 5)
-                    {
-                        upCounter += 1;
-                        downCounter = 0;
-                        Console.WriteLine("Är i påväg uppåt");
-                    }
+                    Console.WriteLine("På väg uppåt Breath");
+
+                    //if (downCounter < 5)
+                    //{
+                    //    upCounter += 1;
+                    //    downCounter = 0;
+                    //    Console.WriteLine("Är i påväg uppåt");
+                    //}
                 }
             }
             return topLocations;
@@ -342,11 +345,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
-                    {
+                    //if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    //{
                         upCounter += 1;
                         downCounter = 0;
-                    }
+                    //}
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -362,11 +365,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 4)
-                    {
-                        downCounter += 1;
-                        upCounter = 0;
-                    }
+                    Console.WriteLine("På väg nedåt Pulse");
+
+                    //if (upCounter < 4)
+                    //{
+                    //    downCounter += 1;
+                    //    upCounter = 0;
+                    //}
                 }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -475,25 +480,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaks = locatePeaksBreath(measurementsFiltList);
 
                             // Rita ut peakar i andningen (= utandning)
-                            for (int i = 0; i < peaks[0].Count(); i++)
+                            for (int i = 0; i < peaks[2].Count(); i++)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+                                chartBreath.AddPointToLine("Breathmarkers", peaks[3][i], peaks[2][i]);
                             }
                             
                             // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                            for (int i = 0; i < peaks[0].Count; ++i)
+                            for (int i = 0; i < peaks[2].Count; ++i)
                             {
-                                if (peaks[0][i] >= samplesForBreathAlarm)
+                                if (peaks[2][i] >= samplesForBreathAlarm)
                                 {
-                                    peaks[0].RemoveRange(0, i);
-                                    peaks[1].RemoveRange(0, i);
+                                    peaks[2].RemoveRange(0, i);
+                                    peaks[3].RemoveRange(0, i);
                                 }
                             }
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaks[0].Count() * 60 * fps / samplesForBreathAlarm;
+                            average = peaks[2].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
