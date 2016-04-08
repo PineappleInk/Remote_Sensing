@@ -23,7 +23,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Resources;
     using System.Windows.Markup;
     using System.Windows.Data;
-     
+
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -63,17 +63,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
-        //Puls
-        List<double> pulseList = new List<double>();
-
         //Andning
         /// <summary>
-        /// listDepthMatlab - lista som skickas till matlab
-        /// calculatedBreaths - lista med uträknade frekvenser från matlab, medelvärdesbildas och visas i användargränssnittet
-        ///                     30 värden samlas in och medelvärdet visas för användaren (se matlabCommand)
+        /// listDepthMatlab - lista som innehåller djupvärden för andningen
         /// </summary>
         List<double> depthList = new List<double>();
-        List<double> calculatedBreaths = new List<double>();
 
         //Globala variabler
         int samplesOfMeasurement = 300;
@@ -90,12 +84,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Filter
         int orderOfFilter = 27;
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6/60, 60/60, 27);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40/60, 180/60, 27);
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, 27);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, 27);
         //----------------------------------------------------------------------------------------
 
-        private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-        
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -261,7 +253,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (downCounter < 5)
                     {
-                        upCounter += 1;
+                        upCounter++;
                         downCounter = 0;
                     }
                 }
@@ -282,14 +274,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (upCounter < 5)
                     {
-                        downCounter += 1;
+                        downCounter++;
                         upCounter = 0;
                     }
                 }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 1)
+                    if (downCounter > 15)
                     {
                         // Lägger endast till dalar i listan
                         topLocations[2].Add(Convert.ToDouble(i));
@@ -298,7 +290,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         downCounter = 0;
 
                         Console.WriteLine("Dal x: " + topLocations[2][topLocations[2].Count - 1] + " Dal y: " + topLocations[3][topLocations[3].Count - 1]);
-                     }
+                    }
                 }
             }
             return topLocations;
@@ -411,7 +403,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Skriver ut pulspeakar i programmet
                             textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                                 + System.Environment.NewLine + "Uppskattad BPM: " + average;
-                            
+
                             pulseAlarm(average, lowNumPulse);
                         }
 
@@ -419,7 +411,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                         }
-                        
+
                         rgbList[0].RemoveRange(0, runPlotModulo);
                         rgbList[1].RemoveRange(0, runPlotModulo);
                         rgbList[2].RemoveRange(0, runPlotModulo);
@@ -519,7 +511,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                 }
 
             }
@@ -545,7 +537,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
             else inputTextPulse.Background = System.Windows.Media.Brushes.White;
@@ -623,7 +615,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (colorFrame != null)
                 {
+                    int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+
 
                     int width = colorFrame.FrameDescription.Width;
                     int height = colorFrame.FrameDescription.Height;
@@ -688,8 +682,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             List<List<double>> biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
                             
-
-                            // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
                             if (biglist[0].Count % runPlotModulo == 0)
                             {
@@ -697,9 +689,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 plottingAndCalculations("pulse", depthList, biglist);
                             }
                         }
-                        catch
-                        { }
-
+                        catch { }
                     }
 
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
@@ -778,7 +768,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //                try
         //                {
         //                    listIntensity.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getHeadJoint(), pixelData));
-                            
+
         //                    if (listIntensity.Count % 10 == 0)
         //                    {
         //                        matlabCommand("Intensity", listIntensity);
@@ -881,7 +871,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 inputTextPulse.Text = Convert.ToString(lowNumPulse);
             }
-        
+
         }
 
         private void retrieveInputBreathing_Click(object sender, RoutedEventArgs e)
