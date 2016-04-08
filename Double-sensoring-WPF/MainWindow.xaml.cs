@@ -23,7 +23,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Resources;
     using System.Windows.Markup;
     using System.Windows.Data;
-     
+
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -76,7 +76,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //Globala variabler
-        int samplesOfMeasurement = 900;
+        int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
 
@@ -86,7 +86,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
-        int pulsWarningInSeconds = 10;
+        int pulseWarningInSeconds = 10;
 
         //Filter
         int orderOfFilter = 27;
@@ -95,7 +95,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-        
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -263,7 +263,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         upCounter += 1;
                         downCounter = 0;
-                    }
+                }
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -283,8 +283,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         downCounter += 1;
                         upCounter = 0;
-                    }
                 }
+            }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
@@ -315,14 +315,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             
             for (int i = 0; i < measurements.Count - 4; i++)
             {
-                //Påväg nedåt
+                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
                     if (upCounter < 5)
                     {
                         downCounter += 1;
                         upCounter = 0;
-                    }
+                }
                 }
               
                 //Vid dal
@@ -424,7 +424,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (rgbList[1].Count >= samplesOfMeasurement + orderOfFilter)
                     {
-                        double pulsWarningOverSamples = pulsWarningInSeconds * fps;
+                        double pulsWarningOverSamples = pulseWarningInSeconds * fps;
 
                         // Filtrering
                         double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
@@ -454,13 +454,24 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
                             }
 
+                            // Beräknar ut pulsen över den valda beräkningstiden
+                            int samplesForPulseAlarm = pulseWarningInSeconds * fps;
+
+                            for (int i = 0; i < peaks[0].Count; ++i)
+                            {
+                                if (peaks[0][i] >= measurementsFiltList.Count - samplesForPulseAlarm)
+                                {
+                                    peaks[0].RemoveRange(0, i);
+                                    peaks[1].RemoveRange(0, i);
+                                }
+                            }
                             //Average är antalet pulsslag under 60 sekunder
                             average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
                             //Skriver ut pulspeakar i programmet
                             textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                                 + System.Environment.NewLine + "Uppskattad BPM: " + average;
-                            
+
                             //Tar in larmgränsen och jämför med personens uppskattade puls.
                             pulseAlarm(average, lowNumPulse);
                         }
@@ -469,7 +480,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("Pulse", measurementsFiltList[i], i);
                         }
-                        
+
                         rgbList[0].RemoveRange(0, runPlotModulo);
                         rgbList[1].RemoveRange(0, runPlotModulo);
                         rgbList[2].RemoveRange(0, runPlotModulo);
@@ -502,31 +513,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaks = locatePeaksBreath(measurementsFiltList);
 
                             // Rita ut peakar i andningen (= utandning)
-                            for (int i = 0; i < peaks[0].Count(); i++)
+                            for (int i = 0; i < peaks[2].Count(); i++)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+                                chartBreath.AddPointToLine("Breathmarkers", peaks[3][i], peaks[2][i]);
+                            }
+                            
+                            // Beräknar ut andningsfrekvensen över den valda beräkningstiden
+                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+
+                            for (int i = 0; i < peaks[2].Count; ++i)
+                            {
+                                if (peaks[2][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
+                                {
+                                    peaks[2].RemoveRange(0, i);
+                                    peaks[3].RemoveRange(0, i);
+                                }
                             }
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+                            average = peaks[2].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                 + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
+                            //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                             breathingAlarm(average, lowNumBreathing);
-
-                            // Kontrollera om många peak-dal-avstånd i rad som är för låga
-                            // Detektion låg andning
-                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
-
-                            //for (int j = 0; j > samplesOfMeasurement - samplesForBreathAlarm; ++j)
-                            //{
-                            //    double distanceBwPeaks = peaks[0][j] - peaks[2][j];
-                            //    //if (distanceBwPeaks < )
-
-                            //}
                         }
 
                         for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -570,7 +582,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;                    
+                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                 }
 
             }
@@ -596,7 +608,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;                    
+                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
             else inputTextPulse.Background = System.Windows.Media.Brushes.White;
@@ -738,7 +750,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
 
                             List<List<double>> biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
-                            
+
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
@@ -846,10 +858,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 plottingAndCalculations("breathing", depthList);
                             }
-                            //if (listDepthMatlab.Count >= 300)
-                            //{
-                            //    listDepthMatlab.RemoveRange(0, 30);
-                            //}
                         }
                         catch (System.IndexOutOfRangeException)
                         {
@@ -881,6 +889,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             depthList.Clear();
             colorSensing.biglist.Clear();
         }
+
         //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.
         //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
         private void retrieveInputPulse_Click(object sender, RoutedEventArgs e)
@@ -898,7 +907,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 inputTextPulse.Text = Convert.ToString(lowNumPulse);
             }
-        
+
         }
         //Funktionen ändrar gränsen för andningslarmet. Det finns ett satt tal från början som heter lowNumPulse.
         //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
