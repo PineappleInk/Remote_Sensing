@@ -256,27 +256,40 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
-                //Påväg uppåt
+                // Påväg uppåt och kanske vid dal
                 if (measurements[i] < measurements[i + 1])
                 {
+                    //Påväg uppåt
                     if (downCounter < 5)
                     {
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }
-                //Vid topp
-                else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                {
-                    if (upCounter > 15)
+                    //Vid dal
+                    if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                     {
-                        topLocations[0].Add(Convert.ToDouble(i));
-                        topLocations[1].Add(measurements[i]);
-                        upCounter = 0;
-                        downCounter = 0;
+                        if (downCounter > 15)
+                        {
+                            upCounter = 0;
+                            downCounter = 0;
+                            // Lägger endast till dalar i listan                      
+                            topLocations[2].Add(Convert.ToDouble(i));
+                            topLocations[3].Add(measurements[i]);
+                        }
                     }
                 }
-                //Påväg nedåt
+                ////Vid topp
+                //else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                //{
+                //    if (upCounter > 15)
+                //    {
+                //        topLocations[0].Add(Convert.ToDouble(i));
+                //        topLocations[1].Add(measurements[i]);
+                //        upCounter = 0;
+                //        downCounter = 0;
+                //    }
+                //}
+                // Påväg nedåt och kanske vid topp
                 else if (measurements[i] > measurements[i + 1])
                 {
                     if (upCounter < 5)
@@ -284,19 +297,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         downCounter += 1;
                         upCounter = 0;
                     }
-                }
-                //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                {
-                    if (downCounter > 15)
+                    //Vid topp
+                    if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                     {
-                        upCounter = 0;
-                        downCounter = 0;
-                        // Lägger endast till dalar i listan                      
-                        topLocations[2].Add(Convert.ToDouble(i));
-                        topLocations[3].Add(measurements[i]);
+                        if (upCounter > 15)
+                        {
+                            topLocations[0].Add(Convert.ToDouble(i));
+                            topLocations[1].Add(measurements[i]);
+                            upCounter = 0;
+                            downCounter = 0;
                         }
+                    }
                 }
+                ////Vid dal
+                //else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                //{
+                //    if (downCounter > 15)
+                //    {
+                //        upCounter = 0;
+                //        downCounter = 0;
+                //        // Lägger endast till dalar i listan                      
+                //        topLocations[2].Add(Convert.ToDouble(i));
+                //        topLocations[3].Add(measurements[i]);
+                //        }
+                //}
             }
             return topLocations;
         }
