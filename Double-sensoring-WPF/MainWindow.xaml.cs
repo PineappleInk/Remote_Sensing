@@ -76,7 +76,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> calculatedBreaths = new List<double>();
 
         //Globala variabler
-        int samplesOfMeasurement = 900;
+        int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
 
@@ -478,9 +478,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
                             }
+                            
+                            // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+
+                            for (int i = 0; i < peaks[0].Count; ++i)
+                            {
+                                if (peaks[0][i] >= samplesForBreathAlarm)
+                                {
+                                    peaks[0].RemoveRange(0, i);
+                                    peaks[1].RemoveRange(0, i);
+                                }
+                            }
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
+                            average = peaks[0].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
@@ -488,21 +500,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                             breathingAlarm(average, lowNumBreathing);
-
-                            // Kontrollera om många peak-dal-avstånd i rad som är för låga
-                            // Detektion låg andning
-                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
-
-                            for (int i = 0; i < peaks[0].Count; ++i)
-                            {
-                                //if
-                            }
-                            //for (int j = 0; j > samplesOfMeasurement - samplesForBreathAlarm; ++j)
-                            //{
-                            //    double distanceBwPeaks = peaks[0][j] - peaks[2][j];
-                            //    //if (distanceBwPeaks < )
-
-                            //}
                         }
 
                         for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -822,10 +819,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 plottingAndCalculations("breathing", depthList);
                             }
-                            //if (listDepthMatlab.Count >= 300)
-                            //{
-                            //    listDepthMatlab.RemoveRange(0, 30);
-                            //}
                         }
                         catch (System.IndexOutOfRangeException)
                         {
@@ -857,6 +850,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             depthList.Clear();
             colorSensing.biglist.Clear();
         }
+
         //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.
         //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
         private void retrieveInputPulse_Click(object sender, RoutedEventArgs e)
@@ -864,8 +858,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 int inputnumber = Convert.ToInt32(inputTextPulse.Text);
+                Console.WriteLine(inputnumber);
                 if (inputnumber >= 30 && inputnumber <= 200)
                 {
+
+                    Console.WriteLine(inputnumber);
                     lowNumPulse = inputnumber;
                 }
                 else inputTextPulse.Text = Convert.ToString(lowNumPulse);
