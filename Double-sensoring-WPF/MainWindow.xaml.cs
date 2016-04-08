@@ -462,13 +462,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                 + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
+                            //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                             breathingAlarm(average, lowNumBreathing);
 
                             // Kontrollera om många peak-dal-avstånd i rad som är för låga
                             // Detektion låg andning
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
+                            for (int i = 0; i < peaks[0].Count; ++i)
+                            {
+                                //if
+                            }
                             //for (int j = 0; j > samplesOfMeasurement - samplesForBreathAlarm; ++j)
                             //{
                             //    double distanceBwPeaks = peaks[0][j] - peaks[2][j];
