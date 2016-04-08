@@ -260,11 +260,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    //if (downCounter < 5)
-                    //{
+                    if (downCounter < 5)
+                    {
                         upCounter += 1;
                         //downCounter = 0;
-                    //}
+                    }
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -280,12 +280,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    Console.WriteLine("På väg nedåt Breath");
-                //    if (upCounter < 5)
-                //    {
-                //        downCounter += 1;
-                //        upCounter = 0;
-                //    }
+                    if (upCounter < 5)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
                 }
             }
 
@@ -295,11 +294,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                  //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
                 {
-                    //if (upCounter < 5)
-                    //{
+                    if (upCounter < 5)
+                    {
                         downCounter += 1;
-                        //upCounter = 0;
-                    //}
+                        upCounter = 0;
+                    }
                 }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -316,17 +315,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 else if (measurements[i] < measurements[i + 1])
                 {
-                    Console.WriteLine("På väg uppåt Breath");
-
-                    //if (downCounter < 5)
-                    //{
-                    //    upCounter += 1;
-                    //    downCounter = 0;
-                    //    Console.WriteLine("Är i påväg uppåt");
-                    //}
+                    if (downCounter < 5)
+                    {
+                        upCounter += 1;
+                        downCounter = 0;
+                    }
                 }
             }
             return topLocations;
+        }
+
+        private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> valley)
+        {
+            List<List<double>> correctPeaks = new List<List<double>>();
+
+            //Jaja, jag arbetar på det ^^'
+
+            return correctPeaks;
         }
 
         //Lokalisera topparna i lista för puls
@@ -433,14 +438,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Beräknar ut pulsen över den valda beräkningstiden
                             int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
-                            for (int i = 0; i < peaks[0].Count; ++i)
-                            {
-                                if (peaks[0][i] >= measurementsFiltList.Count - samplesForPulseAlarm)
-                                {
-                                    peaks[0].RemoveRange(0, i);
-                                    peaks[1].RemoveRange(0, i);
-                                }
-                            }
+                            //for (int i = 0; i < peaks[0].Count; ++i)
+                            //{
+                            //    if (peaks[0][i] >= measurementsFiltList.Count - samplesForPulseAlarm)
+                            //    {
+                            //        peaks[0].RemoveRange(0, i);
+                            //        peaks[1].RemoveRange(0, i);
+                            //    }
+                            //}
                             //Average är antalet pulsslag under 60 sekunder
                             average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
@@ -497,14 +502,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                            for (int i = 0; i < peaks[2].Count; ++i)
-                            {
-                                if (peaks[2][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
-                                {
-                                    peaks[2].RemoveRange(0, i);
-                                    peaks[3].RemoveRange(0, i);
-                                }
-                            }
+                            //for (int i = 0; i < peaks[2].Count; ++i)
+                            //{
+                            //    if (peaks[2][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
+                            //    {
+                            //        peaks[2].RemoveRange(0, i);
+                            //        peaks[3].RemoveRange(0, i);
+                            //    }
+                            //}
 
                             // Average är antalet peakar i andningen under 60 sekunder.
                             average = peaks[2].Count() * 60 * fps / samplesForBreathAlarm;
