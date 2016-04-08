@@ -86,7 +86,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
-        int pulsWarningInSeconds = 10;
+        int pulseWarningInSeconds = 10;
 
         //Filter
         int orderOfFilter = 27;
@@ -345,11 +345,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    //if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
-                    //{
+                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    {
                         upCounter += 1;
                         downCounter = 0;
-                    //}
+                    }
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -365,13 +365,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    Console.WriteLine("På väg nedåt Pulse");
-
-                    //if (upCounter < 4)
-                    //{
-                    //    downCounter += 1;
-                    //    upCounter = 0;
-                    //}
+                    if (upCounter < 4)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
                 }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -402,7 +400,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (rgbList[1].Count >= samplesOfMeasurement + orderOfFilter)
                     {
-                        double pulsWarningOverSamples = pulsWarningInSeconds * fps;
+                        double pulsWarningOverSamples = pulseWarningInSeconds * fps;
 
                         // Filtrering
                         double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
@@ -432,6 +430,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
                             }
 
+                            // Beräknar ut pulsen över den valda beräkningstiden
+                            int samplesForPulseAlarm = pulseWarningInSeconds * fps;
+
+                            for (int i = 0; i < peaks[0].Count; ++i)
+                            {
+                                if (peaks[0][i] >= measurementsFiltList.Count - samplesForPulseAlarm)
+                                {
+                                    peaks[0].RemoveRange(0, i);
+                                    peaks[1].RemoveRange(0, i);
+                                }
+                            }
                             //Average är antalet pulsslag under 60 sekunder
                             average = peaks[0].Count() * 60 * fps / samplesOfMeasurement;
 
@@ -485,12 +494,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 chartBreath.AddPointToLine("Breathmarkers", peaks[3][i], peaks[2][i]);
                             }
                             
-                            // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                            // Beräknar ut andningsfrekvensen över den valda beräkningstiden
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                             for (int i = 0; i < peaks[2].Count; ++i)
                             {
-                                if (peaks[2][i] >= samplesForBreathAlarm)
+                                if (peaks[2][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
                                 {
                                     peaks[2].RemoveRange(0, i);
                                     peaks[3].RemoveRange(0, i);
