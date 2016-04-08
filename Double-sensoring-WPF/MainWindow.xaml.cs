@@ -477,7 +477,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                                 + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
-
+                            //Tar in larmgränsen och jämför med personens uppskattade puls.
                             pulseAlarm(average, lowNumPulse);
                         }
 
@@ -531,6 +531,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
                                 + Environment.NewLine + "Uppskattad BPM: " + average;
 
+                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                         breathingAlarm(average, lowNumBreathing);
 
                         // Kontrollera om många peakar i rad är för låga
@@ -899,7 +900,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             depthList.Clear();
             colorSensing.biglist.Clear();
         }
-
+        //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.
+        //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
         private void retrieveInputPulse_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -917,7 +919,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         
         }
-
+        //Funktionen ändrar gränsen för andningslarmet. Det finns ett satt tal från början som heter lowNumPulse.
+        //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
         private void retrieveInputBreathing_Click(object sender, RoutedEventArgs e)
         {
             try
