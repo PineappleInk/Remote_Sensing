@@ -249,10 +249,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
-            topLocations.Add(new List<double>()); //[1] Topparnas värden 
-            // Lägger även till dalar
-            topLocations.Add(new List<double>()); //[2] Dalarnas position
-            topLocations.Add(new List<double>()); //[3] Dalarnas värden
+            topLocations.Add(new List<double>()); //[1] Topparnas värden
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
@@ -263,7 +260,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         upCounter += 1;
                         downCounter = 0;
-                }
+                    }
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -283,48 +280,36 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         downCounter += 1;
                         upCounter = 0;
+                    }
                 }
             }
-                //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                {
-                    if (downCounter > 15)
-                    {
-                        upCounter = 0;
-                        downCounter = 0;
-                        // Lägger endast till dalar i listan                      
-                        topLocations[2].Add(Convert.ToDouble(i));
-                        topLocations[3].Add(measurements[i]);
-                        }
-                }
-                }
             return topLocations;
-            }
+        }
 
         // Lokalisera dalar i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
-        // [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        // [1] - värde i respektive position som innehåller dalar (alltså från tidsaxeln)
         private List<List<double>> locateBottomsBreath(List<double> measurements)
         {
             int upCounter = 0;
             int downCounter = 0;
             // Lista för dalar
             List<List<double>> bottomLocations = new List<List<double>>();
-            bottomLocations.Add(new List<double>()); //[0] Topparnas position
-            bottomLocations.Add(new List<double>()); //[1] Topparnas värden 
-            
+            bottomLocations.Add(new List<double>()); //[0] Dalarnas position
+            bottomLocations.Add(new List<double>()); //[1] Dalarnas värden 
+
             for (int i = 0; i < measurements.Count - 4; i++)
             {
                  //Påväg nedåt
-                else if (measurements[i] > measurements[i + 1])
+                if (measurements[i] > measurements[i + 1])
                 {
                     if (upCounter < 5)
                     {
                         downCounter += 1;
                         upCounter = 0;
+                    }
                 }
-                }
-              
+
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
@@ -342,7 +327,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (measurements[i] < measurements[i + 1])
                 {
                     if (downCounter < 5)
-                {
+                    {
                         upCounter += 1;
                         downCounter = 0;
                     }
@@ -351,11 +336,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return bottomLocations;
         }
 
-        private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> valley)
+        private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> vallies)
         {
             List<List<double>> correctPeaks = new List<List<double>>();
+            List<List<double>> peaksAndVallies = new List<List<double>>();
+            int peaksLength = peaks.Count;
+            int valliesLength = vallies.Count;
 
-            //Jaja, jag arbetar på det ^^'
+            for(int i = 0; i < peaks.Count; ++i)
+            {
+                    
+            }
 
             return correctPeaks;
         }
@@ -400,16 +391,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         downCounter += 1;
                         upCounter = 0;
-                    }
-                }
-                //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                {
-                    if (downCounter > 4)
-                    {
-                        // Reset
-                        upCounter = 0;
-                        downCounter = 0;
                     }
                 }
             }
@@ -524,21 +505,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 chartBreath.AddPointToLine("Breathmarkers", peaks[3][i], peaks[2][i]);
                             }
-                            
+
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                            //for (int i = 0; i < peaks[2].Count; ++i)
+                            //for (int i = 0; i < peaks[0].Count; ++i)
                             //{
-                            //    if (peaks[2][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
+                            //    if (peaks[0][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
                             //    {
-                            //        peaks[2].RemoveRange(0, i);
-                            //        peaks[3].RemoveRange(0, i);
+                            //        peaks[0].RemoveRange(0, i);
+                            //        peaks[1].RemoveRange(0, i);
                             //    }
                             //}
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaks[2].Count() * 60 * fps / samplesForBreathAlarm;
+                            average = peaks[0].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
