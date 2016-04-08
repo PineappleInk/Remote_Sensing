@@ -254,7 +254,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             topLocations.Add(new List<double>()); //[2] Dalarnas position
             topLocations.Add(new List<double>()); //[3] Dalarnas värden
 
-            /* Detektera toppar */
             for (int i = 0; i < measurements.Count - 4; i++)
             {
                 //Påväg uppåt
@@ -263,8 +262,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (downCounter < 5)
                     {
                         upCounter += 1;
-                        //downCounter = 0;
-                    }
+                        downCounter = 0;
+                }
                 }
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
@@ -284,22 +283,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         downCounter += 1;
                         upCounter = 0;
-                    }
                 }
             }
-
-            /* Detektera dalar */
-            for (int i = 0; i < measurements.Count - 4; i++)
-            {
-                 //Påväg nedåt
-                if (measurements[i] > measurements[i + 1])
-                {
-                    if (upCounter < 5)
-                    {
-                        downCounter += 1;
-                        upCounter = 0;
-                    }
-                }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
@@ -310,19 +295,60 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Lägger endast till dalar i listan                      
                         topLocations[2].Add(Convert.ToDouble(i));
                         topLocations[3].Add(measurements[i]);
+                        }
+                }
+                }
+            return topLocations;
+            }
+
+        // Lokalisera dalar i lista för andning
+        // Returvärdet är en lista med listor för [0] - positioner och 
+        // [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
+        private List<List<double>> locateBottomsBreath(List<double> measurements)
+        {
+            int upCounter = 0;
+            int downCounter = 0;
+            // Lista för dalar
+            List<List<double>> bottomLocations = new List<List<double>>();
+            bottomLocations.Add(new List<double>()); //[0] Topparnas position
+            bottomLocations.Add(new List<double>()); //[1] Topparnas värden 
+            
+            for (int i = 0; i < measurements.Count - 4; i++)
+            {
+                 //Påväg nedåt
+                else if (measurements[i] > measurements[i + 1])
+                {
+                    if (upCounter < 5)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                }
+                }
+              
+                //Vid dal
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (downCounter > 15)
+                    {
+                        upCounter = 0;
+                        downCounter = 0;
+                        // Lägger endast till dalar i listan                      
+                        bottomLocations[0].Add(Convert.ToDouble(i));
+                        bottomLocations[1].Add(measurements[i]);
                     }
                 }
+
                 //Påväg uppåt
-                else if (measurements[i] < measurements[i + 1])
+                if (measurements[i] < measurements[i + 1])
                 {
                     if (downCounter < 5)
-                    {
+                {
                         upCounter += 1;
                         downCounter = 0;
                     }
                 }
             }
-            return topLocations;
+            return bottomLocations;
         }
 
         private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> valley)
@@ -878,11 +904,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 int inputnumber = Convert.ToInt32(inputTextPulse.Text);
-                Console.WriteLine(inputnumber);
                 if (inputnumber >= 30 && inputnumber <= 200)
                 {
-
-                    Console.WriteLine(inputnumber);
                     lowNumPulse = inputnumber;
                 }
                 else inputTextPulse.Text = Convert.ToString(lowNumPulse);
