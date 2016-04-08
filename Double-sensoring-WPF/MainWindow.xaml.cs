@@ -339,14 +339,71 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> vallies)
         {
             List<List<double>> correctPeaks = new List<List<double>>();
-            List<List<double>> peaksAndVallies = new List<List<double>>();
-            int peaksLength = peaks.Count;
-            int valliesLength = vallies.Count;
+            correctPeaks.Add(new List<double>());
+            correctPeaks.Add(new List<double>());
 
-            for(int i = 0; i < peaks.Count; ++i)
+            List<List<double>> peaksAndVallies = new List<List<double>>();
+            peaksAndVallies.Add(new List<double>());
+            peaksAndVallies.Add(new List<double>());
+
+            int counter = 0;
+
+            if (peaks[0].Count > vallies[0].Count)
             {
-                    
+                for (int i = 0; i < peaks[0].Count;)
+                {
+                    if (counter != vallies[0].Count)
+                    {
+                        if (peaks[0][i] > vallies[0][counter++])
+                        {
+                            peaksAndVallies[0].Add(vallies[0][counter]);
+                            peaksAndVallies[1].Add(vallies[1][counter]);
+                            counter++;
+                        }
+                        else
+                        {
+                            peaksAndVallies[0].Add(peaks[0][i]);
+                            peaksAndVallies[0].Add(peaks[0][i]);
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        peaksAndVallies[0].Add(peaks[0][i]);
+                        peaksAndVallies[0].Add(peaks[0][i]);
+                        i++;
+                    }
+                }
             }
+            else
+            {
+                for (int i = 0; i < vallies[0].Count;)
+                {
+                    if (counter != peaks[0].Count)
+                    {
+                        if (peaks[0][i] > peaks[0][counter++])
+                        {
+                            peaksAndVallies[0].Add(peaks[0][counter]);
+                            peaksAndVallies[1].Add(peaks[1][counter]);
+                            counter++;
+                        }
+                        else
+                        {
+                            peaksAndVallies[0].Add(vallies[0][i]);
+                            peaksAndVallies[0].Add(vallies[0][i]);
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        peaksAndVallies[0].Add(vallies[0][i]);
+                        peaksAndVallies[0].Add(vallies[0][i]);
+                        i++;
+                    }
+                }
+            }
+            
+            // HÄR BÖR peaksAndVallies vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
             return correctPeaks;
         }
