@@ -263,7 +263,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //if (downCounter < 5)
                     //{
                         upCounter += 1;
-                        downCounter = 0;
+                        //downCounter = 0;
                     //}
                 }
                 //Vid topp
@@ -295,11 +295,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                  //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 5)
-                    {
+                    //if (upCounter < 5)
+                    //{
                         downCounter += 1;
-                        upCounter = 0;
-                    }
+                        //upCounter = 0;
+                    //}
                 }
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
