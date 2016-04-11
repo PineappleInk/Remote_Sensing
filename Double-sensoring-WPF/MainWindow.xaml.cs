@@ -331,7 +331,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-
             // Villkor för avgörande om för låg eller ej
             if (highEnough <= 1)
             { 
@@ -510,6 +509,52 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             return topLocations;
+        }
+
+        private List<List<double>> locateBottomsPulse(List<double> measurements)
+        {
+            List<List<double>> bottomLocations = new List<List<double>>();
+            bottomLocations.Add(new List<double>());
+            bottomLocations.Add(new List<double>());
+            int upCounter = 0;
+            int downCounter = 0;
+
+            for (int i = 0; i < measurements.Count - 4; i++)
+            {
+                //Påväg nedåt
+                if (measurements[i] > measurements[i + 1])
+                {
+                    if (upCounter < 4)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
+                }
+
+                //Vid dal
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (upCounter > 4)
+                    {
+                        bottomLocations[0].Add(Convert.ToDouble(i)); // Positionen på dalen läggs till i listan
+                        bottomLocations[1].Add(measurements[i]); // Värdet på dalen läggs till i listan
+                        upCounter = 0;
+                        downCounter = 0;
+                    }
+                }
+
+                //Påväg uppåt
+                else if (measurements[i] < measurements[i + 1])
+                {
+                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    {
+                        upCounter += 1;
+                        downCounter = 0;
+                    }
+                }                
+               
+            }
+            return bottomLocations;
         }
 
         /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
