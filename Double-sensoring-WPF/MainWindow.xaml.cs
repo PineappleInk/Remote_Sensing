@@ -77,7 +77,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /*Globala variabler*/
 
         // Info om mätdata
-        int samplesOfMeasurement = 300;
+        int samplesOfMeasurement = 600;
         int runPlotModulo = 5;
         int fps = 30;
 
@@ -88,6 +88,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
         int pulseWarningInSeconds = 10;
+
+        double minimiDepthBreath = 2;
 
         //Filter
         int orderOfFilter = 27;
@@ -287,6 +289,55 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
+        // Lokalisera dalar i lista för andning
+        // Returvärdet är en lista med listor för [0] - positioner och 
+        // [1] - värde i respektive position som innehåller dalar (alltså från tidsaxeln)
+        private List<List<double>> locateBottomsBreath(List<double> measurements)
+        {
+            int upCounter = 0;
+            int downCounter = 0;
+            // Lista för dalar
+            List<List<double>> bottomLocations = new List<List<double>>();
+            bottomLocations.Add(new List<double>()); //[0] Dalarnas position
+            bottomLocations.Add(new List<double>()); //[1] Dalarnas värden 
+
+            for (int i = 0; i < measurements.Count - 4; i++)
+            {
+                //Påväg nedåt
+                if (measurements[i] > measurements[i + 1])
+                {
+                    if (upCounter < 5)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
+                }
+
+                //Vid dal
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (downCounter > 15)
+                    {
+                        upCounter = 0;
+                        downCounter = 0;
+                        // Lägger endast till dalar i listan                      
+                        bottomLocations[0].Add(Convert.ToDouble(i));
+                        bottomLocations[1].Add(measurements[i]);
+                    }
+                }
+
+                //Påväg uppåt
+                else if (measurements[i] < measurements[i + 1])
+                {
+                    if (downCounter < 5)
+                    {
+                        upCounter += 1;
+                        downCounter = 0;
+                    }
+                }
+            }
+            return bottomLocations;
+        }
 
         // Avgör om larmet bör gå, p.g.a. för liten skillnad i bröstdjup
         private bool breathsTooLow(List<double> measurements)
@@ -367,58 +418,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return timeBwPeaks;
         }
 
-        // Lokalisera dalar i lista för andning
-        // Returvärdet är en lista med listor för [0] - positioner och 
-        // [1] - värde i respektive position som innehåller dalar (alltså från tidsaxeln)
-        private List<List<double>> locateBottomsBreath(List<double> measurements)
-        {
-            int upCounter = 0;
-            int downCounter = 0;
-            // Lista för dalar
-            List<List<double>> bottomLocations = new List<List<double>>();
-            bottomLocations.Add(new List<double>()); //[0] Dalarnas position
-            bottomLocations.Add(new List<double>()); //[1] Dalarnas värden 
-
-            for (int i = 0; i < measurements.Count - 4; i++)
-            {
-                //Påväg nedåt
-                if (measurements[i] > measurements[i + 1])
-                {
-                    if (upCounter < 5)
-                    {
-                        downCounter += 1;
-                        upCounter = 0;
-                    }
-                }
-
-                //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
-                {
-                    if (downCounter > 15)
-                    {
-                        upCounter = 0;
-                        downCounter = 0;
-                        // Lägger endast till dalar i listan                      
-                        bottomLocations[0].Add(Convert.ToDouble(i));
-                        bottomLocations[1].Add(measurements[i]);
-                    }
-                }
-
-                //Påväg uppåt
-                if (measurements[i] < measurements[i + 1])
-                {
-                    if (downCounter < 5)
-                    {
-                        upCounter += 1;
-                        downCounter = 0;
-                    }
-                }
-            }
-            return bottomLocations;
-        }
-
         private List<List<double>> correctPeaks(List<List<double>> peaks, List<List<double>> valleys, double minimiDepth)
         {
+            Console.WriteLine("Toppar: " + peaks[0].Count + " Dalar: " + valleys[0].Count);
+
             List<List<double>> correctPeaks = new List<List<double>>();
             correctPeaks.Add(new List<double>());
             correctPeaks.Add(new List<double>());
@@ -466,7 +469,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (counter != peaks[0].Count)
                     {
-                        if (peaks[0][i] > peaks[0][counter++])
+                        if (peaks[0][i] > valleys[0][counter])
                         {
                             peaksAndValleys[0].Add(peaks[0][counter]);
                             peaksAndValleys[1].Add(peaks[1][counter]);
@@ -490,7 +493,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-
+            Console.WriteLine("Längd: " + peaksAndValleys[0].Count);
+            for (int i = 0; i < peaksAndValleys[0].Count; ++i)
+            {
+                Console.WriteLine(i + " flagga: " + peaksAndValleys[2][i]);
+            }
             // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
             if (peaksAndValleys[2][0] == 1)
@@ -520,7 +527,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-
+            Console.WriteLine(correctPeaks[0].Count);
             return correctPeaks;
         }
 
@@ -709,6 +716,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
                         chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
+                        chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
                         chartBreath.ClearCurveDataPointsFromGraph();
 
                         double average = 0;
@@ -722,12 +730,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             valleys = locateBottomsBreath(measurementsFiltList);
 
                             List<List<double>> peaksFilt = new List<List<double>>();
-                            peaksFilt = correctPeaks(peaks, valleys, 2);
+                            peaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
 
                             // Rita ut peakar i andningen (= utandning)
-                            for (int i = 0; i < peaksFilt[0].Count(); i++)
+                            for (int i = 0; i < peaks[0].Count; i++)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", peaksFilt[1][i], peaksFilt[0][i]);
+                                chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
+                            }
+
+                            for (int i = 0; i < valleys[0].Count; i++)
+                            {
+                                chartBreath.AddPointToLine("Valleymarkers", valleys[1][i], valleys[0][i]);
                             }
 
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
