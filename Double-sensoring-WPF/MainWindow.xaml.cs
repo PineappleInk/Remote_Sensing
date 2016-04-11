@@ -300,8 +300,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int numOfxPosBreath = bottomsBreath[0].Count;
 
             // Största x-värde i respektive lista tas fram
-            double biggestxPosPeak = peaksBreath[0][numOfxPosPeaks];
-            double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks];
+            double biggestxPosPeak = peaksBreath[0][numOfxPosPeaks - 1];
+            double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks - 1];
 
             // Inställnignar
             double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
@@ -320,7 +320,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
                 {
                     if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
-                       (peaksBreath[0][i] - peaksBreath[0][i - 1]) > xMaximum)
+                       (peaksBreath[0][i] - peaksBreath[0][i-1]) < xMaximum)
                     {
                         ++highEnough;
                     }
@@ -332,7 +332,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Villkor för avgörande om för låg eller ej
             if (highEnough <= 1)
-            {
+            { 
                 return true; // 
             }
             else
@@ -493,11 +493,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
-            if (peaksAndValleys[0][0] == 1)
+            if (peaksAndValleys[2][0] == 1)
             {
-                if (peaksAndValleys[0][1] == 0)
+                if (peaksAndValleys[2][1] == 0)
                 {
-                    if (peaksAndValleys[1][0] > peaksAndValleys[1][1] + minimiDepth)
+                    if (peaksAndValleys[1][0] - peaksAndValleys[1][1] > minimiDepth)
                     {
                         correctPeaks[0].Add(peaksAndValleys[0][0]);
                         correctPeaks[1].Add(peaksAndValleys[1][0]);
@@ -507,11 +507,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 1; i < peaksAndValleys[0].Count - 1; ++i)
             {
-                if (peaksAndValleys[0][i] == 0)
+                if (peaksAndValleys[2][i] == 0)
                 {
-                    if (peaksAndValleys[0][i + 1] == 1)
+                    if (peaksAndValleys[2][i + 1] == 1)
                     {
-                        if (peaksAndValleys[1][i + 1] > peaksAndValleys[1][i] + minimiDepth)
+                        if (peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] > minimiDepth)
                         {
                             correctPeaks[0].Add(peaksAndValleys[0][i + 1]);
                             correctPeaks[1].Add(peaksAndValleys[1][i + 1]);
@@ -610,8 +610,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }
-
+                }                
+               
             }
             return bottomLocations;
         }
