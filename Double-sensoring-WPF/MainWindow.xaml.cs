@@ -308,7 +308,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
             double xTimeMax = 30; // Längsta tid [s] mellan två peakar
             double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
-            int timeLimit = 40; //Antal sekunder efter hur många larmet går
+            int timeLimit = breathingWarningInSeconds; //Antal sekunder efter hur många larmet går
             double sampleLimit = timeLimit * fps; //Antal sampel efter hur mångar larmet går
 
 
@@ -321,7 +321,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
                 {
                     if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
-                       (peaksBreath[0][i] - peaksBreath[0][i-1]) > xMaximum)
+                       (peaksBreath[0][i] - peaksBreath[0][i - 1]) > xMaximum)
                     {
                         ++highEnough;
                     }
@@ -333,7 +333,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Villkor för avgörande om för låg eller ej
             if (highEnough <= 1)
-            { 
+            {
                 return true; // 
             }
             else
@@ -355,7 +355,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             List<List<double>> timeBwPeaks = new List<List<double>>();
             timeBwPeaks.Add(new List<double>()); // Tiderna mellan topparna lagras
 
-            for (int i = 0; i < numOfPeaks ; ++i)
+            for (int i = 0; i < numOfPeaks; ++i)
             {
                 double timeBwTwoPeaks = (peaksBreath[0][i] - peaksBreath[0][i + 1]) / fps;
                 double timesTen = 10 * timeBwTwoPeaks;
@@ -382,7 +382,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
-                 //Påväg nedåt
+                //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
                 {
                     if (upCounter < 5)
@@ -502,19 +502,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         correctPeaks[0].Add(peaksAndValleys[0][0]);
                         correctPeaks[1].Add(peaksAndValleys[1][0]);
+                    }
                 }
             }
-            }
-            
+
             for (int i = 1; i < peaksAndValleys[0].Count - 1; ++i)
             {
                 if (peaksAndValleys[0][i] == 0)
                 {
-                    if (peaksAndValleys[0][i+1] == 1)
+                    if (peaksAndValleys[0][i + 1] == 1)
                     {
-                        if (peaksAndValleys[1][i+1] > peaksAndValleys[1][i] + minimiDepth)
+                        if (peaksAndValleys[1][i + 1] > peaksAndValleys[1][i] + minimiDepth)
                         {
-                            correctPeaks[0].Add(peaksAndValleys[0][i+1]);
+                            correctPeaks[0].Add(peaksAndValleys[0][i + 1]);
                             correctPeaks[1].Add(peaksAndValleys[1][i + 1]);
                             ++i;
                         }
@@ -611,8 +611,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }                
-               
+                }
+
             }
             return bottomLocations;
         }
