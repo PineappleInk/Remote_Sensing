@@ -75,7 +75,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> depthList = new List<double>();
         List<double> calculatedBreaths = new List<double>();
 
-        //Globala variabler
+        /*Globala variabler*/
+
+        // Info om mätdata
         int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
@@ -286,6 +288,61 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
+
+        // Avgör om larmet bör gå, p.g.a. för liten skillnad i bröstdjup
+        private bool breathsTooLow(List<double> measurements)
+        {
+            // Toppar och dalar/bottnar i andningsdjupet
+            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+            List<List<double>> bottomsBreath = locateBottomsBreath(measurements); // [0]=xPos, [1]=yPos
+
+            // Antal peakar respektive dalar
+            int numOfxPosPeaks = peaksBreath[0].Count;
+            int numOfxPosBreath = bottomsBreath[0].Count;
+
+            // Största x-värde i respektive lista tas fram
+            double biggestxPosPeak = peaksBreath[0][numOfxPosPeaks];
+            double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks];
+
+            // Inställnignar
+            double heightLimit = 1;
+            double xTimeMax = 30; // Längsta tid [s] mellan två peakar
+            double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
+            int timeLimit = 40; //Antal sekunder efter hur många larmet går
+            double sampleLimit = timeLimit * fps; //Antal sampel efter hur mångar larmet går
+
+
+            /* Kod för kontroll */
+            int highEnough = 0;
+            int tooLow = 0;
+            // if:en gör kontroll på att det finns peakar och dalar efter sampleLimit
+            if (biggestxPosPeak > sampleLimit && biggestxPosBottom > sampleLimit)
+            {
+                for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
+                {
+                    if (peaksBreath[0][i] - bottomsBreath[0][i] > heightLimit &&
+                       (peaksBreath[0][i] - peaksBreath[0][i-1]) > xMaximum)
+                    {
+                        ++highEnough;
+                    }
+                    else
+                    {
+                        ++tooLow;
+                    }
+                }
+            }
+
+            // Villkor för avgörande om för låg eller ej
+            if (highEnough <= 1)
+            { 
+                return true; // 
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         // Lokalisera dalar i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
         // [1] - värde i respektive position som innehåller dalar (alltså från tidsaxeln)
@@ -300,7 +357,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
-                 //Påväg nedåt
+                //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
                 {
                     if (upCounter < 5)
@@ -335,6 +392,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             return bottomLocations;
         }
+
 
         private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> vallies)
         {
@@ -402,7 +460,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-            
+
             // HÄR BÖR peaksAndVallies vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
             return correctPeaks;
