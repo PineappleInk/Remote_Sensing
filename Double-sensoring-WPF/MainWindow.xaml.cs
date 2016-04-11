@@ -396,16 +396,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     if (downCounter > 15)
                     {
-                        upCounter = 0;
-                        downCounter = 0;
                         // Lägger endast till dalar i listan                      
                         bottomLocations[0].Add(Convert.ToDouble(i));
                         bottomLocations[1].Add(measurements[i]);
+                        // Reset
+                        upCounter = 0;
+                        downCounter = 0;            
                     }
                 }
 
                 //Påväg uppåt
-                if (measurements[i] < measurements[i + 1])
+                else if (measurements[i] < measurements[i + 1])
                 {
                     if (downCounter < 5)
                     {
