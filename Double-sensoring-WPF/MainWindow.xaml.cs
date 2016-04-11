@@ -357,14 +357,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < numOfPeaks ; ++i)
             {
-                timeBwPeaks[0][i]= peaksBreath[0][i] - peaksBreath[0][i+1];
+                double timeBwTwoPeaks = (peaksBreath[0][i] - peaksBreath[0][i + 1]) / fps;
+                double timesTen = 10 * timeBwTwoPeaks;
+                double rounded = Math.Round(timesTen);
+                double dividedByTen = rounded / 10;
+                timeBwPeaks[0][i] = dividedByTen;
             }
 
-            // Tiden mellan alla toppar returneras i lista
+            // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
             return timeBwPeaks;
         }
-
-
 
         // Lokalisera dalar i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
