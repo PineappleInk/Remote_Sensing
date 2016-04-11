@@ -59,7 +59,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private BodySensing bodySensning;
 
         ////----------------------------------------Våra egna---------------------
-        ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
