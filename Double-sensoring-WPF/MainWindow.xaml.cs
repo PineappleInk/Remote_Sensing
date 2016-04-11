@@ -59,7 +59,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private BodySensing bodySensning;
 
         ////----------------------------------------Våra egna---------------------
-        ///Matlab-variabler
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
@@ -321,7 +320,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
                 {
                     if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
-                       (peaksBreath[0][i] - peaksBreath[0][i - 1]) > xMaximum)
+                       (peaksBreath[0][i] - peaksBreath[0][i-1]) < xMaximum)
                     {
                         ++highEnough;
                     }
@@ -333,7 +332,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Villkor för avgörande om för låg eller ej
             if (highEnough <= 1)
-            {
+            { 
                 return true; // 
             }
             else
@@ -611,8 +610,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }
-
+                }                
+               
             }
             return bottomLocations;
         }
