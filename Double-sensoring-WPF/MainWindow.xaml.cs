@@ -75,7 +75,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         List<double> depthList = new List<double>();
         List<double> calculatedBreaths = new List<double>();
 
-        //Globala variabler
+        /*Globala variabler*/
+
+        // Info om mätdata
         int samplesOfMeasurement = 300;
         int runPlotModulo = 5;
         int fps = 30;
@@ -286,6 +288,86 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return topLocations;
         }
 
+
+        // Avgör om larmet bör gå, p.g.a. för liten skillnad i bröstdjup
+        private bool breathsTooLow(List<double> measurements)
+        {
+            // Toppar och dalar/bottnar i andningsdjupet
+            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+            List<List<double>> bottomsBreath = locateBottomsBreath(measurements); // [0]=xPos, [1]=yPos
+
+            // Antal peakar respektive dalar
+            int numOfxPosPeaks = peaksBreath[0].Count;
+            int numOfxPosBreath = bottomsBreath[0].Count;
+
+            // Största x-värde i respektive lista tas fram
+            double biggestxPosPeak = peaksBreath[0][numOfxPosPeaks];
+            double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks];
+
+            // Inställnignar
+            double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
+            double xTimeMax = 30; // Längsta tid [s] mellan två peakar
+            double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
+            int timeLimit = 40; //Antal sekunder efter hur många larmet går
+            double sampleLimit = timeLimit * fps; //Antal sampel efter hur mångar larmet går
+
+
+            /* Kod för kontroll */
+            int highEnough = 0;
+            int tooLow = 0;
+            // if:en gör kontroll på att det finns peakar och dalar efter sampleLimit
+            if (biggestxPosPeak > sampleLimit && biggestxPosBottom > sampleLimit)
+            {
+                for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
+                {
+                    if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
+                       (peaksBreath[0][i] - peaksBreath[0][i-1]) > xMaximum)
+                    {
+                        ++highEnough;
+                    }
+                    else
+                    {
+                        ++tooLow;
+                    }
+                }
+            }
+            // Villkor för avgörande om för låg eller ej
+            if (highEnough <= 1)
+            { 
+                return true; // 
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
+        private List<List<double>> timeBetweenAllPeaks(List<double> measurements)
+        {
+            // Toppar i andningsdjupet
+            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+
+            // Antal peakar
+            int numOfPeaks = peaksBreath[0].Count;
+
+            // Tiderna mellan topparna - Ny lista
+            List<List<double>> timeBwPeaks = new List<List<double>>();
+            timeBwPeaks.Add(new List<double>()); // Tiderna mellan topparna lagras
+
+            for (int i = 0; i < numOfPeaks ; ++i)
+            {
+                double timeBwTwoPeaks = (peaksBreath[0][i] - peaksBreath[0][i + 1]) / fps;
+                double timesTen = 10 * timeBwTwoPeaks;
+                double rounded = Math.Round(timesTen);
+                double dividedByTen = rounded / 10;
+                timeBwPeaks[0][i] = dividedByTen;
+            }
+
+            // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
+            return timeBwPeaks;
+        }
+
         // Lokalisera dalar i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
         // [1] - värde i respektive position som innehåller dalar (alltså från tidsaxeln)
@@ -420,10 +502,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         correctPeaks[0].Add(peaksAndValleys[0][0]);
                         correctPeaks[1].Add(peaksAndValleys[1][0]);
-                    }
                 }
             }
-
+            }
+            
             for (int i = 1; i < peaksAndValleys[0].Count - 1; ++i)
             {
                 if (peaksAndValleys[0][i] == 0)
@@ -487,6 +569,52 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             return topLocations;
+        }
+
+        private List<List<double>> locateBottomsPulse(List<double> measurements)
+        {
+            List<List<double>> bottomLocations = new List<List<double>>();
+            bottomLocations.Add(new List<double>());
+            bottomLocations.Add(new List<double>());
+            int upCounter = 0;
+            int downCounter = 0;
+
+            for (int i = 0; i < measurements.Count - 4; i++)
+            {
+                //Påväg nedåt
+                if (measurements[i] > measurements[i + 1])
+                {
+                    if (upCounter < 4)
+                    {
+                        downCounter += 1;
+                        upCounter = 0;
+                    }
+                }
+
+                //Vid dal
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                {
+                    if (upCounter > 4)
+                    {
+                        bottomLocations[0].Add(Convert.ToDouble(i)); // Positionen på dalen läggs till i listan
+                        bottomLocations[1].Add(measurements[i]); // Värdet på dalen läggs till i listan
+                        upCounter = 0;
+                        downCounter = 0;
+                    }
+                }
+
+                //Påväg uppåt
+                else if (measurements[i] < measurements[i + 1])
+                {
+                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    {
+                        upCounter += 1;
+                        downCounter = 0;
+                    }
+                }                
+               
+            }
+            return bottomLocations;
         }
 
         /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
