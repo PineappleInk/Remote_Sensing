@@ -305,7 +305,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks];
 
             // Inställnignar
-            double heightLimit = 1;
+            double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
             double xTimeMax = 30; // Längsta tid [s] mellan två peakar
             double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
             int timeLimit = 40; //Antal sekunder efter hur många larmet går
@@ -320,7 +320,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
                 {
-                    if (peaksBreath[0][i] - bottomsBreath[0][i] > heightLimit &&
+                    if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
                        (peaksBreath[0][i] - peaksBreath[0][i-1]) > xMaximum)
                     {
                         ++highEnough;
@@ -341,6 +341,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 return false;
             }
         }
+
+        // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
+        private List<List<double>> timeBetweenAllPeaks(List<double> measurements)
+        {
+            // Toppar i andningsdjupet
+            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+
+            // Antal peakar
+            int numOfPeaks = peaksBreath[0].Count;
+
+            // Tiderna mellan topparna - Ny lista
+            List<List<double>> timeBwPeaks = new List<List<double>>();
+            timeBwPeaks.Add(new List<double>()); // Tiderna mellan topparna lagras
+
+            for (int i = 0; i < numOfPeaks ; ++i)
+            {
+                timeBwPeaks[0][i]= peaksBreath[0][i] - peaksBreath[0][i+1];
+            }
+
+            // Tiden mellan alla toppar returneras i lista
+            return timeBwPeaks;
+        }
+
+
 
         // Lokalisera dalar i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
