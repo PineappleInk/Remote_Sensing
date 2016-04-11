@@ -336,74 +336,109 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return bottomLocations;
         }
 
-        private List<List<double>> correctPeaksBreath(List<List<double>> peaks, List<List<double>> vallies)
+        private List<List<double>> correctPeaks(List<List<double>> peaks, List<List<double>> valleys, double minimiDepth)
         {
             List<List<double>> correctPeaks = new List<List<double>>();
             correctPeaks.Add(new List<double>());
             correctPeaks.Add(new List<double>());
 
-            List<List<double>> peaksAndVallies = new List<List<double>>();
-            peaksAndVallies.Add(new List<double>());
-            peaksAndVallies.Add(new List<double>());
+            List<List<double>> peaksAndValleys = new List<List<double>>();
+            peaksAndValleys.Add(new List<double>());
+            peaksAndValleys.Add(new List<double>());
+            peaksAndValleys.Add(new List<double>()); // 0 = dal, 1 = topp
 
             int counter = 0;
 
-            if (peaks[0].Count > vallies[0].Count)
+            if (peaks[0].Count > valleys[0].Count)
             {
                 for (int i = 0; i < peaks[0].Count;)
                 {
-                    if (counter != vallies[0].Count)
+                    if (counter != valleys[0].Count)
                     {
-                        if (peaks[0][i] > vallies[0][counter++])
+                        if (peaks[0][i] > valleys[0][counter])
                         {
-                            peaksAndVallies[0].Add(vallies[0][counter]);
-                            peaksAndVallies[1].Add(vallies[1][counter]);
+                            peaksAndValleys[0].Add(valleys[0][counter]);
+                            peaksAndValleys[1].Add(valleys[1][counter]);
+                            peaksAndValleys[2].Add(0);
                             counter++;
                         }
                         else
                         {
-                            peaksAndVallies[0].Add(peaks[0][i]);
-                            peaksAndVallies[0].Add(peaks[0][i]);
+                            peaksAndValleys[0].Add(peaks[0][i]);
+                            peaksAndValleys[1].Add(peaks[0][i]);
+                            peaksAndValleys[2].Add(1);
                             i++;
                         }
                     }
                     else
                     {
-                        peaksAndVallies[0].Add(peaks[0][i]);
-                        peaksAndVallies[0].Add(peaks[0][i]);
+                        peaksAndValleys[0].Add(peaks[0][i]);
+                        peaksAndValleys[1].Add(peaks[1][i]);
+                        peaksAndValleys[2].Add(1);
                         i++;
                     }
                 }
             }
             else
             {
-                for (int i = 0; i < vallies[0].Count;)
+                for (int i = 0; i < valleys[0].Count;)
                 {
                     if (counter != peaks[0].Count)
                     {
                         if (peaks[0][i] > peaks[0][counter++])
                         {
-                            peaksAndVallies[0].Add(peaks[0][counter]);
-                            peaksAndVallies[1].Add(peaks[1][counter]);
+                            peaksAndValleys[0].Add(peaks[0][counter]);
+                            peaksAndValleys[1].Add(peaks[1][counter]);
+                            peaksAndValleys[2].Add(1);
                             counter++;
                         }
                         else
                         {
-                            peaksAndVallies[0].Add(vallies[0][i]);
-                            peaksAndVallies[0].Add(vallies[0][i]);
+                            peaksAndValleys[0].Add(valleys[0][i]);
+                            peaksAndValleys[1].Add(valleys[1][i]);
+                            peaksAndValleys[2].Add(0);
                             i++;
                         }
                     }
                     else
                     {
-                        peaksAndVallies[0].Add(vallies[0][i]);
-                        peaksAndVallies[0].Add(vallies[0][i]);
+                        peaksAndValleys[0].Add(valleys[0][i]);
+                        peaksAndValleys[1].Add(valleys[1][i]);
+                        peaksAndValleys[2].Add(0);
                         i++;
                     }
                 }
             }
-            
-            // HÄR BÖR peaksAndVallies vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
+
+            // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
+
+            if (peaksAndValleys[0][0] == 1)
+            {
+                if (peaksAndValleys[0][1] == 0)
+                {
+                    if (peaksAndValleys[1][0] > peaksAndValleys[1][1] + minimiDepth)
+                    {
+                        correctPeaks[0].Add(peaksAndValleys[0][0]);
+                        correctPeaks[1].Add(peaksAndValleys[1][0]);
+                    }
+                }
+            }
+
+            for (int i = 1; i < peaksAndValleys[0].Count - 1; ++i)
+            {
+                if (peaksAndValleys[0][i] == 0)
+                {
+                    if (peaksAndValleys[0][i+1] == 1)
+                    {
+                        if (peaksAndValleys[1][i+1] > peaksAndValleys[1][i] + minimiDepth)
+                        {
+                            correctPeaks[0].Add(peaksAndValleys[0][i+1]);
+                            correctPeaks[1].Add(peaksAndValleys[1][i + 1]);
+                            ++i;
+                        }
+                    }
+                }
+            }
 
             return correctPeaks;
         }
@@ -555,31 +590,36 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         if (measurementsFiltList.Count > 10)
                         {
                             List<List<double>> peaks = new List<List<double>>();
+                            List<List<double>> valleys = new List<List<double>>();
                             peaks = locatePeaksBreath(measurementsFiltList);
+                            valleys = locateBottomsBreath(measurementsFiltList);
+
+                            List<List<double>> peaksFilt = new List<List<double>>();
+                            peaksFilt = correctPeaks(peaks, valleys, 2);
 
                             // Rita ut peakar i andningen (= utandning)
-                            for (int i = 0; i < peaks[2].Count(); i++)
+                            for (int i = 0; i < peaksFilt[0].Count(); i++)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", peaks[3][i], peaks[2][i]);
+                                chartBreath.AddPointToLine("Breathmarkers", peaksFilt[1][i], peaksFilt[0][i]);
                             }
 
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                            //for (int i = 0; i < peaks[0].Count; ++i)
+                            //for (int i = 0; i < peaksFilt[0].Count; ++i)
                             //{
-                            //    if (peaks[0][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
+                            //    if (peaksFilt[0][i] >= measurementsFiltList.Count - samplesForBreathAlarm)
                             //    {
-                            //        peaks[0].RemoveRange(0, i);
-                            //        peaks[1].RemoveRange(0, i);
+                            //        peaksFilt[0].RemoveRange(0, i);
+                            //        peaksFilt[1].RemoveRange(0, i);
                             //    }
                             //}
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaks[0].Count() * 60 * fps / samplesForBreathAlarm;
+                            average = peaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
-                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaks[0].Count()
+                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
                                 + Environment.NewLine + "Uppskattad BPM: " + average;
 
                             //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
