@@ -46,14 +46,14 @@
         <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="2" Grid.Row="2" Margin="217.5,9.5,0,0" TextWrapping="Wrap" Text="Andningsfrekvens:" Height="56" VerticalAlignment="Top" HorizontalAlignment="Left" Width="134"/>
         <TextBlock x:Name="informationTextPulse" Grid.Column="2" Grid.Row="2" Margin="16.5,0.5,0,0" TextWrapping="Wrap" Background="White" Height="43" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
         <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Grid.Row="2" Margin="16.5,103.5,0,0" TextWrapping="Wrap" Height="53" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-        <TextBlock x:Name="textBlockSound" Grid.Column="2" Grid.Row="2" Margin="283.5,173.5,0,0" TextWrapping="Wrap" Text="Ljud för larm" Height="3" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76"/>
+        <TextBlock x:Name="textBlockSound" Grid.Column="2" Grid.Row="2" Margin="351.5,72.5,0,0" TextWrapping="Wrap" Text="Ljud för larm" Height="32" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76"/>
         <TextBox x:Name="inputTextPulse" Grid.Column="2" Grid.Row="2" Margin="46.5,43.5,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="73"/>
         <TextBox x:Name="inputTextBreathing" Grid.Column="2" Grid.Row="2" Margin="46.5,142.5,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="73"/>
 
         <Button x:Name="button" Content="Clear Lists" Margin="46.5,211.5,0,0" Click="button_Click" Grid.Column="2" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
         <Button x:Name="retrieveInputPulse" Content="Enter Pulse" Grid.Column="2" Grid.Row="2" Margin="46.5,74.5,0,0" Click="retrieveInputPulse_Click" RenderTransformOrigin="0.5,0.5" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
         <Button x:Name="retrieveInputBreathing" Content="Enter Breathing" Grid.Column="2" Grid.Row="2" Margin="46.5,173.5,0,0" Click="retrieveInputBreathing_Click" RenderTransformOrigin="0.5,0.5" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
-        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="2" Grid.Row="2" Margin="360.5,175.5,0,0" RenderTransformOrigin="0.452,0.469" IsChecked="False" Height="1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="18"/>
+        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="2" Grid.Row="2" Margin="375.5,104.5,0,0" RenderTransformOrigin="0.452,0.469" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
 
     </Grid>
 </Window>
