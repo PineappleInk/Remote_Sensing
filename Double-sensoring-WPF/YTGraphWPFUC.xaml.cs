@@ -47,7 +47,7 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 900; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
@@ -89,6 +89,15 @@ namespace Module_Graphs
                 s.MarkerStyle = MarkerStyle.Cross;
                 s.MarkerSize = 10;
                 s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
+                s.BorderWidth = 3;
+            }
+            else if (strUnit == "valleyMarker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Diamond;
+                s.MarkerSize = 10;
+                s.Color = System.Drawing.Color.FromArgb(255, 255, 255, 0);
                 s.BorderWidth = 3;
             }
             else
