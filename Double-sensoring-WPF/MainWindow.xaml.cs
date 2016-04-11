@@ -420,8 +420,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private List<List<double>> correctPeaks(List<List<double>> peaks, List<List<double>> valleys, double minimiDepth)
         {
-            Console.WriteLine("Toppar: " + peaks[0].Count + " Dalar: " + valleys[0].Count);
-
             List<List<double>> correctPeaks = new List<List<double>>();
             correctPeaks.Add(new List<double>());
             correctPeaks.Add(new List<double>());
