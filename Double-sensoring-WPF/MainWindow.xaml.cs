@@ -340,56 +340,53 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         // Avgör om larmet bör gå, p.g.a. för liten skillnad i bröstdjup
-        private bool breathsTooLow(List<double> measurements)
+        private List<List<double>> correctPeaks2(List<List<double>> peaks, List<List<double>> valleys)
         {
-            // Toppar och dalar/bottnar i andningsdjupet
-            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
-            List<List<double>> bottomsBreath = locateBottomsBreath(measurements); // [0]=xPos, [1]=yPos
-
             // Antal peakar respektive dalar
-            int numOfxPosPeaks = peaksBreath[0].Count;
-            int numOfxPosBreath = bottomsBreath[0].Count;
+            int numOfxPosPeaks = peaks[0].Count;
+            int numOfxPosBreath = valleys[0].Count;
+            // Sista position i vektor, i någon av x-listorna
+            int minNumOfxPos = Math.Min(numOfxPosPeaks, numOfxPosBreath);
 
             // Största x-värde i respektive lista tas fram
-            double biggestxPosPeak = peaksBreath[0][numOfxPosPeaks - 1];
-            double biggestxPosBottom = bottomsBreath[0][numOfxPosPeaks - 1];
+            double biggestxPosPeak = peaks[0][numOfxPosPeaks - 1];
+            double biggestxPosBottom = valleys[0][numOfxPosPeaks - 1];
 
             // Inställnignar
             double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
             double xTimeMax = 30; // Längsta tid [s] mellan två peakar
             double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
             int timeLimit = breathingWarningInSeconds; //Antal sekunder efter hur många larmet går
-            double sampleLimit = timeLimit * fps; //Antal sampel efter hur mångar larmet går
+            double sampleLimit = timeLimit * fps; //Antal sampel efter hur många larmet går
 
 
             /* Kod för kontroll */
-            int highEnough = 0;
-            int tooLow = 0;
+            //int highEnough = 0;
+            //int tooLow = 0;
+
+            //Korekta peakar som ska detekteras
+            List<List<double>> correctPeaks = new List<List<double>>();
+            correctPeaks.Add(new List<double>());
+            correctPeaks.Add(new List<double>());
+
             // if:en gör kontroll på att det finns peakar och dalar efter sampleLimit
             if (biggestxPosPeak > sampleLimit && biggestxPosBottom > sampleLimit)
             {
-                for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
+                for (int i = 1; i < minNumOfxPos ; ++i)
                 {
-                    if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
-                       (peaksBreath[0][i] - peaksBreath[0][i-1]) < xMaximum)
+                    if (peaks[1][i] - valleys[1][i] > heightLimit &&
+                       (peaks[0][i] - peaks[0][i - 1]) < xMaximum)
                     {
-                        ++highEnough;
-                    }
-                    else
-                    {
-                        ++tooLow;
-                    }
+                        correctPeaks[0].Add(peaks[0][i]); //x-värde
+                        correctPeaks[1].Add(peaks[1][i]); //y-värde
                 }
             }
-            // Villkor för avgörande om för låg eller ej
-            if (highEnough <= 1)
-            { 
-                return true; // 
             }
             else
             {
-                return false;
+                Console.WriteLine("Inte tillräckligt lång lista i funktion correctPeaks2");
             }
+            return correctPeaks;
         }
 
         // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
@@ -436,28 +433,28 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                    peaksAndValleys[2].Add(0);
+                            peaksAndValleys[2].Add(0);
                     j++;
-                }
+                        }
                 else if (j == valleys[0].Count)
-                {
-                    peaksAndValleys[0].Add(peaks[0][i]);
+                        {
+                            peaksAndValleys[0].Add(peaks[0][i]);
                     peaksAndValleys[1].Add(peaks[1][i]);
-                    peaksAndValleys[2].Add(1);
-                    i++;
-                }
+                            peaksAndValleys[2].Add(1);
+                            i++;
+                        }
                 else if (peaks[0][i] < valleys[0][j])
-                {
-                    peaksAndValleys[0].Add(peaks[0][i]);
-                    peaksAndValleys[1].Add(peaks[1][i]);
-                    peaksAndValleys[2].Add(1);
-                    i++;
-                }
+                    {
+                        peaksAndValleys[0].Add(peaks[0][i]);
+                        peaksAndValleys[1].Add(peaks[1][i]);
+                        peaksAndValleys[2].Add(1);
+                        i++;
+                    }
                 else
-                {
+            {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                    peaksAndValleys[2].Add(0);
+                        peaksAndValleys[2].Add(0);
                     j++;
                 }
             }
@@ -700,18 +697,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaks = locatePeaksBreath(measurementsFiltList);
                             valleys = locateBottomsBreath(measurementsFiltList);
 
-                            List<List<double>> peaksFilt = new List<List<double>>();
-                            peaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
+                            // Korrekta toppar
+                            List<List<double>> breathPeaksFilt = new List<List<double>>();
+                            //peaksFilt = correctPeaks(peaks, valleys, 2);
+                            breathPeaksFilt = correctPeaks2(peaks, valleys);
 
                             // Rita ut peakar i andningen (= utandning)
-                            for (int i = 0; i < peaks[0].Count; i++)
+                            for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", peaks[1][i], peaks[0][i]);
-                            }
-
-                            for (int i = 0; i < valleys[0].Count; i++)
-                            {
-                                chartBreath.AddPointToLine("Valleymarkers", valleys[1][i], valleys[0][i]);
+                                chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i]);
                             }
 
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
@@ -727,10 +721,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //}
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = peaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
+                            average = breathPeaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
 
                             // Ritar ut andningspeakar i programmet
-                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
+                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
                                 + Environment.NewLine + "Uppskattad BPM: " + average;
 
                             //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
