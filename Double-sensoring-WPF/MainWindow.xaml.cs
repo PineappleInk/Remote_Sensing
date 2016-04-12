@@ -420,7 +420,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Console.WriteLine("Heart-rate-variability:");
             for (int i = 0; i <= timeBwPeaks.Count; ++i)
             {
-                Console.WriteLine("Tid" + 1 + ":" + timeBwPeaks[i]);
+                Console.WriteLine("Tid" + i + ":" + timeBwPeaks[i]);
             }
             // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
             return timeBwPeaks;
@@ -633,6 +633,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             List<List<double>> peaks = new List<List<double>>();
                             peaks = locatePeaksPulse(measurementsFiltList);
+
+                            // TEST heart-rate-variability /Lina
+                            List<double> heartRateVariability = timeBetweenAllPeaks(peaks);
+
 
                             for (int i = 0; i < peaks[0].Count(); i++)
                             {
