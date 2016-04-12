@@ -37,7 +37,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Paramteter for position of bellyJoint
         /// </summary>
-        private double bellyJointYPosition = 1/2.1; //Närmare 1 flyttar punkten nedåt
+        private double bellyJointYPosition = 1 / 2.1; //Närmare 1 flyttar punkten nedåt
         private double bellyJointXPosition = 1;
         //double heartrate = 0;
         //double average = 0;
@@ -416,6 +416,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 timeBwPeaks[i] = dividedByTen;
             }
 
+            //TEST
+            Console.WriteLine("Heart-rate-variability:");
+            for (int i = 0; i <= timeBwPeaks.Count; ++i)
+            {
+                Console.WriteLine("Tid" + 1 + ":" + timeBwPeaks[i]);
+            }
             // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
             return timeBwPeaks;
         }
