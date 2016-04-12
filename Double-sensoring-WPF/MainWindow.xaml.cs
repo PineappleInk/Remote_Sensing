@@ -420,6 +420,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private List<List<double>> correctPeaks(List<List<double>> peaks, List<List<double>> valleys, double minimiDepth)
         {
+            Console.WriteLine("Toppar: " + peaks[0].Count + " Dalar: " + valleys[0].Count);
             List<List<double>> correctPeaks = new List<List<double>>();
             correctPeaks.Add(new List<double>());
             correctPeaks.Add(new List<double>());
@@ -429,73 +430,45 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             peaksAndValleys.Add(new List<double>());
             peaksAndValleys.Add(new List<double>()); // 0 = dal, 1 = topp
 
-            int counter = 0;
+            for (int i = 0, j = 0; i < peaks[0].Count || j < valleys[0].Count;)
+            {
+                if (i == peaks[0].Count)
+                {
+                    peaksAndValleys[0].Add(valleys[0][j]);
+                    peaksAndValleys[1].Add(valleys[1][j]);
+                    peaksAndValleys[2].Add(0);
+                    j++;
+                }
+                else if (j == valleys[0].Count)
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
+                    peaksAndValleys[1].Add(peaks[1][i]);
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
+                else if (peaks[0][i] < valleys[0][j])
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
+                    peaksAndValleys[1].Add(peaks[1][i]);
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
+                else
+                {
+                    peaksAndValleys[0].Add(valleys[0][j]);
+                    peaksAndValleys[1].Add(valleys[1][j]);
+                    peaksAndValleys[2].Add(0);
+                    j++;
+                }
+            }
 
-            if (peaks[0].Count > valleys[0].Count)
+            //TEST
+
+            for (int i = 0; i < peaksAndValleys[2].Count; ++i)
             {
-                for (int i = 0; i < peaks[0].Count;)
-                {
-                    if (counter != valleys[0].Count)
-                    {
-                        if (peaks[0][i] > valleys[0][counter])
-                        {
-                            peaksAndValleys[0].Add(valleys[0][counter]);
-                            peaksAndValleys[1].Add(valleys[1][counter]);
-                            peaksAndValleys[2].Add(0);
-                            counter++;
-                        }
-                        else
-                        {
-                            peaksAndValleys[0].Add(peaks[0][i]);
-                            peaksAndValleys[1].Add(peaks[0][i]);
-                            peaksAndValleys[2].Add(1);
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        peaksAndValleys[0].Add(peaks[0][i]);
-                        peaksAndValleys[1].Add(peaks[1][i]);
-                        peaksAndValleys[2].Add(1);
-                        i++;
-                    }
-                }
+                Console.WriteLine("Index: " + i + " värde: " + peaksAndValleys[2][i]);
             }
-            else
-            {
-                for (int i = 0; i < valleys[0].Count;)
-                {
-                    if (counter != peaks[0].Count)
-                    {
-                        if (peaks[0][i] > valleys[0][counter])
-                        {
-                            peaksAndValleys[0].Add(peaks[0][counter]);
-                            peaksAndValleys[1].Add(peaks[1][counter]);
-                            peaksAndValleys[2].Add(1);
-                            counter++;
-                        }
-                        else
-                        {
-                            peaksAndValleys[0].Add(valleys[0][i]);
-                            peaksAndValleys[1].Add(valleys[1][i]);
-                            peaksAndValleys[2].Add(0);
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        peaksAndValleys[0].Add(valleys[0][i]);
-                        peaksAndValleys[1].Add(valleys[1][i]);
-                        peaksAndValleys[2].Add(0);
-                        i++;
-                    }
-                }
-            }
-            Console.WriteLine("Längd: " + peaksAndValleys[0].Count);
-            for (int i = 0; i < peaksAndValleys[0].Count; ++i)
-            {
-                Console.WriteLine(i + " flagga: " + peaksAndValleys[2][i]);
-            }
+
             // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
             if (peaksAndValleys[2][0] == 1)
