@@ -83,11 +83,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         // Alarmparametrar
         int lowNumPulse = 30;
-        int lowNumBreathing = 10;
+        int lowNumBreathing = 3;
 
         //Listor för beräkningar för larm
-        int breathingWarningInSeconds = 40;
         int pulseWarningInSeconds = 10;
+        int breathingWarningInSeconds = 40;
 
         double minimiDepthBreath = 0.5;
 
