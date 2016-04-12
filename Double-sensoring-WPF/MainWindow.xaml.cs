@@ -395,25 +395,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
-        private List<List<double>> timeBetweenAllPeaks(List<double> measurements)
+        private List<double> timeBetweenAllPeaks(List<List<double>> correctPeaksPulse)
         {
-            // Toppar i andningsdjupet
-            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+            // Toppar i andningsdjupet (korrekta)
+            List<List<double>> peaks = correctPeaksPulse; // [0]=xPos, [1]=yPos
 
             // Antal peakar
-            int numOfPeaks = peaksBreath[0].Count;
+            int numOfPeaks = peaks[0].Count;
 
             // Tiderna mellan topparna - Ny lista
-            List<List<double>> timeBwPeaks = new List<List<double>>();
-            timeBwPeaks.Add(new List<double>()); // Tiderna mellan topparna lagras
+            List<double> timeBwPeaks = new List<double>();
+            //timeBwPeaks.Add(new double()); // Tiderna mellan topparna lagras
 
             for (int i = 0; i < numOfPeaks; ++i)
             {
-                double timeBwTwoPeaks = (peaksBreath[0][i] - peaksBreath[0][i + 1]) / fps;
+                double timeBwTwoPeaks = (peaks[0][i] - peaks[0][i + 1]) / fps;
                 double timesTen = 10 * timeBwTwoPeaks;
                 double rounded = Math.Round(timesTen);
                 double dividedByTen = rounded / 10;
-                timeBwPeaks[0][i] = dividedByTen;
+                timeBwPeaks[i] = dividedByTen;
             }
 
             // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
