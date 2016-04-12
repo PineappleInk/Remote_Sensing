@@ -174,8 +174,8 @@ namespace Module_Graphs
         {
             double w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
             double h = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
-            double scalew = w / 1920;
-            double scaleh = h / 1080;
+            double scalew = w / 1376;
+            double scaleh = h / 768;
             chart1.Width = (int)Convert.ToInt32(e.NewSize.Width * scalew);
             chart1.Height = (int)Convert.ToInt32(e.NewSize.Height * scaleh);
         }      
