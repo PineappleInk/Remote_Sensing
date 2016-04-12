@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         // Alarmparametrar
         int lowNumPulse = 30;
-        int lowNumBreathing = 10;
+        int lowNumBreathing = 3;
 
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
@@ -397,27 +397,33 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
-        private List<List<double>> timeBetweenAllPeaks(List<double> measurements)
+        private List<double> timeBetweenAllPeaks(List<List<double>> correctPeaksPulse)
         {
-            // Toppar i andningsdjupet
-            List<List<double>> peaksBreath = locatePeaksBreath(measurements); // [0]=xPos, [1]=yPos
+            // Toppar i andningsdjupet (korrekta)
+            List<List<double>> peaks = correctPeaksPulse; // [0]=xPos, [1]=yPos
 
             // Antal peakar
-            int numOfPeaks = peaksBreath[0].Count;
+            int numOfPeaks = peaks[0].Count;
 
             // Tiderna mellan topparna - Ny lista
-            List<List<double>> timeBwPeaks = new List<List<double>>();
-            timeBwPeaks.Add(new List<double>()); // Tiderna mellan topparna lagras
+            List<double> timeBwPeaks = new List<double>();
+            //timeBwPeaks.Add(new double()); // Tiderna mellan topparna lagras
 
             for (int i = 0; i < numOfPeaks; ++i)
             {
-                double timeBwTwoPeaks = (peaksBreath[0][i] - peaksBreath[0][i + 1]) / fps;
+                double timeBwTwoPeaks = (peaks[0][i] - peaks[0][i + 1]) / fps;
                 double timesTen = 10 * timeBwTwoPeaks;
                 double rounded = Math.Round(timesTen);
                 double dividedByTen = rounded / 10;
-                timeBwPeaks[0][i] = dividedByTen;
+                timeBwPeaks[i] = dividedByTen;
             }
 
+            //TEST
+            Console.WriteLine("Heart-rate-variability:");
+            for (int i = 0; i <= timeBwPeaks.Count; ++i)
+            {
+                Console.WriteLine("Tid" + 1 + ":" + timeBwPeaks[i]);
+            }
             // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
             return timeBwPeaks;
         }
@@ -611,7 +617,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
                         List<double> measurementsFiltList = measurementsFilt.ToList();
 
-                        measurementsFiltList.RemoveRange(0, orderOfFilter);
+                            measurementsFiltList.RemoveRange(0, orderOfFilter);
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
@@ -620,16 +626,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         double average = 0;
 
                         //Toppdetektering
-                        List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksPulse(measurementsFiltList);
+                            List<List<double>> peaks = new List<List<double>>();
+                            peaks = locatePeaksPulse(measurementsFiltList);
 
-                        for (int i = 0; i < peaks[0].Count(); i++)
-                        {
-                            chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
-                        }
+                            for (int i = 0; i < peaks[0].Count(); i++)
+                            {
+                                chartPulse.AddPointToLine("Pulsemarkers", peaks[1][i], peaks[0][i]);
+                            }
 
-                        // Beräknar ut pulsen över den valda beräkningstiden
-                        int samplesForPulseAlarm = pulseWarningInSeconds * fps;
+                            // Beräknar ut pulsen över den valda beräkningstiden
+                            int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
                         for (int i = 0; i < peaks[0].Count; ++i)
                         {
@@ -640,15 +646,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        //Average är antalet pulsslag under 60 sekunder
+                            //Average är antalet pulsslag under 60 sekunder
                         average = peaks[0].Count() * 60 * fps / samplesForPulseAlarm;
 
-                        //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                            + System.Environment.NewLine + "Uppskattad BPM: " + average;
+                            //Skriver ut pulspeakar i programmet
+                            textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                                + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(average, lowNumPulse);
+                            //Tar in larmgränsen och jämför med personens uppskattade puls.
+                            pulseAlarm(average, lowNumPulse);
 
 
                         for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -659,11 +665,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         Console.WriteLine("Pulselängd: " + measurementsFiltList.Count);
                         if (measurementsFiltList.Count == samplesOfMeasurement + runPlotModulo)
                         {
-                            rgbList[0].RemoveRange(0, runPlotModulo);
-                            rgbList[1].RemoveRange(0, runPlotModulo);
-                            rgbList[2].RemoveRange(0, runPlotModulo);
-                        }
+                        rgbList[0].RemoveRange(0, runPlotModulo);
+                        rgbList[1].RemoveRange(0, runPlotModulo);
+                        rgbList[2].RemoveRange(0, runPlotModulo);
                     }
+                }
                 }
 
                 //Analys av andning
@@ -688,23 +694,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Toppdetektering
 
-                        List<List<double>> peaks = new List<List<double>>();
-                        List<List<double>> valleys = new List<List<double>>();
-                        peaks = locatePeaksBreath(measurementsFiltList);
-                        valleys = locateBottomsBreath(measurementsFiltList);
+                            List<List<double>> peaks = new List<List<double>>();
+                            List<List<double>> valleys = new List<List<double>>();
+                            peaks = locatePeaksBreath(measurementsFiltList);
+                            valleys = locateBottomsBreath(measurementsFiltList);
 
-                        // Korrekta toppar
-                        List<List<double>> breathPeaksFilt = new List<List<double>>();
-                        breathPeaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
+                            // Korrekta toppar
+                            List<List<double>> breathPeaksFilt = new List<List<double>>();
+                            breathPeaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
 
-                        // Rita ut peakar i andningen (= utandning)
-                        for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
-                        {
-                            chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i]);
-                        }
+                            // Rita ut peakar i andningen (= utandning)
+                            for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
+                            {
+                                chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i]);
+                            }
 
-                        // Beräknar ut andningsfrekvensen över den valda beräkningstiden
-                        int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                            // Beräknar ut andningsfrekvensen över den valda beräkningstiden
+                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         for (int i = 0; i < breathPeaksFilt[0].Count; ++i)
                         {
@@ -715,15 +721,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        // Average är antalet peakar i andningen under 60 sekunder.
+                            // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
 
-                        // Ritar ut andningspeakar i programmet
-                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
-                            + Environment.NewLine + "Uppskattad BPM: " + average;
+                            // Ritar ut andningspeakar i programmet
+                            averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
+                                + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        breathingAlarm(average, lowNumBreathing);
+                            //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
+                            breathingAlarm(average, lowNumBreathing);
 
 
                         for (int i = 0; i < measurementsFiltList.Count(); i++)
@@ -734,9 +740,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         Console.WriteLine("Andningslängd: " + measurementsFiltList.Count);
                         if (measurementsFiltList.Count == samplesOfMeasurement + runPlotModulo)
                         {
-                            depthList.RemoveRange(0, runPlotModulo);
-                        }
+                        depthList.RemoveRange(0, runPlotModulo);
                     }
+                }
                 }
                 else
                 {
