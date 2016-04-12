@@ -345,6 +345,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Antal peakar respektive dalar
             int numOfxPosPeaks = peaks[0].Count;
             int numOfxPosBreath = valleys[0].Count;
+            // Sista position i vektor, i någon av x-listorna
+            int minNumOfxPos = Math.Min(numOfxPosPeaks, numOfxPosBreath);
 
             // Största x-värde i respektive lista tas fram
             double biggestxPosPeak = peaks[0][numOfxPosPeaks - 1];
@@ -355,7 +357,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double xTimeMax = 30; // Längsta tid [s] mellan två peakar
             double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
             int timeLimit = breathingWarningInSeconds; //Antal sekunder efter hur många larmet går
-            double sampleLimit = timeLimit * fps; //Antal sampel efter hur mångar larmet går
+            double sampleLimit = timeLimit * fps; //Antal sampel efter hur många larmet går
 
 
             /* Kod för kontroll */
@@ -370,15 +372,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // if:en gör kontroll på att det finns peakar och dalar efter sampleLimit
             if (biggestxPosPeak > sampleLimit && biggestxPosBottom > sampleLimit)
             {
-                for (int i = 1; peaks[0][i] > sampleLimit || valleys[0][i] > sampleLimit; ++i)
+                for (int i = 1; i < minNumOfxPos ; ++i)
                 {
                     if (peaks[1][i] - valleys[1][i] > heightLimit &&
                        (peaks[0][i] - peaks[0][i - 1]) < xMaximum)
                     {
                         correctPeaks[0].Add(peaks[0][i]); //x-värde
                         correctPeaks[1].Add(peaks[1][i]); //y-värde
+                    }
+                }
             }
-            }
+            else
+            {
+                Console.WriteLine("Inte tillräckligt lång lista i funktion correctPeaks2");
             }
             return correctPeaks;
         }
@@ -606,8 +612,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }                
-               
+                }
+
             }
             return bottomLocations;
         }
@@ -721,7 +727,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Korrekta toppar
                             List<List<double>> breathPeaksFilt = new List<List<double>>();
                             //peaksFilt = correctPeaks(peaks, valleys, 2);
-                            breathPeaksFilt = correctPeaks2(peaks,valleys);
+                            breathPeaksFilt = correctPeaks2(peaks, valleys);
 
                             // Rita ut peakar i andningen (= utandning)
                             for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
