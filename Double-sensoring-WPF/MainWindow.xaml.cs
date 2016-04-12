@@ -697,8 +697,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Korrekta toppar
                             List<List<double>> breathPeaksFilt = new List<List<double>>();
                             //peaksFilt = correctPeaks(peaks, valleys, 2);
-                            breathPeaksFilt = correctPeaks2(peaks, valleys);
-                            peaks = correctPeaks(peaks, valleys, 2);
+                            breathPeaksFilt = correctPeaks(peaks, valleys, 5);
+                            //breathPeaksFilt = correctPeaks2(peaks, valleys);
 
                             // Rita ut peakar i andningen (= utandning)
                             for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
