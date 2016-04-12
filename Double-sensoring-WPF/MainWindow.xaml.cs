@@ -411,7 +411,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < numOfPeaks; ++i)
             {
-                double timeBwTwoPeaks = (peaks[0][i] - peaks[0][i + 1]) / fps;
+                double timeBwTwoPeaks = (peaks[0][i + 1] - peaks[0][i]) / fps;
                 double timesTen = 10 * timeBwTwoPeaks;
                 double rounded = Math.Round(timesTen);
                 double dividedByTen = rounded / 10;
