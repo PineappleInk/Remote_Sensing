@@ -37,8 +37,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Paramteter for position of bellyJoint
         /// </summary>
-        private double bellyJointYPosition = 2 / 3;
-        private double bellyJointXPosition = 2 / 3;
+        private double bellyJointYPosition = 1/2.1; //Närmare 1 flyttar punkten nedåt
+        private double bellyJointXPosition = 1;
         //double heartrate = 0;
         //double average = 0;
         /// <summary>
@@ -89,7 +89,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int breathingWarningInSeconds = 40;
         int pulseWarningInSeconds = 10;
 
-        double minimiDepthBreath = 2;
+        double minimiDepthBreath = 0.5;
 
         //Filter
         int orderOfFilter = 27;
@@ -696,9 +696,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             // Korrekta toppar
                             List<List<double>> breathPeaksFilt = new List<List<double>>();
-                            //peaksFilt = correctPeaks(peaks, valleys, 2);
-                            breathPeaksFilt = correctPeaks(peaks, valleys, 5);
-                            //breathPeaksFilt = correctPeaks2(peaks, valleys);
+                            breathPeaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
 
                             // Rita ut peakar i andningen (= utandning)
                             for (int i = 0; i < breathPeaksFilt[0].Count(); i++)
@@ -719,7 +717,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //}
 
                             // Average är antalet peakar i andningen under 60 sekunder.
-                            average = breathPeaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
+                            average = breathPeaksFilt[0].Count() * 60 * fps / samplesOfMeasurement;
 
                             // Ritar ut andningspeakar i programmet
                             averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
@@ -1076,6 +1074,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             depthList.Clear();
             colorSensing.biglist.Clear();
+            chartPulse.ClearCurveDataPointsFromGraph();
+            chartBreath.ClearCurveDataPointsFromGraph();
         }
 
         //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.
