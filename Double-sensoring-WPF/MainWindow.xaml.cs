@@ -77,7 +77,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /*Globala variabler*/
 
         // Info om mätdata
-        int samplesOfMeasurement = 1800;
+        int samplesOfMeasurement = 1350;
         int runPlotModulo = 5;
         int fps = 30;
 
@@ -669,10 +669,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         Console.WriteLine("Pulselängd: " + measurementsFiltList.Count);
                         if (measurementsFiltList.Count >= samplesOfMeasurement)
                         {
-                            rgbList[0].RemoveRange(0, runPlotModulo);
-                            rgbList[1].RemoveRange(0, runPlotModulo);
-                            rgbList[2].RemoveRange(0, runPlotModulo);
-                        }
+                            rgbList[0].RemoveRange(0, fps - orderOfFilter + runPlotModulo);
+                            rgbList[1].RemoveRange(0, fps - orderOfFilter + runPlotModulo);
+                            rgbList[2].RemoveRange(0, fps - orderOfFilter + runPlotModulo);
+                        } //Fixa så detta blir statiskt igen :-)
                     }
                 }
 
@@ -744,8 +744,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         Console.WriteLine("Andningslängd: " + measurementsFiltList.Count);
                         if (measurementsFiltList.Count >= samplesOfMeasurement)
                         {
-                            depthList.RemoveRange(0, runPlotModulo);
-                        }
+                            depthList.RemoveRange(0, fps - orderOfFilter + runPlotModulo);
+                        } //Fixa så detta blir statiskt igen :-)
                     }
                 }
                 else

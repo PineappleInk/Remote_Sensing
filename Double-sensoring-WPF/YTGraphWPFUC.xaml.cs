@@ -47,7 +47,7 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 1800; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 1350; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
