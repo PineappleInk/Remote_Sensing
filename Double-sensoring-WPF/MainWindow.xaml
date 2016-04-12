@@ -35,8 +35,8 @@
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Grid.Column="2" Margin="4.5,7,6.5,4" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
 
-            <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Row="1" Margin="14.5,10,212.5,97" Grid.Column="1" />
-            <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Row="2" Margin="14.5,10,212.5,97" Grid.Column="1"  />
+            <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Row="1" Margin="5,5,5,5" Grid.Column="1" />
+            <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Row="2" Margin="5,5,5,5" Grid.Column="1" />
 
             <TextBlock x:Name="textBlock2" Margin="217.5,160.5,0,0" TextWrapping="Wrap" Text="Pixel values" Grid.Column="2" Grid.Row="2" RenderTransformOrigin="0.498,1.1" HorizontalAlignment="Left" Width="134" Height="45" VerticalAlignment="Top"/>
             <TextBlock x:Name="textBlock" Margin="217.5,85.5,0,0" TextWrapping="Wrap" Grid.Column="2" Grid.Row="2" Text="Hjärtrytm:" HorizontalAlignment="Left" Width="134" Height="57" VerticalAlignment="Top"/>
