@@ -77,26 +77,29 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /*Globala variabler*/
 
         // Info om mätdata
-        int samplesOfMeasurement = 1800;
-        int runPlotModulo = 5;
-        int fps = 30;
-        int plotOverSeconds = 20; //Anger över hur många sekunder plottarna ska visas
+        static int secondsOfMeasurement = 60;          //Anger över hur många sekunder vi ska mäta
+        static int fps = 30;                           //Frames Per Second (Antalet bilder/sekund)
+        static int samplesOfMeasurement =
+            secondsOfMeasurement * fps;                //Över hur många bilder vi ska mäta (sekunder * fps)
+        static int runPlotModulo = 5;                  //Hur ofta plottarna ska köras (anges som antalet bilder som ska gå emellan plottningen)
+        static int plotOverSeconds = 20;               //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
         int lowNumPulse = 30;
         int lowNumBreathing = 3;
 
         //Listor för beräkningar för larm
-        int breathingWarningInSeconds = 40;
-        int pulseWarningInSeconds = 10;
-        int startBreathingAfterSeconds = 40;
-        int startPulseAfterSeconds = 20;
+        static int breathingWarningInSeconds = 40;     //Anger över hur många sekunder som beräkningen av andningen ska ske
+        static int pulseWarningInSeconds = 10;         //Anger över hur många sekunder som beräkningen av pulsen ska ske
+        static int startBreathingAfterSeconds = 40;    //Anger efter hur många sekunder som beräkningar och plottning av andning ska ske
+        static int startPulseAfterSeconds = 20;        //Anger efter hur många sekunder som beräkningar och plottning av pulsen ska ske
 
-        double minimiDepthBreath = 0.5;
+        double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
         //Filter
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, 27);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, 27);
+        static int orderOfFilter = 27;
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, orderOfFilter);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -680,7 +683,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         // Average är antalet peakar i andningen under 60 sekunder.
-                        average = breathPeaksFilt[0].Count() * 60 * fps / samplesForBreathAlarm;
+                        average = breathPeaksFilt[0].Count() * 60 / samplesForBreathAlarm;
 
                         // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()

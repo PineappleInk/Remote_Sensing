@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Module_Graphs="clr-namespace:Module_Graphs" x:Class="Microsoft.Samples.Kinect.BodyBasics.MainWindow"
         xmlns:tools="clr-namespace:MyApp.Tools"
-        Title="FOR THE KING!" 
+        Title="FOR THE PINGUIN!" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"
