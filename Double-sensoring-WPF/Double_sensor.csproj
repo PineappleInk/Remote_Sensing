@@ -146,6 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="beep-07.wav" />
+    <Resource Include="Images\Hjärta1.png" />
+    <Resource Include="Images\Hjärta2.png" />
+    <Resource Include="Images\Hjärta3.png" />
+    <Resource Include="Images\Lunga1.png" />
+    <Resource Include="Images\Lunga2.png" />
+    <Resource Include="Images\Lunga3.png" />
     <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
     <Content Include="matlab\breath_simons.m" />

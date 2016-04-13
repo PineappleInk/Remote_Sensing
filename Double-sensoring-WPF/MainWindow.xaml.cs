@@ -23,6 +23,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Resources;
     using System.Windows.Markup;
     using System.Windows.Data;
+    using System.Timers;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -93,6 +94,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, 27);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, 27);
+
+        //TIMER
+        // Create new stopwatch.
+        Stopwatch stopwatch = new Stopwatch();
+        Timer timer = new Timer();
+        bool decreasing = true;
+
+        System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -128,6 +138,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //Startar tid
+            stopwatch.Start();
+
+            // Timer 
+            timer.Start();
+
+            dispatcherTimer.Tick += new EventHandler(PulsingHeartPic2);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Start();
         }
 
         /// <summary>
@@ -320,7 +340,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 for (int i = 1; peaksBreath[0][i] > sampleLimit || bottomsBreath[0][i] > sampleLimit; ++i)
                 {
                     if (peaksBreath[1][i] - bottomsBreath[1][i] > heightLimit &&
-                       (peaksBreath[0][i] - peaksBreath[0][i-1]) < xMaximum)
+                       (peaksBreath[0][i] - peaksBreath[0][i - 1]) < xMaximum)
                     {
                         ++highEnough;
                     }
@@ -332,7 +352,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Villkor för avgörande om för låg eller ej
             if (highEnough <= 1)
-            { 
+            {
                 return true; // 
             }
             else
@@ -610,8 +630,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }                
-               
+                }
+
             }
             return bottomLocations;
         }
@@ -884,6 +904,76 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     array[startposition + 3] = 255;
                 }
             }
+        }
+
+        void PulsingHeartPic()
+        {
+            //TIMER
+
+            if (stopwatch.Elapsed.TotalSeconds > 1)
+            {
+                stopwatch.Stop();
+
+                if (heart1.Opacity == 1)
+                {
+                    BitmapImage Elli = new BitmapImage();
+                    Elli.BeginInit();
+                    Elli.UriSource = new Uri(path + @"\..\..\..\Images\Hjärta2.png");
+                    Elli.EndInit();
+                    heart1.Source = Elli;
+                    heart1.Opacity = 0.5;
+
+                }
+                else if (heart1.Opacity == 0.5)
+                {
+                    BitmapImage Elli = new BitmapImage();
+                    Elli.BeginInit();
+                    Elli.UriSource = new Uri(path + @"\..\..\..\Images\Hjärta3.png");
+                    Elli.EndInit();
+                    heart1.Source = Elli;
+                    heart1.Opacity = 0.2;
+
+                }
+                else
+                {
+                    BitmapImage h2 = new BitmapImage();
+                    h2.BeginInit();
+                    h2.UriSource = new Uri(path + @"\..\..\..\Images\Hjärta1.png");
+                    h2.EndInit();
+                    heart1.Source = h2;
+                    heart1.Opacity = 1;
+                }
+
+                stopwatch.Restart();
+            }
+        }
+
+        private void PulsingHeartPic2(object sender, EventArgs e)
+        {
+            //TIMER
+            if (decreasing)
+            {
+                heart1.Opacity -= 0.2;
+                heart1.Width -= 2;
+                heart1.Height -= 2;
+            }
+            else
+            {
+                heart1.Opacity += 0.2;
+                heart1.Width += 2;
+                heart1.Height += 2;
+            }
+
+            if (heart1.Opacity <= 0.2)
+            {
+                decreasing = false;
+            }
+            if (heart1.Opacity == 1)
+            {
+                decreasing = true;
+            }
+
+            dispatcherTimer.Start();
         }
 
         /// <summary>
