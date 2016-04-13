@@ -80,11 +80,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int samplesOfMeasurement = 1800;
         int runPlotModulo = 5;
         int fps = 30;
+        int plotOverSeconds = 20;
 
         // Alarmparametrar
         int lowNumPulse = 30; // Antal pulsslag vid vilket larm ska gå?
         static int lowNumBreathing = 3; // Antal andetag vid vilket larm ska gå?
-        static string firstLowBreathing = Convert.ToString(lowNumBreathing);
 
         // Listor för beräkningar för larm
         int breathingWarningInSeconds = 40; // Tid för beräkning av larm andning
@@ -573,9 +573,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<double> heartRateVariability = timeBetweenAllPeaks(peaks);
 
                         int j = 0;
-                        if (measurementsFiltList.Count - 20 * fps >= 0)
+                        if (measurementsFiltList.Count - plotOverSeconds * fps >= 0)
                         {
-                            j = measurementsFiltList.Count - 20 * fps;
+                            j = measurementsFiltList.Count - plotOverSeconds * fps;
                         }
 
                         for (int i = 0; i < peaks[0].Count(); i++)
@@ -654,9 +654,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         breathPeaksFilt = correctPeaks(peaks, valleys, minimiDepthBreath);
 
                         int j = 0;
-                        if (measurementsFiltList.Count - 20 * fps >= 0)
+                        if (measurementsFiltList.Count - plotOverSeconds * fps >= 0)
                         {
-                            j = measurementsFiltList.Count - 20 * fps;
+                            j = measurementsFiltList.Count - plotOverSeconds * fps;
                         }
 
                         // Rita ut peakar i andningen (= utandning)
