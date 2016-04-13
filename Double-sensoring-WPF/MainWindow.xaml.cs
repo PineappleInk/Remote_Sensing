@@ -341,61 +341,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return bottomLocations;
         }
 
-        // Avgör om larmet bör gå, p.g.a. för liten skillnad i bröstdjup
-        private List<List<double>> correctPeaks2(List<List<double>> peaks, List<List<double>> valleys)
-        {
-            Console.WriteLine("Linas: Toppar In: " + peaks[0].Count + " Dalar In: " + valleys[0].Count);
-
-            // Antal peakar respektive dalar
-            int numOfxPosPeaks = peaks[0].Count;
-            int numOfxPosValleys = valleys[0].Count;
-            // Sista position i vektor, i någon av x-listorna
-            int minNumOfxPos = Math.Min(numOfxPosPeaks, numOfxPosValleys);
-
-            // Största x-värde i respektive lista tas fram
-            double biggestxPosPeak = peaks[0][numOfxPosPeaks - 1];
-            double biggestxPosBottom = valleys[0][numOfxPosValleys - 1];
-
-            // Inställnignar
-            double heightLimit = 5; // Skillnad i brösthöjd [mm], mellan utandning och inandning
-            double xTimeMax = 30; // Längsta tid [s] mellan två peakar
-            double xMaximum = fps * xTimeMax; // Största sampelavståndet mellan peak och dal som jämförs. Kan ev. redan ingå i lokaliseringen.
-            int timeLimit = breathingWarningInSeconds; //Antal sekunder efter hur många larmet går
-            double sampleLimit = timeLimit * fps; //Antal sampel efter hur många larmet går
-
-
-            /* Kod för kontroll */
-            //int highEnough = 0;
-            //int tooLow = 0;
-
-            //Korekta peakar som ska detekteras
-            List<List<double>> correctPeaks = new List<List<double>>();
-            correctPeaks.Add(new List<double>());
-            correctPeaks.Add(new List<double>());
-
-            // if:en gör kontroll på att det finns peakar och dalar efter sampleLimit
-            // if (biggestxPosPeak > sampleLimit && biggestxPosBottom > sampleLimit)
-            //{
-            for (int i = 1; i < minNumOfxPos; ++i)
-            {
-                if (peaks[1][i] - valleys[1][i] > heightLimit &&
-                   (peaks[0][i] - peaks[0][i - 1]) < xMaximum)
-                {
-                    correctPeaks[0].Add(peaks[0][i]); //x-värde
-                    correctPeaks[1].Add(peaks[1][i]); //y-värde
-                }
-            }
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Inte tillräckligt lång lista i funktion correctPeaks2");
-            //}
-
-            Console.WriteLine("Linas: Toppar Ut: " + correctPeaks[0].Count);
-
-            return correctPeaks;
-        }
-
         // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
         private List<double> timeBetweenAllPeaks(List<List<double>> correctPeaksPulse)
         {
