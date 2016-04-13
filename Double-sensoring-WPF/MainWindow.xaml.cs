@@ -863,10 +863,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
-
-                            textBlock2.Text = "Huvudet befinner sig vid pixel/punkt(?): " +
-                                Math.Round(colorSpaceHeadPoint.X, 0).ToString() + ", " + Math.Round(colorSpaceHeadPoint.Y, 0).ToString();
-
                             // ----- Värden från gröna kanalerna, för tester
                             //Här tar vi ut alla gröna värden i de intressanta pixlarna
 
@@ -1002,7 +998,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //NYTT
-                            textBlock5.Text = "Element i andningslistan: " + depthList.Count;
+                            textBlock5.Text = "[TEST] Element i andningslistan: " + depthList.Count;
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor

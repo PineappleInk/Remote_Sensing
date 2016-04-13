@@ -181,8 +181,12 @@ namespace Module_Graphs
 
         private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
-            chart1.Width = (int)e.NewSize.Width;
-            chart1.Height = (int) e.NewSize.Height;
+            double w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            double h = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+            double scalew = w / 1366;
+            double scaleh = h / 768;
+            chart1.Width = (int)Convert.ToInt32(e.NewSize.Width * scalew);
+            chart1.Height = (int)Convert.ToInt32(e.NewSize.Height * scaleh);
         }      
     }
 }

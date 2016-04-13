@@ -3,15 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:winformchart="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization" mc:Ignorable="d" 
-             
-             d:DesignHeight="300" d:DesignWidth="300" SizeChanged="UserControl_SizeChanged">
+             xmlns:winformchart="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
+             mc:Ignorable="d"
+             SizeChanged="UserControl_SizeChanged">
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid>
             <WindowsFormsHost x:Name="host" Height="Auto">
                 <winformchart:Chart x:Name="chart1" Dock="Left">
-                    
+
                     <winformchart:Chart.Series>
                         <winformchart:Series Name="series" ChartType="FastLine" />
                     </winformchart:Chart.Series>
