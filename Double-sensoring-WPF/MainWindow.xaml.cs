@@ -98,6 +98,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, orderOfFilter);
+
+        //Timer
+        System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+        bool heartDecreasing = true;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -133,6 +137,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //Timer start
+            dispatcherTimer.Tick += dispatcherTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(500000);
+            dispatcherTimer.Start();
         }
 
         public void setBellyJointYPosition(double v)
@@ -1038,6 +1047,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+        }
+
+        //Timer-funktionen
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if(heartDecreasing)
+            {
+                heart.Opacity -= 0.1;
+                heart.Width -= 5;
+                heart.Height -= 5;
+            }
+            else
+            {
+                heart.Opacity += 0.1;
+                heart.Width += 5;
+                heart.Height += 5;
+            }
+            if(heart.Opacity <= 0.4)
+            {
+                heartDecreasing = false;
+            }
+            if (heart.Opacity == 1)
+            {
+                heartDecreasing = true;
+            }
+            dispatcherTimer.Start();
         }
     }
 }
