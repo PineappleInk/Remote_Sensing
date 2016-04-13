@@ -62,17 +62,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
-        //Puls
-        List<double> pulseList = new List<double>();
-
         //Andning
         /// <summary>
-        /// listDepthMatlab - lista som skickas till matlab
-        /// calculatedBreaths - lista med uträknade frekvenser från matlab, medelvärdesbildas och visas i användargränssnittet
-        ///                     30 värden samlas in och medelvärdet visas för användaren (se matlabCommand)
+        /// depthList - Lista som innehåller djupvärdena
         /// </summary>
         List<double> depthList = new List<double>();
-        List<double> calculatedBreaths = new List<double>();
 
         /*Globala variabler*/
 
@@ -544,22 +538,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         int antalFel = 0; // DENNA SKA VÄL TAS BORT TILL SLUTPRODUKTEN?!?!?!
 
-        private void plottingAndCalculations(string codeString, List<double> measurements = null, List<List<double>> rgbList = null)
+        private void plottingAndCalculations(string codeString, List<double> breathingList = null, List<double> rgbList = null)
         {
             try
             {
                 // Analys av puls
                 if (codeString == "pulse")
                 {
-                    if (rgbList[1].Count >= startPulseAfterSeconds * fps + fps)
+                    if (rgbList.Count >= startPulseAfterSeconds * fps + fps)
                     {
                         double pulsWarningOverSamples = pulseWarningInSeconds * fps;
 
                         // Filtrering
-                        double[] measurementsFilt = bpFiltPulse.ProcessSamples(rgbList[1].ToArray());
-                        List<double> measurementsFiltList = measurementsFilt.ToList();
+                        double[] rgbListFilt = bpFiltPulse.ProcessSamples(rgbList.ToArray());
+                        List<double> rgbFiltList = rgbListFilt.ToList();
 
-                        measurementsFiltList.RemoveRange(0, fps);
+                        rgbFiltList.RemoveRange(0, fps);
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
@@ -569,15 +563,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Toppdetektering
                         List<List<double>> peaks = new List<List<double>>();
-                        peaks = locatePeaksPulse(measurementsFiltList);
+                        peaks = locatePeaksPulse(rgbFiltList);
 
                         // TEST heart-rate-variability /Lina
                         List<double> heartRateVariability = timeBetweenAllPeaks(peaks);
 
                         int j = 0;
-                        if (measurementsFiltList.Count - plotOverSeconds * fps >= 0)
+                        if (rgbFiltList.Count - plotOverSeconds * fps >= 0)
                         {
-                            j = measurementsFiltList.Count - plotOverSeconds * fps;
+                            j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
 
                         for (int i = 0; i < peaks[0].Count(); i++)
@@ -593,7 +587,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         for (int i = 0; i < peaks[0].Count; ++i)
                         {
-                            if (peaks[0][i] >= measurementsFiltList.Count - samplesForPulseAlarm)
+                            if (peaks[0][i] >= rgbFiltList.Count - samplesForPulseAlarm)
                             {
                                 peaks[0].RemoveRange(0, i);
                                 peaks[1].RemoveRange(0, i);
@@ -601,7 +595,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         //Average är antalet pulsslag under 60 sekunder
-                        average = peaks[0].Count() * 60 * fps / samplesForPulseAlarm;
+                        average = peaks[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Skriver ut pulspeakar i programmet
                         textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
@@ -610,29 +604,27 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
                         pulseAlarm(average, lowNumPulse);
 
-                        for (int k = j; k < measurementsFiltList.Count(); k++)
+                        for (int k = j; k < rgbFiltList.Count(); k++)
                         {
-                            chartPulse.AddPointToLine("Pulse", measurementsFiltList[k], k - j);
+                            chartPulse.AddPointToLine("Pulse", rgbFiltList[k], k - j);
                         }
                         
-                        if (measurementsFiltList.Count >= samplesOfMeasurement)
+                        if (rgbFiltList.Count >= samplesOfMeasurement)
                         {
-                            rgbList[0].RemoveRange(0, runPlotModulo);
-                            rgbList[1].RemoveRange(0, runPlotModulo);
-                            rgbList[2].RemoveRange(0, runPlotModulo);
-                        } //Fixa så detta blir statiskt igen :-)
+                            rgbList.RemoveRange(0, runPlotModulo);
+                        }
                     }
                 }
 
                 //Analys av andning
                 else if (codeString == "breathing")
                 {
-                    if (measurements.Count >= startBreathingAfterSeconds * fps + fps)
+                    if (breathingList.Count >= startBreathingAfterSeconds * fps + fps)
                     {
                         double breathingWarningOverSamples = breathingWarningInSeconds * fps;
 
                         // Filtrering av djupvärden (andning)
-                        double[] measurementsFilt = bpFiltBreath.ProcessSamples(measurements.ToArray());
+                        double[] measurementsFilt = bpFiltBreath.ProcessSamples(breathingList.ToArray());
                         List<double> measurementsFiltList = measurementsFilt.ToList();
 
                         measurementsFiltList.RemoveRange(0, fps);
@@ -683,7 +675,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         // Average är antalet peakar i andningen under 60 sekunder.
-                        average = breathPeaksFilt[0].Count() * 60 / samplesForBreathAlarm;
+                        average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
 
                         // Ritar ut andningspeakar i programmet
                         averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
@@ -701,7 +693,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         if (measurementsFiltList.Count >= samplesOfMeasurement)
                         {
                             depthList.RemoveRange(0, runPlotModulo);
-                        } //Fixa så detta blir statiskt igen :-)
+                        }
                     }
                 }
                 else
@@ -866,19 +858,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
                                 MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
-                            // ----- Värden från gröna kanalerna, för tester
-                            //Här tar vi ut alla gröna värden i de intressanta pixlarna
-
-                            List<int> grönapixlar = null;
-                            grönapixlar = new List<int>();
-
-                            List<int> blåapixlar = null;
-                            blåapixlar = new List<int>();
-
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
                             rödapixlar = new List<int>();
 
+                            //Här tar vi ut alla gröna värden i de intressanta pixlarna
+                            List<int> grönapixlar = null;
+                            grönapixlar = new List<int>();
+                            
                             // Rutan som följer HeadJoint
                             for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 40);
                                 i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 40); ++i)
@@ -888,27 +875,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
-                                    int b = getcolorfrompixel(i, j, pixels, "blue");
 
-                                    if ((0 < r && r < 255) && (0 < g && g < 255) && (0 < b && b < 255))
+                                    if ((0 < r && r < 255) && (0 < g && g < 255))
                                     {
                                         rödapixlar.Add(r);
                                         grönapixlar.Add(g);
-                                        blåapixlar.Add(b);
                                     }
                                     ChangePixelColor(i, j, pixels, "green");
                                 }
                             }
 
-                            List<List<double>> biglist = colorSensing.createBigList2(rödapixlar, grönapixlar, blåapixlar);
+                            List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
 
 
                             // här ska methlab-funktionen köras--------------------^*************************^^,
                             //definiera hur ofta och hur stor listan är här innan.
-                            if (biglist[0].Count % runPlotModulo == 0)
+                            if (pulseList.Count % runPlotModulo == 0)
                             {
                                 //Analys av puls i matlab
-                                plottingAndCalculations("pulse", depthList, biglist);
+                                plottingAndCalculations("pulse", pulseList, pulseList);
                             }
                         }
                         catch
