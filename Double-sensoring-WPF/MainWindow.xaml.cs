@@ -82,21 +82,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int fps = 30;
 
         // Alarmparametrar
-        int lowNumPulse = 30;
-        int lowNumBreathing = 3;
+        int lowNumPulse = 30; // Antal pulsslag vid vilket larm ska gå?
+        static int lowNumBreathing = 3; // Antal andetag vid vilket larm ska gå?
+        static string firstLowBreathing = Convert.ToString(lowNumBreathing);
 
-        //Listor för beräkningar för larm
-        int breathingWarningInSeconds = 40;
-        int pulseWarningInSeconds = 10;
-        int startBreathingAfterSeconds = 40;
-        int startPulseAfterSeconds = 20;
+        // Listor för beräkningar för larm
+        int breathingWarningInSeconds = 40; // Tid för beräkning av larm andning
+        int pulseWarningInSeconds = 10; // Tid för beräkning av larm puls
+        int startBreathingAfterSeconds = 40; // Initialiseringstid andning  
+        int startPulseAfterSeconds = 20; // Initialiseringstid andning
 
-        double minimiDepthBreath = 0.5;
+        static double minimiDepthBreath = 0.5; // Krav på minsta andningsdjup för att beräknas som andetag
 
         //Filter
-        int orderOfFilter = 27;
-        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, 27);
-        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, 27);
+        static int orderOfFilter = 27;
+        OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
+        OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, orderOfFilter);
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
