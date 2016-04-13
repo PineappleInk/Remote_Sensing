@@ -44,7 +44,7 @@
             <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Grid.Row="2" Margin="16,113,0,0" TextWrapping="Wrap" Height="38" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
             <TextBlock x:Name="textBlockSound" Grid.Column="2" Grid.Row="2" Margin="218,255,0,0" TextWrapping="Wrap" Height="31" VerticalAlignment="Top" HorizontalAlignment="Left" Width="72"><Run Text="Ljud för larm"/><Run Text=":"/></TextBlock>
             <TextBox x:Name="inputTextPulse" Grid.Column="2" Grid.Row="2" Margin="46,49,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
-            <TextBox x:Name="inputTextBreathing" Grid.Column="2" Grid.Row="2" Margin="46,156,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
+            <TextBox x:Name="inputTextBreathing" Grid.Column="2" Grid.Row="2" Margin="46,156,0,0" TextWrapping="Wrap" MaxLines="1" Text="3" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
 
             <Button x:Name="button" Content="Rensa data" Margin="46,255,0,0" Click="button_Click" Grid.Column="2" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
             <Button x:Name="retrieveInputPulse" Content="Enter" Grid.Column="2" Grid.Row="2" Margin="46,82,0,0" Click="retrieveInputPulse_Click" RenderTransformOrigin="0.5,0.5" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
