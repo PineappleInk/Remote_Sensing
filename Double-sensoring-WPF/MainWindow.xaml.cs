@@ -133,6 +133,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //SetingWindow
+            this.settingWindow = new SettingWindow(this);
         }
 
         public void setBellyJointYPosition(double v)
@@ -248,6 +251,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.kinectSensor.Close();
                 this.kinectSensor = null;
             }
+            System.Environment.Exit(1);
         }
 
         // Lokalisera toppen i lista för andning
@@ -1028,7 +1032,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            SettingWindow settingWindow = new SettingWindow(this);
             settingWindow.Show();
         }
 
