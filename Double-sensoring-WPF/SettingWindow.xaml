@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.BodyBasics"
         mc:Ignorable="d"
-        Title="Settings" Height="247.522" Width="504.73">
+        Title="Settings" Height="247.522" Width="504.73" Loaded="Window_Loaded">
     <Grid Margin="0,0,0.4,-0.2">
         <TextBlock x:Name="informationTextPulse" Margin="17,10,0,0" TextWrapping="Wrap" Background="White" Height="44" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
         <TextBlock x:Name="informationTextPulse_Copy" Margin="16,85,0,0" TextWrapping="Wrap" Height="33" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
