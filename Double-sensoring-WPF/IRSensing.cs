@@ -25,7 +25,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private KinectSensor kinectSensor;
 
-        //public List<List<double>> biglist = new List<List<double>>();
         public IRSensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;

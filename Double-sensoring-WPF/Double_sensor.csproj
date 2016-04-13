@@ -158,6 +158,7 @@
     <Content Include="matlab\breath_simons.m" />
     <Content Include="matlab\matlabHandler.m" />
     <Content Include="matlab\RGB_Shadinrakar.m" />
+    <Content Include="Module_Graphs.dll" />
     <Resource Include="matlab\pulseplot.png" />
     <Content Include="matlab\pulse.m" />
     <Content Include="matlab\pulse_instant.m" />
