@@ -87,6 +87,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IRSensing.cs" />
+    <Compile Include="SettingWindow.xaml.cs">
+      <DependentUpon>SettingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="YTGraphWPFUC.xaml.cs">
       <DependentUpon>YTGraphWPFUC.xaml</DependentUpon>
     </Compile>
@@ -105,6 +108,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SettingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="YTGraphWPFUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -146,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="beep-07.wav" />
+    <Resource Include="Images\Hjärta1.png" />
     <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
     <Content Include="matlab\breath_simons.m" />

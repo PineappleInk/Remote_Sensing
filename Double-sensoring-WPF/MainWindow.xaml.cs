@@ -58,6 +58,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //BODY-instans
         private BodySensing bodySensning;
 
+        //SettingWindow-instans
+        private SettingWindow settingWindow;
+
         ////----------------------------------------Våra egna---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
@@ -66,7 +69,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// depthList - Lista som innehåller djupvärdena
         /// </summary>
-        List<double> depthList = new List<double>();
+        public List<double> depthList = new List<double>(); //OBS gör privat
+        List<double> calculatedBreaths = new List<double>();
 
         /*Globala variabler*/
 
@@ -79,8 +83,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int plotOverSeconds = 10;               //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
-        int lowNumPulse = 30;
-        int lowNumBreathing = 3;
+        public int lowNumPulse = 30; //OBS gör privata
+        public int lowNumBreathing = 10;
 
         //Listor för beräkningar för larm
         static int breathingWarningInSeconds = 40;     //Anger över hur många sekunder som beräkningen av andningen ska ske
@@ -94,6 +98,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, orderOfFilter);
+
+        //Timer
+        System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+        bool heartDecreasing = true;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -129,6 +137,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //Timer start
+            dispatcherTimer.Tick += dispatcherTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(500000);
+            dispatcherTimer.Start();
+
+            //SetingWindow
+            this.settingWindow = new SettingWindow(this);
+        }
+
+        public void setBellyJointYPosition(double v)
+        {
+            this.bellyJointYPosition = v;
         }
 
         /// <summary>
@@ -239,6 +260,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 this.kinectSensor.Close();
                 this.kinectSensor = null;
             }
+            System.Environment.Exit(1);
         }
 
         // Lokalisera toppen i lista för andning
@@ -381,28 +403,28 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                    peaksAndValleys[2].Add(0);
+                            peaksAndValleys[2].Add(0);
                     j++;
-                }
+                        }
                 else if (j == valleys[0].Count)
-                {
-                    peaksAndValleys[0].Add(peaks[0][i]);
+                        {
+                            peaksAndValleys[0].Add(peaks[0][i]);
                     peaksAndValleys[1].Add(peaks[1][i]);
-                    peaksAndValleys[2].Add(1);
-                    i++;
-                }
+                            peaksAndValleys[2].Add(1);
+                            i++;
+                        }
                 else if (peaks[0][i] < valleys[0][j])
-                {
-                    peaksAndValleys[0].Add(peaks[0][i]);
-                    peaksAndValleys[1].Add(peaks[1][i]);
-                    peaksAndValleys[2].Add(1);
-                    i++;
-                }
-                else
-                {
+                    {
+                        peaksAndValleys[0].Add(peaks[0][i]);
+                        peaksAndValleys[1].Add(peaks[1][i]);
+                        peaksAndValleys[2].Add(1);
+                        i++;
+                    }
+            else
+            {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                    peaksAndValleys[2].Add(0);
+                        peaksAndValleys[2].Add(0);
                     j++;
                 }
             }
@@ -526,8 +548,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }
-
+                }                
+               
             }
             return bottomLocations;
         }
@@ -580,10 +602,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
                             }
-                        }
+                            }
 
-                        // Beräknar ut pulsen över den valda beräkningstiden
-                        int samplesForPulseAlarm = pulseWarningInSeconds * fps;
+                            // Beräknar ut pulsen över den valda beräkningstiden
+                            int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
                         while (peaksPulse[0][0] < rgbFiltList.Count - samplesForPulseAlarm)
                         {
@@ -591,15 +613,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaksPulse[1].RemoveAt(0);
                         }
 
-                        //Average är antalet pulsslag under 60 sekunder
+                            //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
-                        //Skriver ut pulspeakar i programmet
-                        textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaksPulse[0].Count()
-                            + System.Environment.NewLine + "Uppskattad BPM: " + average;
+                            //Skriver ut pulspeakar i programmet
+                            //textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                            //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(average, lowNumPulse);
+                            //Tar in larmgränsen och jämför med personens uppskattade puls.
+                            pulseAlarm(average, lowNumPulse);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -635,8 +657,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Toppdetektering
 
-                        List<List<double>> peaks = new List<List<double>>();
-                        List<List<double>> valleys = new List<List<double>>();
+                            List<List<double>> peaks = new List<List<double>>();
+                            List<List<double>> valleys = new List<List<double>>();
                         peaks = locatePeaksBreath(breathingFiltList);
                         valleys = locateBottomsBreath(breathingFiltList);
 
@@ -650,17 +672,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             j = breathingFiltList.Count - plotOverSeconds * fps;
                         }
 
-                        // Rita ut peakar i andningen (= utandning)
+                            // Rita ut peakar i andningen (= utandning)
                         for (int i = 0; i < breathPeaksFilt[0].Count; i++)
                         {
                             if (breathPeaksFilt[0][i] >= j)
                             {
                                 chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
                             }
-                        }
+                            }
 
-                        // Beräknar ut andningsfrekvensen över den valda beräkningstiden
-                        int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                            // Beräknar ut andningsfrekvensen över den valda beräkningstiden
+                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
                         {
@@ -668,15 +690,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             breathPeaksFilt[1].RemoveAt(0);
                         }
 
-                        // Average är antalet peakar i andningen under 60 sekunder.
+                            // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
 
-                        // Ritar ut andningspeakar i programmet
-                        averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + breathPeaksFilt[0].Count()
-                            + Environment.NewLine + "Uppskattad BPM: " + average;
+                            // Ritar ut andningspeakar i programmet
+                            //settingWindow.averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
+                            //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        breathingAlarm(average, lowNumBreathing);
+                            //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
+                            breathingAlarm(average, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
@@ -685,9 +707,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         
                         if (breathingFiltList.Count >= samplesOfMeasurement)
                         {
-                            depthList.RemoveRange(0, runPlotModulo);
-                        }
+                        depthList.RemoveRange(0, runPlotModulo);
                     }
+                }
                 }
                 else
                 {
@@ -708,13 +730,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
-                if (!checkBoxSound.HasContent)
+                if (!settingWindow.checkBoxSound.HasContent)
                 {
                     Console.WriteLine("Det fanns inget värde i checkBoxSound");
                 }
-                if ((bool)checkBoxSound.IsChecked)
+                if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                     beep.SoundLocation = soundpath;
@@ -722,11 +744,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                 }
 
             }
-            else inputTextBreathing.Background = System.Windows.Media.Brushes.White;
+            else settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
         }
 
         //Larm för pulsen
@@ -734,13 +756,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averagePulse < lowNum)
             {
-                if (!checkBoxSound.HasContent)
+                if (!settingWindow.checkBoxSound.HasContent)
                 {
                     Console.WriteLine("Det fanns inget värde i checkBoxSound");
                 }
-                if ((bool)checkBoxSound.IsChecked)
+                if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                     beep.SoundLocation = soundpath;
@@ -748,10 +770,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
-            else inputTextPulse.Background = System.Windows.Media.Brushes.White;
+            else settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
@@ -978,9 +1000,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
-                            //NYTT
-                            textBlock5.Text = "[TEST] Element i andningslistan: " + depthList.Count;
-
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
                             if (depthList.Count % runPlotModulo == 0)
@@ -1013,7 +1032,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            settingWindow.Show();
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
         {
             depthList.Clear();
             colorSensing.gDrList.Clear();
@@ -1021,42 +1045,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.ClearCurveDataPointsFromGraph();
         }
 
-        //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.
-        //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
-        private void retrieveInputPulse_Click(object sender, RoutedEventArgs e)
+        //Timer-funktionen
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            try
+            if(heartDecreasing)
             {
-                int inputnumber = Convert.ToInt32(inputTextPulse.Text);
-                if (inputnumber >= 30 && inputnumber <= 200)
-                {
-                    lowNumPulse = inputnumber;
-                }
-                else inputTextPulse.Text = Convert.ToString(lowNumPulse);
+                heart.Opacity -= 0.1;
+                heart.Width -= 5;
+                heart.Height -= 5;
             }
-            catch (System.FormatException)
+            else
             {
-                inputTextPulse.Text = Convert.ToString(lowNumPulse);
+                heart.Opacity += 0.1;
+                heart.Width += 5;
+                heart.Height += 5;
             }
-
-        }
-        //Funktionen ändrar gränsen för andningslarmet. Det finns ett satt tal från början som heter lowNumPulse.
-        //Det är bara möjligt att ändra gränsen om den finns inom intervallet i if-satsen.
-        private void retrieveInputBreathing_Click(object sender, RoutedEventArgs e)
-        {
-            try
+            if(heart.Opacity <= 0.4)
             {
-                int inputnumber = Convert.ToInt32(inputTextBreathing.Text);
-                if (inputnumber >= 2 && inputnumber <= 40)
-                {
-                    lowNumBreathing = inputnumber;
-                }
-                else inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
+                heartDecreasing = false;
             }
-            catch (System.FormatException)
+            if (heart.Opacity == 1)
             {
-                inputTextBreathing.Text = Convert.ToString(lowNumBreathing);
+                heartDecreasing = true;
             }
+            dispatcherTimer.Start();
         }
     }
 }
