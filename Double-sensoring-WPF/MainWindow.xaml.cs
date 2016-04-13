@@ -89,7 +89,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Listor för beräkningar för larm
         int breathingWarningInSeconds = 40;
         int pulseWarningInSeconds = 10;
-        int startBreathingAfterSeconds = 40;
+        int startBreathingAfterSeconds = 40; 
         int startPulseAfterSeconds = 20;
 
         double minimiDepthBreath = 0.5;

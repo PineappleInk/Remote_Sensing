@@ -51,12 +51,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Brush used for drawing joints that are currently tracked
         /// </summary>
-        private readonly Brush trackedJointBrush = new SolidColorBrush(Color.FromArgb(255, 68, 192, 68));
+        //private readonly Brush trackedJointBrush = new SolidColorBrush(Color.FromArgb(255, 68, 192, 68)); /Lina
 
         /// <summary>
         /// Brush used for drawing joints that are currently inferred
         /// </summary>        
-        private readonly Brush inferredJointBrush = Brushes.Yellow;
+        //private readonly Brush inferredJointBrush = Brushes.Yellow;/Lina
 
         /// <summary>
         /// Pen used for drawing bones that are currently inferred
