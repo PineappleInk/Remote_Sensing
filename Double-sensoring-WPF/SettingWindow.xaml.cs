@@ -56,6 +56,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+            inputTextBreathing.Text = Convert.ToString(mainWindow.lowNumBreathing);
+            inputTextPulse.Text = Convert.ToString(mainWindow.lowNumPulse);
             this.Hide();
         }
 
@@ -87,12 +89,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                 if(inputnumber_b >= 2 && inputnumber_b <= 40 && inputnumber >= 30 && inputnumber <= 200)
                 {
-
                     this.Hide();
                 }
             }
             catch (System.FormatException)
             {
+                inputTextBreathing.Text = Convert.ToString(mainWindow.lowNumBreathing);
+                inputTextPulse.Text = Convert.ToString(mainWindow.lowNumPulse);
             }
         }
     }

@@ -610,8 +610,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
-                            //Skriver ut pulspeakar i programmet
-                            //textBlock.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                            ////Skriver ut pulspeakar i programmet
+                            //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                             //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                             //Tar in larmgränsen och jämför med personens uppskattade puls.
@@ -691,7 +691,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
 
                             // Ritar ut andningspeakar i programmet
-                            //settingWindow.averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
+                            //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
                             //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                             //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
