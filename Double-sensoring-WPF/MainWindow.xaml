@@ -33,25 +33,11 @@
             </Grid.RowDefinitions>
 
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Grid.Column="2" Margin="4.5,7,6,4" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Button x:Name="Settings" Content="Settings" Grid.Column="2" HorizontalAlignment="Left" Margin="19.6,23.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Settings_Click" IsCancel="True"/>
 
 
             <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Row="1" Margin="0,5,4.5,5" Grid.Column="1" />
             <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Row="2" Margin="0,5,4.5,5" Grid.Column="1" />
-
-            <TextBlock x:Name="textBlock2" Margin="217.5,160,0,0" TextWrapping="Wrap" Text="Pixel values" Grid.Column="2" Grid.Row="2" RenderTransformOrigin="0.498,1.1" HorizontalAlignment="Left" Width="134" Height="46" VerticalAlignment="Top"/>
-            <TextBlock x:Name="textBlock" Margin="217.5,86,0,0" TextWrapping="Wrap" Grid.Column="2" Grid.Row="2" Text="Hjärtrytm:" HorizontalAlignment="Left" Width="134" Height="56" VerticalAlignment="Top"/>
-            <TextBlock x:Name="textBlock5" Margin="217.5,224,-11,0" TextWrapping="Wrap" Grid.Column="2" Grid.Row="2" Height="48" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Grid.ColumnSpan="2"><Span Background="White" Foreground="#FFA31515" FontSize="12.6666666666667" FontFamily="Consolas"><Run Text="Element i andningslistan: "/></Span></TextBlock>
-            <TextBlock x:Name="averageBreathingTextBlock" Grid.Column="2" Grid.Row="2" Margin="217.5,10,0,0" TextWrapping="Wrap" Text="Andningsfrekvens:" Height="56" VerticalAlignment="Top" HorizontalAlignment="Left" Width="134"/>
-            <TextBlock x:Name="informationTextPulse" Grid.Column="2" Grid.Row="2" Margin="16.5,0,0,0" TextWrapping="Wrap" Background="White" Height="44" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på pulsen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-            <TextBlock x:Name="informationTextPulse_Copy" Grid.Column="2" Grid.Row="2" Margin="16.5,104,0,0" TextWrapping="Wrap" Height="52" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"><Run Text="Skriv in en önskvärd larmnivå"/><Run Text=" på "/><Run Text="andningen"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-            <TextBlock x:Name="textBlockSound" Grid.Column="2" Grid.Row="2" Margin="315.5,72,0,0" TextWrapping="Wrap" Text="Ljud för larm" Height="32" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76"/>
-            <TextBox x:Name="inputTextPulse" Grid.Column="2" Grid.Row="2" Margin="46.5,44,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="73"/>
-            <TextBox x:Name="inputTextBreathing" Grid.Column="2" Grid.Row="2" Margin="46.5,142,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="73"/>
-
-            <Button x:Name="button" Content="Clear Lists" Margin="46.5,212,0,0" Click="button_Click" Grid.Column="2" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
-            <Button x:Name="retrieveInputPulse" Content="Enter Pulse" Grid.Column="2" Grid.Row="2" Margin="46.5,74,0,0" Click="retrieveInputPulse_Click" RenderTransformOrigin="0.5,0.5" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
-            <Button x:Name="retrieveInputBreathing" Content="Enter Breathing" Grid.Column="2" Grid.Row="2" Margin="46.5,174,0,0" Click="retrieveInputBreathing_Click" RenderTransformOrigin="0.5,0.5" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
-            <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Grid.Column="2" Grid.Row="2" Margin="341.5,104,0,0" RenderTransformOrigin="0.452,0.469" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
 
         </Grid>
     </Viewbox>
