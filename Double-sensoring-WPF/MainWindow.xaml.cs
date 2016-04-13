@@ -102,6 +102,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Timer
         System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
         bool heartDecreasing = true;
+
+        System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
+        bool lungDecreasing = true;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -142,6 +145,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(500000);
             dispatcherTimer.Start();
+
+            //Timer start
+            lungTimer.Tick += lungTimer_Tick;
+            lungTimer.Interval = new TimeSpan(2000000);
+            lungTimer.Start();
 
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
@@ -1077,7 +1085,33 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             dispatcherTimer.Start();
         }
-    }
+
+        //Timer-funktionen
+        private void lungTimer_Tick(object sender, EventArgs e)
+        {
+            if (lungDecreasing)
+            {
+                lung2.Opacity -= 0.05;
+                lung2.Width -= 1;
+                lung2.Height -= 3;
+            }
+            else
+            {
+                lung2.Opacity += 0.05;
+                lung2.Width += 1;
+                lung2.Height += 3;
+            }
+            if (lung2.Opacity <= 0.8)
+            {
+                lungDecreasing = false;
+            }
+            if (lung2.Opacity >= 1)
+            {
+                lungDecreasing = true;
+            }
+            lungTimer.Start();
+        }
+    }   
 }
 
 namespace MyApp.Tools
