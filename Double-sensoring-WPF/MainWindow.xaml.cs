@@ -1038,7 +1038,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void button_Click(object sender, RoutedEventArgs e)
         {
             depthList.Clear();
-            colorSensing.biglist.Clear();
+            colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
         }
