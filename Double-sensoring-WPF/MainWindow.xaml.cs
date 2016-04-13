@@ -80,7 +80,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int samplesOfMeasurement = 1800;
         int runPlotModulo = 5;
         int fps = 30;
-        int plotOverSeconds = 20;
+        int plotOverSeconds = 20; //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
         int lowNumPulse = 30;
