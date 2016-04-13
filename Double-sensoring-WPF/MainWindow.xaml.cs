@@ -1031,6 +1031,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             SettingWindow settingWindow = new SettingWindow(this);
             settingWindow.Show();
         }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            depthList.Clear();
+            colorSensing.gDrList.Clear();
+            chartPulse.ClearCurveDataPointsFromGraph();
+            chartBreath.ClearCurveDataPointsFromGraph();
+        }
     }
 }
 
