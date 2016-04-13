@@ -77,9 +77,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /*Globala variabler*/
 
         // Info om mätdata
-        int samplesOfMeasurement = 1800;
+        static int samplesOfMeasurement = 1800;
         int runPlotModulo = 5;
-        int fps = 30;
+        static int fps = 30;
         int plotOverSeconds = 20; //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
@@ -92,7 +92,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         int startBreathingAfterSeconds = 40; 
         int startPulseAfterSeconds = 20;
 
-        double minimiDepthBreath = 0.5;
+        static double minimiDepthBreath = 0.5;
 
         //Filter
         static int orderOfFilter = 27;
