@@ -80,7 +80,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int samplesOfMeasurement =
             secondsOfMeasurement * fps;                //Över hur många bilder vi ska mäta (sekunder * fps)
         static int runPlotModulo = 5;                  //Hur ofta plottarna ska köras (anges som antalet bilder som ska gå emellan plottningen)
-        static int plotOverSeconds = 20;               //Anger över hur många sekunder plottarna ska visas
+        static int plotOverSeconds = 10;               //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
         public int lowNumPulse = 30; //OBS gör privata
@@ -98,6 +98,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
         OnlineFilter bpFiltPulse = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 40 / 60, 180 / 60, orderOfFilter);
+
+        //Timer
+        System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+        bool heartDecreasing = true;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -133,6 +137,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //Timer start
+            dispatcherTimer.Tick += dispatcherTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(500000);
+            dispatcherTimer.Start();
 
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
@@ -578,7 +587,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<List<double>> peaksPulse = new List<List<double>>();
                         peaksPulse = locatePeaksPulse(rgbFiltList);
 
-                        // TEST heart-rate-variability /Lina
+                        // TEST heart-rate-variability
                         List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
 
                         int j = 0;
@@ -598,13 +607,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Beräknar ut pulsen över den valda beräkningstiden
                             int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
-                        for (int i = 0; i < peaksPulse[0].Count; ++i)
+                        while (peaksPulse[0][0] < rgbFiltList.Count - samplesForPulseAlarm)
                         {
-                            if (peaksPulse[0][i] <= rgbFiltList.Count - samplesForPulseAlarm)
-                            {
-                                peaksPulse[0].RemoveRange(0, i);
-                                peaksPulse[1].RemoveRange(0, i);
-                            }
+                            peaksPulse[0].RemoveAt(0);
+                            peaksPulse[1].RemoveAt(0);
                         }
 
                             //Average är antalet pulsslag under 60 sekunder
@@ -678,13 +684,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Beräknar ut andningsfrekvensen över den valda beräkningstiden
                             int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
-                        for (int i = 0; i < breathPeaksFilt[0].Count; ++i)
+                        while (breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
                         {
-                            if (breathPeaksFilt[0][i] <= breathingFiltList.Count - samplesForBreathAlarm)
-                            {
-                                breathPeaksFilt[0].RemoveRange(0, i);
-                                breathPeaksFilt[1].RemoveRange(0, i);
-                            }
+                            breathPeaksFilt[0].RemoveAt(0);
+                            breathPeaksFilt[1].RemoveAt(0);
                         }
 
                             // Average är antalet peakar i andningen under 60 sekunder.
@@ -701,8 +704,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartBreath.AddPointToLine("Breath", breathingFiltList[k], k - j);
                         }
-
-                        Console.WriteLine("Andningslängd: " + breathingFiltList.Count);
+                        
                         if (breathingFiltList.Count >= samplesOfMeasurement)
                         {
                         depthList.RemoveRange(0, runPlotModulo);
@@ -726,7 +728,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för andning
         private void breathingAlarm(double averageBreathing, int lowNum)
         {
-            if (averageBreathing < lowNum && depthList.Count >= samplesOfMeasurement)
+            if (averageBreathing < lowNum)
             {
                 if (!settingWindow.checkBoxSound.HasContent)
                 {
@@ -752,7 +754,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
         {
-            if (averagePulse < lowNum && depthList.Count >= samplesOfMeasurement)
+            if (averagePulse < lowNum)
             {
                 if (!settingWindow.checkBoxSound.HasContent)
                 {
@@ -1041,6 +1043,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+        }
+
+        //Timer-funktionen
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if(heartDecreasing)
+            {
+                heart.Opacity -= 0.1;
+                heart.Width -= 5;
+                heart.Height -= 5;
+            }
+            else
+            {
+                heart.Opacity += 0.1;
+                heart.Width += 5;
+                heart.Height += 5;
+            }
+            if(heart.Opacity <= 0.4)
+            {
+                heartDecreasing = false;
+            }
+            if (heart.Opacity == 1)
+            {
+                heartDecreasing = true;
+            }
+            dispatcherTimer.Start();
         }
     }
 }
