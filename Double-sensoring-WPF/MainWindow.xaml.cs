@@ -106,6 +106,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
         double heartPulse = 60;
+        double breathPulse = 20;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -704,6 +705,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
 
+                        //Sparar andningsfrekvensen i den globala variabeln
+                        breathPulse = average;
+
                             // Ritar ut andningspeakar i programmet
                             //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
                             //    + Environment.NewLine + "Uppskattad BPM: " + average;
@@ -1111,6 +1115,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 lungDecreasing = true;
             }
+            //Skriver ut andningsfrekvens
+            breathrateTextBlock.Text = breathPulse.ToString();
+
             dispatcherTimer.Interval = new TimeSpan((long)30 * 10000000 / 60 / 14);
             lungTimer.Start();
         }
