@@ -18,6 +18,6 @@
         <Button x:Name="Position_High" Content="High" HorizontalAlignment="Left" Margin="329,48,0,0" VerticalAlignment="Top" Width="51" Click="Position_High_Click"/>
         <Button x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="276,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_Normal_Click"/>
         <Button x:Name="Position_low" Content="Low" HorizontalAlignment="Left" Margin="223,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_low_Click"/>
-        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="409,184,0,0" VerticalAlignment="Top" Width="75" Click="Save_Click"/>
+        <Button x:Name="Save" Content="Save and close" HorizontalAlignment="Left" Margin="393,184,0,0" VerticalAlignment="Top" Width="91" Click="Save_Click"/>
     </Grid>
 </Window>
