@@ -1075,6 +1075,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 heartDecreasing = true;
             }
+          
             dispatcherTimer.Start();
         }
     }
