@@ -1072,6 +1072,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 heartDecreasing = true;
             }
+            //Skriv ut hjärtfrekvensen
+            heartrateTextBlock.Text = heartPulse.ToString();
+
             //Sätt timertiden till att matcha hjärtfrekvensen
             dispatcherTimer.Interval = new TimeSpan((long)heartPulse * 10000000 / 60 / 14);
             dispatcherTimer.Start();
