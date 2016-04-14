@@ -1103,14 +1103,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 lung2.Width += 1;
                 lung2.Height += 3;
             }
-            if (lung2.Opacity <= 0.8)
+            if (lung2.Opacity <= 0.4)
             {
                 lungDecreasing = false;
             }
-            if (lung2.Opacity >= 1)
+            if (lung2.Opacity == 1)
             {
                 lungDecreasing = true;
             }
+            dispatcherTimer.Interval = new TimeSpan((long)30 * 10000000 / 60 / 14);
             lungTimer.Start();
         }
     }
