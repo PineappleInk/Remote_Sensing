@@ -102,6 +102,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Timer
         System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
         bool heartDecreasing = true;
+        double heartPulse = 60;
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -616,6 +617,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
+                        //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
+                        heartPulse = average;
                             ////Skriver ut pulspeakar i programmet
                             //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                             //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
@@ -1048,6 +1051,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Timer-funktionen
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            dispatcherTimer.Stop();
             if(heartDecreasing)
             {
                 heart.Opacity -= 0.1;
@@ -1068,6 +1072,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 heartDecreasing = true;
             }
+            //Sätt timertiden till att matcha hjärtfrekvensen
+            dispatcherTimer.Interval = new TimeSpan((long)heartPulse * 10000000 / 60 / 14);
             dispatcherTimer.Start();
         }
     }
