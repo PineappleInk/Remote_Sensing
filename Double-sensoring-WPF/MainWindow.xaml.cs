@@ -1115,6 +1115,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 lungDecreasing = true;
             }
+            //Skriver ut andningsfrekvens
+            breathrateTextBlock.Text = breathPulse.ToString();
+
             lungTimer.Start();
         }
     }

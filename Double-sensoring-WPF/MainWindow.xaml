@@ -38,12 +38,11 @@
 
             <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Row="1" Margin="0,5,4,5" Grid.Column="1" />
             <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Row="2" Margin="0,5,4,5" Grid.Column="1" />
-            <Image x:Name="heart" Grid.Column="2" Height="100" Margin="20,78,278.5,0" Grid.Row="2" VerticalAlignment="Top" Source="Images/Hjärta1.png"/>
-            <TextBlock x:Name="heartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="37,98,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="24" Background="Transparent" TextAlignment="Center" VerticalAlignment="Top" Height="60" Width="64"/>
-            <TextBlock x:Name="breathrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="43,223,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="48" TextAlignment="Center" VerticalAlignment="Top" Height="60" Width="64"/>
-            <Image x:Name="heart" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="246.667,216,51.333,5.333" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Hjärta1.png"/>
-            <Image x:Name="lung2" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="77.667,231,0,0" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Center" Width="100" Source="Images/Lung2.png"/>
-            <Image x:Name="lung1" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="77.667,231,0,0" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Center" Width="100" Source="Images/Lung1.png"/>
+            <TextBlock x:Name="heartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="153,84,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="60" Background="Transparent" TextAlignment="Center" VerticalAlignment="Top" Height="88" Width="100"/>
+            <TextBlock x:Name="breathrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="153,220,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="60" TextAlignment="Center" VerticalAlignment="Top" Height="88" Width="100"/>
+            <Image x:Name="heart" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="37,72,261.5,149" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Hjärta1.png"/>
+            <Image x:Name="lung2" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="37,211,261.5,10" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lung2.png"/>
+            <Image x:Name="lung1" Grid.Column="2" HorizontalAlignment="Center" Height="100" Margin="37,211,261.5,10" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lung1.png"/>
 
         </Grid>
     </Viewbox>
