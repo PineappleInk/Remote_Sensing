@@ -159,8 +159,7 @@
     <Resource Include="Images\lung1.png" />
     <Resource Include="Images\lung2.png" />
     <Resource Include="Images\pineapple ink-logo-02.png" />
-    <Resource Include="Images\loadlunga-08.png" />
-    <Resource Include="Images\loadlunga2-08.png" />
+    <Resource Include="Images\laddalunga.png" />
     <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
     <Content Include="matlab\breath_simons.m" />

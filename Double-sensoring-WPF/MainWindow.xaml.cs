@@ -244,12 +244,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
-            lungcirkel.Visibility = Visibility.Hidden;
             lung3.Visibility = Visibility.Hidden;
             heart2.Width = 50;
             heart2.Height = 50;
-            lungcirkel.Width = 50;
-            lungcirkel.Height = 50;
             lung3.Width = 50;
             lung3.Height = 50;
         }
@@ -1347,7 +1344,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 TextLungLoad.Text = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100).ToString() + "%";
                                 chartBreath.Visibility = Visibility.Hidden;
                                 lung3.Visibility = Visibility.Visible;
-                                lungcirkel.Visibility = Visibility.Visible;
                                 lung3.Width += 0.2;
                                 lung3.Height += 0.2;
                             }
