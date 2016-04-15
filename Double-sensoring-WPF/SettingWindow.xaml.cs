@@ -39,18 +39,24 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //mainWindow.getColorSensing().biglist.Clear();
         }
 
-        private void Position_low_Click(object sender, RoutedEventArgs e)
+        private void Position_Low_Checked(object sender, RoutedEventArgs e)
         {
+            Position_Normal.IsChecked = false;
+            Position_High.IsChecked = false;
             mainWindow.setBellyJointYPosition(1);
         }
 
-        private void Position_Normal_Click(object sender, RoutedEventArgs e)
+        private void Position_Normal_Checked(object sender, RoutedEventArgs e)
         {
+            Position_Low.IsChecked = false;
+            Position_High.IsChecked = false;
             mainWindow.setBellyJointYPosition(2/2.5);
         }
 
-        private void Position_High_Click(object sender, RoutedEventArgs e)
+        private void Position_High_Checked(object sender, RoutedEventArgs e)
         {
+            Position_Low.IsChecked = false;
+            Position_Normal.IsChecked = false;
             mainWindow.setBellyJointYPosition(2/3);
         }
 
