@@ -44,13 +44,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Position_Normal.IsChecked = false;
             Position_High.IsChecked = false;
             mainWindow.setBellyJointYPosition(1);
+            Console.WriteLine(mainWindow.bellyJointYPosition);
         }
 
         private void Position_Normal_Checked(object sender, RoutedEventArgs e)
         {
-            Position_Low.IsChecked = false;
+            if(Position_Low != null)
+            {
+                Position_Low.IsChecked = false;
+            }           
             Position_High.IsChecked = false;
             mainWindow.setBellyJointYPosition(2/2.5);
+            Console.WriteLine(mainWindow.bellyJointYPosition);
         }
 
         private void Position_High_Checked(object sender, RoutedEventArgs e)
@@ -58,6 +63,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Position_Low.IsChecked = false;
             Position_Normal.IsChecked = false;
             mainWindow.setBellyJointYPosition(2/3);
+            Console.WriteLine(mainWindow.bellyJointYPosition);
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)

@@ -37,7 +37,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Paramteter for position of bellyJoint
         /// </summary>
-        private double bellyJointYPosition = 1 / 2.1; //Närmare 1 flyttar punkten nedåt
+        public double bellyJointYPosition = 1 / 2.1; //Närmare 1 flyttar punkten nedåt
         private double bellyJointXPosition = 1;
         //double heartrate = 0;
         //double average = 0;
@@ -1126,6 +1126,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             lungTimer.Interval = new TimeSpan(60/(long)breathPulse * 10000000 / 28);
             lungTimer.Start();
+        }
+
+        private void Exit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            System.Environment.Exit(1);
         }
     }
 }
