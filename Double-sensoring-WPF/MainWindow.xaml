@@ -4,7 +4,7 @@
         xmlns:Module_Graphs="clr-namespace:Module_Graphs"
         xmlns:tools="clr-namespace:MyApp.Tools"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Microsoft.Samples.Kinect.BodyBasics.MainWindow"
-        Title="FOR THE PINGUIN!" 
+        Title="Pineapple! Gott på pizza, varm macka och i fruktsalladen!" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"

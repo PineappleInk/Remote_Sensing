@@ -497,28 +497,28 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                            peaksAndValleys[2].Add(0);
+                    peaksAndValleys[2].Add(0);
                     j++;
-                        }
+                }
                 else if (j == valleys[0].Count)
-                        {
-                            peaksAndValleys[0].Add(peaks[0][i]);
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
                     peaksAndValleys[1].Add(peaks[1][i]);
-                            peaksAndValleys[2].Add(1);
-                            i++;
-                        }
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
                 else if (peaks[0][i] < valleys[0][j])
-                    {
-                        peaksAndValleys[0].Add(peaks[0][i]);
-                        peaksAndValleys[1].Add(peaks[1][i]);
-                        peaksAndValleys[2].Add(1);
-                        i++;
-                    }
-            else
-            {
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
+                    peaksAndValleys[1].Add(peaks[1][i]);
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
+                else
+                {
                     peaksAndValleys[0].Add(valleys[0][j]);
                     peaksAndValleys[1].Add(valleys[1][j]);
-                        peaksAndValleys[2].Add(0);
+                    peaksAndValleys[2].Add(0);
                     j++;
                 }
             }
@@ -642,17 +642,62 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         upCounter += 1;
                         downCounter = 0;
                     }
-                }                
-               
+                }
+
             }
             return valleyLocations;
         }
 
-        /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
-        /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
-        /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
+        private List<List<double>> sortByTime(List<List<double>> peaks)
+        {
+            List<List<double>> sortByAllTime = new List<List<double>>();
+            sortByAllTime.Add(new List<double>());
+            sortByAllTime.Add(new List<double>());
+            
+            List<double> timeBetweenPeaks = new List<double>();
 
-        int antalFel = 0; // DENNA SKA VÄL TAS BORT TILL SLUTPRODUKTEN?!?!?!
+            timeBetweenPeaks = timeBetweenAllPeaks(peaks);
+
+            //Peakarna som ska returneras. Ifall dåliga finns så tas de bort nedan.
+            sortByAllTime = peaks;
+
+            double meanH = 0;
+            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
+            {
+                meanH += (1 / (double)timeBetweenPeaks.Count) * (timeBetweenPeaks[i]);
+            }
+
+            // Tar fram summa av tiden
+            double sum = 0;
+            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
+            {
+                sum += (timeBetweenPeaks[i] - meanH) * (timeBetweenPeaks[i] - meanH);
+            }
+            // Tar fram std-avvikelsen sigmaH
+            double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
+            // Tar bort alla peakar med för hög avikelse från medel
+            for (int i = 0, j = 1; i < timeBetweenPeaks.Count; ++i)
+            {
+                if (timeBetweenPeaks[i] > meanH + sigmaH * 1) // Kollar om tiden är utanför medel +- std
+                {
+                    peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
+                    peaks[1].RemoveAt(i + j); // Samma
+                    j--;
+                }
+                else if (timeBetweenPeaks[i] < meanH - sigmaH * 1)
+                {
+                    if (i + 1 != timeBetweenPeaks.Count)
+                    {
+                        timeBetweenPeaks[i + 1] += timeBetweenPeaks[i];
+                    }
+                    peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
+                    peaks[1].RemoveAt(i + j); // Samma
+                    j--;
+                }
+            }
+            //Returnerar peakarna, där dåliga peakar ska ha tagits bort
+            return sortByAllTime;
+        }
 
         private List<List<double>> sortOfHeight(List<List<double>> peaks, List<List<double>> valleys)
         {
@@ -682,14 +727,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Tar fram summa av höjden
             double sum = 0;
-            for (int i = 0 ; i < N ; ++i)
+            for (int i = 0; i < N; ++i)
             {
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
 
             // Tar fram std-avvikelsen sigmaH
-            double sigmaH = Math.Sqrt( (1/N) * sum);
+            double sigmaH = Math.Sqrt((1 / N) * sum);
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
@@ -706,6 +751,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             return sortOfHeight;
         }
+
+        /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
+        /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
+        /// <param name="measurements">innehåller all mätdata i form av en lista med floats</param>
+
+        int antalFel = 0; // DENNA SKA VÄL TAS BORT TILL SLUTPRODUKTEN?!?!?!
 
         private void plottingAndCalculations(string codeString, List<double> breathingList = null, List<double> rgbList = null)
         {
@@ -726,6 +777,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers2", "valleyMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
                         double average = 0;
@@ -763,31 +815,41 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (peaksPulse[0][i] >= j)
                             {
+                                chartPulse.AddPointToLine("Pulsemarkers2", peaksPulse[1][i], peaksPulse[0][i] - j);
+                            }
+                        }
+
+                        peaksPulse = sortByTime(peaksPulse);
+
+                        for (int i = 0; i < peaksPulse[0].Count(); i++)
+                        {
+                            if (peaksPulse[0][i] >= j)
+                            {
                                 chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
                             }
-                            }
+                        }
 
-                            // Beräknar ut pulsen över den valda beräkningstiden
-                            int samplesForPulseAlarm = pulseWarningInSeconds * fps;
+                        // Beräknar ut pulsen över den valda beräkningstiden
+                        int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
                         // Plockar ut värden över de senaste 10 sekundrarna
                         while (peaksPulse[0].Count > 0 && peaksPulse[0][0] < rgbFiltList.Count - samplesForPulseAlarm)
                         {
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
-                            }
+                        }
 
-                            //Average är antalet pulsslag under 60 sekunder
+                        //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
                         heartPulse = average;
-                            ////Skriver ut pulspeakar i programmet
-                            //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                            //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
+                        ////Skriver ut pulspeakar i programmet
+                        //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
+                        //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
-                            //Tar in larmgränsen och jämför med personens uppskattade puls.
-                            pulseAlarm(average, lowNumPulse);
+                        //Tar in larmgränsen och jämför med personens uppskattade puls.
+                        pulseAlarm(average, lowNumPulse);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -823,8 +885,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Toppdetektering
 
-                            List<List<double>> peaks = new List<List<double>>();
-                            List<List<double>> valleys = new List<List<double>>();
+                        List<List<double>> peaks = new List<List<double>>();
+                        List<List<double>> valleys = new List<List<double>>();
                         peaks = locatePeaksBreath(breathingFiltList);
                         valleys = locateValleysBreath(breathingFiltList);
 
@@ -838,36 +900,36 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             j = breathingFiltList.Count - plotOverSeconds * fps;
                         }
 
-                            // Rita ut peakar i andningen (= utandning)
+                        // Rita ut peakar i andningen (= utandning)
                         for (int i = 0; i < breathPeaksFilt[0].Count; i++)
                         {
                             if (breathPeaksFilt[0][i] >= j)
                             {
                                 chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
                             }
-                            }
+                        }
 
-                            // Beräknar ut andningsfrekvensen över den valda beräkningstiden
-                            int samplesForBreathAlarm = breathingWarningInSeconds * fps;
+                        // Beräknar ut andningsfrekvensen över den valda beräkningstiden
+                        int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0].Count > 0 && breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
-                            {
+                        {
                             breathPeaksFilt[0].RemoveAt(0);
                             breathPeaksFilt[1].RemoveAt(0);
                         }
 
-                            // Average är antalet peakar i andningen under 60 sekunder.
+                        // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
 
                         //Sparar andningsfrekvensen i den globala variabeln
                         breathPulse = average;
 
-                            // Ritar ut andningspeakar i programmet
-                            //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
-                            //    + Environment.NewLine + "Uppskattad BPM: " + average;
+                        // Ritar ut andningspeakar i programmet
+                        //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
+                        //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
-                            //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                            breathingAlarm(average, lowNumBreathing);
+                        //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
+                        breathingAlarm(average, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
@@ -876,9 +938,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         if (breathingFiltList.Count >= samplesOfMeasurement)
                         {
-                        depthList.RemoveRange(0, runPlotModulo);
+                            depthList.RemoveRange(0, runPlotModulo);
+                        }
                     }
-                }
                 }
                 else
                 {
@@ -1013,8 +1075,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (color == "transparantRed")
                 {
                     array[startposition + 3] += 30;
+                }
             }
-        }
         }
 
         /// <summary>
@@ -1077,7 +1139,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                         rödapixlar.Add(r);
                                         grönapixlar.Add(g);
                                     }
-                                    ChangePixelColor(i, j, pixels, "transparantRed");
+                                    ChangePixelColor(i, j, pixels, "red");
                                 }
                             }
 
