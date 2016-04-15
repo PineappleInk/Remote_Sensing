@@ -17,6 +17,7 @@
     </Window.Resources>
 
     <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
         <Grid Margin="0,0,0,0" Height="664" Width="1099">
 
             <Grid.ColumnDefinitions>
@@ -32,8 +33,6 @@
                 <RowDefinition Height="526.5*"/>
                 <RowDefinition Height="18*"/>
             </Grid.RowDefinitions>
-
-            <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Margin="504.8,10.6,6.2,310.8" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Column="1" Grid.RowSpan="2" />
             <Button x:Name="Settings" Content="Settings" Grid.Column="2" HorizontalAlignment="Left" Margin="235.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Settings_Click" IsCancel="True" RenderTransformOrigin="0.526,-0.915"/>
             <Button x:Name="Clear" Content="Clear" Grid.Column="2" HorizontalAlignment="Left" Margin="145.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Clear_Click" RenderTransformOrigin="3.55,12.581"/>
 
@@ -45,7 +44,9 @@
             <Image x:Name="lung2" Grid.Column="1" HorizontalAlignment="Center" Height="100" Margin="568.8,71.8,9.6,149.8" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lung2.png"/>
             <Image x:Name="lung1" Grid.Column="1" HorizontalAlignment="Center" Height="100" Margin="568.8,71.8,9.6,149.8" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lung1.png"/>
             <Button x:Name="Exit_Button" Content="Exit" Grid.Column="2" HorizontalAlignment="Left" Margin="323.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Exit_Button_Click"/>
-
+            <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Margin="504.8,10.6,6.2,310.8" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Column="1" Grid.RowSpan="2" />
+            <Image x:Name="heart2" Grid.Column="1" HorizontalAlignment="Center" Height="179" Margin="200.8,83.8,271.6,58.8" Grid.Row="2" VerticalAlignment="Center" Width="206" Source="Images/Hjärta1.png"/>
+            <TextBlock x:Name="TextBlock" HorizontalAlignment="Left" Margin="255.8,148.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="89" Width="99" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2"/>
         </Grid>
     </Viewbox>
 </Window>

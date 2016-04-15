@@ -241,6 +241,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
+            chartPulse.Visibility = Visibility.Hidden;
+            chartBreath.Visibility = Visibility.Hidden;
         }
 
         /// <summary>
@@ -1083,6 +1085,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
 
+                            //Skriver ut progress
+                            if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
+                            {
+                                TextBlock.Text = "Loading Graph " + Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
+                                chartPulse.Visibility = Visibility.Hidden;
+                                heart2.Visibility = Visibility.Visible;
+                            }
+                            else if(Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
+                            {
+                                TextBlock.Text = "";
+                                chartPulse.Visibility = Visibility.Visible;
+                                heart2.Visibility = Visibility.Hidden;
+                            }
+
                             //definiera hur ofta och hur stor listan är här innan.
                             if (pulseList.Count % runPlotModulo == 0)
                             {
@@ -1162,7 +1178,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     ushort[] pixelData = new ushort[512 * 424];
 
-                    depthFrame.CopyFrameDataToArray(pixelData);
+                    //depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
                     if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
@@ -1177,18 +1193,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
-                            depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
+                            //depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            if (depthList.Count % runPlotModulo == 0)
+                            /*if (depthList.Count % runPlotModulo == 0)
                             {
                                 plottingAndCalculations("breathing", depthList);
-                            }
+                            }*/
                         }
                         catch (System.IndexOutOfRangeException)
                         {
-                            System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
+                            //System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
                         }
                     }
                 }
