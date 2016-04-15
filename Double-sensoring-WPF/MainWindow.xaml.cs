@@ -116,6 +116,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         public MainWindow()
         {
+            //Välkomnande röst
+            string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
+            System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
+            greeting.SoundLocation = greetingsPath;
+            greeting.Play();
+
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
 
