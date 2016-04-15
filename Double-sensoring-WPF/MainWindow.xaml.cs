@@ -243,6 +243,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
+            heart2.Visibility = Visibility.Hidden;
+            heart2.Width = 50;
+            heart2.Height = 50;
         }
 
         /// <summary>
@@ -907,7 +910,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    breathingAlarmText.Opacity = 100;
+                    breathingAlarmText.Opacity = 1;
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -917,7 +920,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Opacity = 100;
+                    breathingAlarmText.Opacity = 1;
                 }
 
             }
@@ -936,7 +939,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    pulseAlarmText.Opacity = 100;
+                    pulseAlarmText.Opacity = 1;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -945,7 +948,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    pulseAlarmText.Opacity = 100;
+                    pulseAlarmText.Opacity = 1;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
@@ -1094,9 +1097,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Skriver ut progress
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
                             {
-                                TextBlock.Text = "Loading Graph " + Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
+                                TextBlock.Text = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
+                                heart2.Width += 0.2;
+                                heart2.Height += 0.2;
                             }
                             else if(Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
                             {
@@ -1244,6 +1249,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            heart2.Width = 50;
+            heart2.Height = 50;
         }
 
         //Timer-funktionen
