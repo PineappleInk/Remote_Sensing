@@ -243,6 +243,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
+            heart2.Visibility = Visibility.Hidden;
+            heart2.Width = 50;
+            heart2.Height = 50;
         }
 
         /// <summary>
@@ -717,7 +720,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH = 0;
             int n = yPeaks.Count;
             int m = yValleys.Count;
-            int N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
+            double N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
 
             for (int i = 0; i < N; ++i)
             {
@@ -770,6 +773,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+
+                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers3", "marker_heightSorted");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
                         double average = 0;
@@ -812,6 +817,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (peaksPulse[0][i] >= j)
                             {
                                 chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
+                                // Linas nya TEST
+                                chartPulse.AddPointToLine("Pulsemarkers3", peaksAndValleysSortedOnHeight[1][i],
+                                    peaksAndValleysSortedOnHeight[0][i] - j);
                             }
                         }
 
@@ -1140,9 +1148,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Skriver ut progress
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
                             {
-                                TextBlock.Text = "Loading Graph " + Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
+                                TextBlock.Text = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
+                                heart2.Width += 0.2;
+                                heart2.Height += 0.2;
                             }
                             else if(Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
                             {
@@ -1290,6 +1300,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            heart2.Width = 50;
+            heart2.Height = 50;
         }
 
         //Timer-funktionen

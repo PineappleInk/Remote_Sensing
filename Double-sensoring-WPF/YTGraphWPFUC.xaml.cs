@@ -100,6 +100,15 @@ namespace Module_Graphs
                 s.Color = System.Drawing.Color.FromArgb(255, 255, 255, 0);
                 s.BorderWidth = 3;
             }
+            else if (strUnit == "marker_heightSorted")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Star10;
+                s.MarkerSize = 10;
+                s.Color = System.Drawing.Color.FromArgb(255, 255, 255, 0);
+                s.BorderWidth = 3;
+            }
             else
             {
                 Series s = chart1.Series.Add(strPinDescription);
