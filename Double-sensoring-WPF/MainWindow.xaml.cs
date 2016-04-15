@@ -770,6 +770,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+
+                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers3", "marker_heightSorted");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
                         double average = 0;
@@ -812,6 +814,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             if (peaksPulse[0][i] >= j)
                             {
                                 chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
+                                // Linas nya TEST
+                                chartPulse.AddPointToLine("Pulsemarkers3", peaksAndValleysSortedOnHeight[1][i],
+                                    peaksAndValleysSortedOnHeight[0][i] - j);
                             }
                         }
 
