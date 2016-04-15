@@ -763,8 +763,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
             // Tar fram medelhöjd meanH (x-streck)
             double meanH = 0;
-            int n = yPeaks.Count;
-            int m = yValleys.Count;
+            double n = yPeaks.Count;
+            double m = yValleys.Count;
             double N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
 
             for (int i = 0; i < N; ++i)
