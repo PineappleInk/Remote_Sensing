@@ -885,6 +885,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
+                        Console.WriteLine(pulseListLina[0].Count);
                         for (int i = 0; i < pulseListLina[0].Count(); i++)
                         {
                             if (pulseListLina[0][i] >= j)
