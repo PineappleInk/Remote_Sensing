@@ -961,7 +961,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    breathingAlarmText.Opacity = 1;
+                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -971,12 +971,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Opacity = 1;
+                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
                 }
 
             }
             else settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
-            breathingAlarmText.Opacity = 0;
+            breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
         }
 
         //Larm för pulsen
@@ -990,7 +990,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    pulseAlarmText.Opacity = 1;
+                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -999,12 +999,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    pulseAlarmText.Opacity = 1;
+                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
             else settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
-            pulseAlarmText.Opacity = 0;
+            breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
