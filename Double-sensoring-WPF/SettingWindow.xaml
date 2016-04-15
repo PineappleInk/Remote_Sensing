@@ -15,9 +15,10 @@
         <Button x:Name="button" Content="Clear Lists" Margin="17,184,0,0" Click="button_Click" RenderTransformOrigin="0.5,0.5" Height="19" VerticalAlignment="Top" HorizontalAlignment="Left" Width="96"/>
         <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="438,48,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="235,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="130"><Run Text="Set "/><Run Text="position for breathing measurments"/><LineBreak/><Run/></TextBlock>
-        <Button x:Name="Position_High" Content="High" HorizontalAlignment="Left" Margin="329,48,0,0" VerticalAlignment="Top" Width="51" Click="Position_High_Click"/>
-        <Button x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="276,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_Normal_Click"/>
-        <Button x:Name="Position_low" Content="Low" HorizontalAlignment="Left" Margin="223,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_low_Click"/>
         <Button x:Name="Save" Content="Save and close" HorizontalAlignment="Left" Margin="393,184,0,0" VerticalAlignment="Top" Width="91" Click="Save_Click"/>
+        <Button x:Name="resetButton" Content="Reset" HorizontalAlignment="Left" Margin="305,184,0,0" VerticalAlignment="Top" Width="75" Click="resetButton_Click"/>
+        <RadioButton x:Name="Position_High" Content="High" HorizontalAlignment="Left" Margin="240,57,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="240,78,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <RadioButton x:Name="Position_Low" Content="Low" HorizontalAlignment="Left" Margin="240,100,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
