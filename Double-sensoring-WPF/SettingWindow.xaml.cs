@@ -98,6 +98,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 inputTextPulse.Text = Convert.ToString(mainWindow.lowNumPulse);
             }
         }
+
+        private void resetButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.lowNumBreathing = 10;
+            mainWindow.lowNumPulse = 30;
+            inputTextBreathing.Text = Convert.ToString(mainWindow.lowNumBreathing);
+            inputTextPulse.Text = Convert.ToString(mainWindow.lowNumPulse);
+            checkBoxSound.IsChecked = false;
+        }
     }
 
     //Funktionen ändrar gränsen för pulslarmet. Det finns ett satt tal från början som heter lowNumPulse.

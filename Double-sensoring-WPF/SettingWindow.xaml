@@ -19,5 +19,6 @@
         <Button x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="276,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_Normal_Click"/>
         <Button x:Name="Position_low" Content="Low" HorizontalAlignment="Left" Margin="223,48,0,0" VerticalAlignment="Top" Width="48" Click="Position_low_Click"/>
         <Button x:Name="Save" Content="Save and close" HorizontalAlignment="Left" Margin="393,184,0,0" VerticalAlignment="Top" Width="91" Click="Save_Click"/>
+        <Button x:Name="resetButton" Content="Reset" HorizontalAlignment="Left" Margin="305,184,0,0" VerticalAlignment="Top" Width="75" Click="resetButton_Click"/>
     </Grid>
 </Window>
