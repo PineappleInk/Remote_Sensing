@@ -106,8 +106,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
         double heartPulse = 60;
-        double breathPulse = 20;
-        //----------------------------------------------------------------------------------------
+        double breathPulse = 30;
+        //-------------------------------------------------------s---------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
@@ -150,7 +150,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //Timer start
             lungTimer.Tick += lungTimer_Tick;
-            lungTimer.Interval = new TimeSpan(2000000);
+            lungTimer.Interval = new TimeSpan(500000);
             lungTimer.Start();
 
             //SetingWindow
@@ -1088,7 +1088,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             heartrateTextBlock.Text = heartPulse.ToString();
 
             //Sätt timertiden till att matcha hjärtfrekvensen
-            dispatcherTimer.Interval = new TimeSpan((long)heartPulse * 10000000 / 60 / 14);
+            dispatcherTimer.Interval = new TimeSpan(60/(long)heartPulse * 10000000 / 14);
             dispatcherTimer.Start();
         }
 
@@ -1098,14 +1098,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             if (lungDecreasing)
             {
                 lung2.Opacity -= 0.05;
-                lung2.Width -= 1;
-                lung2.Height -= 3;
+                lung2.Width -= 1.2;
+                lung2.Height -= 0.3;
             }
             else
             {
                 lung2.Opacity += 0.05;
-                lung2.Width += 1;
-                lung2.Height += 3;
+                lung2.Width += 1.2;
+                lung2.Height += 0.3;
             }
             if (lung2.Opacity <= 0.4)
             {
@@ -1118,7 +1118,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Skriver ut andningsfrekvens
             breathrateTextBlock.Text = breathPulse.ToString();
 
-            dispatcherTimer.Interval = new TimeSpan((long)30 * 10000000 / 60 / 14);
+            lungTimer.Interval = new TimeSpan(60/(long)breathPulse * 10000000 / 28);
             lungTimer.Start();
         }
     }
