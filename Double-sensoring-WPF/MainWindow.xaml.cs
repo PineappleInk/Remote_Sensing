@@ -953,7 +953,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    breathingAlarmText.Opacity = 100;
+                    breathingAlarmText.Opacity = 1;
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -963,7 +963,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Opacity = 100;
+                    breathingAlarmText.Opacity = 1;
                 }
 
             }
@@ -982,7 +982,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    pulseAlarmText.Opacity = 100;
+                    pulseAlarmText.Opacity = 1;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -991,7 +991,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    pulseAlarmText.Opacity = 100;
+                    pulseAlarmText.Opacity = 1;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
