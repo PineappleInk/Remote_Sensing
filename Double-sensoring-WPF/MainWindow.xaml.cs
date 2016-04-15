@@ -694,7 +694,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     highEnoughPeaks[3].Add(yValleys[i]);
                 }
             }
-   
+
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
@@ -718,8 +718,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
             // Tar fram medelhöjd meanH (x-streck)
             double meanH = 0;
-            int n = yPeaks.Count;
-            int m = yValleys.Count;
+            double n = yPeaks.Count;
+            double m = yValleys.Count;
             double N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
 
             for (int i = 0; i < N; ++i)
@@ -831,7 +831,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
-                            }
+                        }
 
                         //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
@@ -907,7 +907,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0].Count > 0 && breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
-                            {
+                        {
                             breathPeaksFilt[0].RemoveAt(0);
                             breathPeaksFilt[1].RemoveAt(0);
                         }
@@ -1075,8 +1075,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (color == "transparantRed")
                 {
                     array[startposition + 3] += 30;
+                }
             }
-        }
         }
 
         /// <summary>
@@ -1154,7 +1154,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 heart2.Width += 0.2;
                                 heart2.Height += 0.2;
                             }
-                            else if(Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
+                            else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
                             {
                                 TextBlock.Text = "";
                                 chartPulse.Visibility = Visibility.Visible;
