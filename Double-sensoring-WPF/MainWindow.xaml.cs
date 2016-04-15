@@ -795,7 +795,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // genom att kalla på underfunktion.
             filteredByH = checkHeights(sortedPeaksAndValleys, meanH, sigmaH);
 
-            return sortOfHeight;
+            return filteredByH;
         }
         /* SLUT: Sortera bort en del pulsvärden på bas av höjd */
 
