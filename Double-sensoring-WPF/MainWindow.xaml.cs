@@ -907,6 +907,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
+                    breathingAlarmText.Opacity = 100;
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -916,10 +917,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    breathingAlarmText.Opacity = 100;
                 }
 
             }
             else settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
+            breathingAlarmText.Opacity = 0;
         }
 
         //Larm för pulsen
@@ -933,6 +936,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
+                    pulseAlarmText.Opacity = 100;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -941,10 +945,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
+                    pulseAlarmText.Opacity = 100;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
             else settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
+            pulseAlarmText.Opacity = 0;
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
