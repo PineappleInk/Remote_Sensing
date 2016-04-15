@@ -717,7 +717,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH = 0;
             int n = yPeaks.Count;
             int m = yValleys.Count;
-            int N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
+            double N = Math.Min(n, m); // Anm: Ska ej behövas nu. n = m ska gälla.
 
             for (int i = 0; i < N; ++i)
             {
