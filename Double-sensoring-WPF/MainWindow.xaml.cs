@@ -703,6 +703,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             List<List<double>> sortOfHeight = new List<List<double>>();
             sortOfHeight.Add(new List<double>());
+
             sortOfHeight.Add(new List<double>());
 
             // Peakar och dalar sorterade så att dem ligger i ordning
