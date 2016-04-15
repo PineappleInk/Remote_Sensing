@@ -244,8 +244,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
+            lungcirkel.Visibility = Visibility.Hidden;
+            lung3.Visibility = Visibility.Hidden;
             heart2.Width = 50;
             heart2.Height = 50;
+            lungcirkel.Width = 50;
+            lungcirkel.Height = 50;
+            lung3.Width = 50;
+            lung3.Height = 50;
         }
 
         /// <summary>
@@ -1145,7 +1151,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
 
-                            //Skriver ut progress
+                            //Laddar hjärt-grafen
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
                             {
                                 TextBlock.Text = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
@@ -1255,14 +1261,31 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
                             double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
 
-                            //depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
+                            depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //lägg till average i listan med alla djupvärden
                             //skicka listan om den blivit tillräckligt stor
-                            /*if (depthList.Count % runPlotModulo == 0)
+                            if (depthList.Count % runPlotModulo == 0)
                             {
                                 plottingAndCalculations("breathing", depthList);
-                            }*/
+                            }
+
+                            //Laddar lung-grafen
+                            if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) <= 100)
+                            {
+                                TextLungLoad.Text = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100).ToString() + "%";
+                                chartBreath.Visibility = Visibility.Hidden;
+                                lung3.Visibility = Visibility.Visible;
+                                lungcirkel.Visibility = Visibility.Visible;
+                                lung3.Width += 0.2;
+                                lung3.Height += 0.2;
+                            }
+                            else if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) == 101)
+                            {
+                                TextLungLoad.Text = "";
+                                chartBreath.Visibility = Visibility.Visible;
+                                lung3.Visibility = Visibility.Hidden;
+                            }
                         }
                         catch (System.IndexOutOfRangeException)
                         {
@@ -1302,6 +1325,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.ClearCurveDataPointsFromGraph();
             heart2.Width = 50;
             heart2.Height = 50;
+            lung3.Width = 50;
+            lung3.Height = 50;
         }
 
         //Timer-funktionen
