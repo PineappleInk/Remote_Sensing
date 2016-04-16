@@ -898,38 +898,27 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         /* SLUT toppdetektering */
 
                         //Beräkning av hjärtfrekvens
-                        Console.WriteLine("Heartrate beräkning påbörjas");
                         double heartrate = 0;
                         double calcHeartRateOverSeconds = 10;
                         double periods = 0;
                         List<double> timeBetweenHeartBeats = new List<double>();
                         timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime);
-                        double xStart = samplesOfMeasurement - (calcHeartRateOverSeconds * fps);
-                        Console.WriteLine("xStart: " + xStart);
-
+                        double xStart = rgbFiltList.Count - (calcHeartRateOverSeconds * fps);
                         for (int i = 0; i < peaksByTime[0].Count - 1; ++i)
                         {
-                            Console.WriteLine("x-count i peaksbytime: " + peaksByTime[0].Count);
                             if (peaksByTime[0][i] >= xStart)
                             {
                                 double T = timeBetweenHeartBeats[i];
-                                Console.WriteLine("T: " + T);
                                 double f = 1 / T;
-                                Console.WriteLine("f: " + f);
                                 double fOneMinute = f * 60;
-                                Console.WriteLine("fOneMinute: " + fOneMinute);
                                 heartrate += fOneMinute;
-                                Console.WriteLine("heartrate addition: " + heartrate);
                                 periods += 1;
-                                Console.WriteLine("periods: " + periods);
                             }
                         }
                         heartrate = Math.Round(heartrate / periods);
-                        Console.WriteLine("Slutgiltig heartrate: " + heartrate);
 
                         //Skriver ut heartrate på skärmen
                         heartPulse = heartrate;
-                        Console.WriteLine("heartPulse: " + heartPulse);
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
                         // Plottning av pulskurva (färgvärde över tid), samt alla typer av toppdetekteringar
@@ -1486,8 +1475,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             XMLsave.saveToXML(heartPulse.ToString());
 
             //Sätt timertiden till att matcha hjärtfrekvensen
-            dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
-            dispatcherTimer.Start();
+            if (heartPulse != 0)
+            {
+                dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
+                dispatcherTimer.Start();
+            }
         }
 
         //Timer-funktionen
@@ -1516,8 +1508,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Skriver ut andningsfrekvens
             breathrateTextBlock.Text = breathPulse.ToString();
 
-            lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
-            lungTimer.Start();
+            if (breathPulse != 0)
+            {
+                lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
+                lungTimer.Start();
+            }
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
