@@ -435,10 +435,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < numOfPeaks - 1; ++i)
             {
                 double timeBwTwoPeaks = (peaks[0][i + 1] - peaks[0][i]) / fps;
-                double timesTen = 10 * timeBwTwoPeaks;
-                double rounded = Math.Round(timesTen);
-                double dividedByTen = rounded / 10;
-                timeBwPeaks.Add(dividedByTen);
+                //double timesTen = 10 * timeBwTwoPeaks;
+                //double rounded = Math.Round(timesTen);
+                //double dividedByTen = rounded / 10;
+                //timeBwPeaks.Add(dividedByTen);
+                timeBwPeaks.Add(timeBwTwoPeaks);
             }
 
             // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
@@ -900,6 +901,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime);
                         double xStart = samplesOfMeasurement - (calcHeartRateOverSeconds * fps);
                         Console.WriteLine("xStart: " + xStart);
+
                         for (int i = 0; i < peaksByTime[0].Count - 1; ++i)
                         {
                             Console.WriteLine("x-count i peaksbytime: " + peaksByTime[0].Count);
