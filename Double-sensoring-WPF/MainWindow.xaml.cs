@@ -280,10 +280,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
             lung3.Visibility = Visibility.Hidden;
-            heart2.Width = 50;
-            heart2.Height = 50;
-            lung3.Width = 50;
-            lung3.Height = 50;
         }
 
         /// <summary>
@@ -1286,11 +1282,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Laddar hjärt-grafen
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
                             {
-                                TextBlock.Text = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
+                                double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100);
+                                TextBlock.Text = procent.ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
-                                heart2.Width += 0.2;
-                                heart2.Height += 0.2;
+                                heart2.Width = heart2.MaxWidth * procent / 100;
+                                heart2.Height = heart2.MaxHeight * procent / 100;
                             }
                             else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
                             {
@@ -1397,11 +1394,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Laddar lung-grafen
                             if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) <= 100)
                             {
-                                TextLungLoad.Text = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100).ToString() + "%";
+                                double procent = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100);
+                                TextLungLoad.Text = procent.ToString() + "%";
                                 chartBreath.Visibility = Visibility.Hidden;
                                 lung3.Visibility = Visibility.Visible;
-                                lung3.Width += 0.2;
-                                lung3.Height += 0.2;
+                                lung3.Width = lung3.MaxWidth * procent / 100;
+                                lung3.Height = lung3.MaxHeight * procent / 100;
                             }
                             else if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) == 101)
                             {
@@ -1446,10 +1444,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
-            heart2.Width = 50;
-            heart2.Height = 50;
-            lung3.Width = 50;
-            lung3.Height = 50;
         }
 
         //Timer-funktionen

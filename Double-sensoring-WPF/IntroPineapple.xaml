@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.BodyBasics"
         mc:Ignorable="d"
-        Title="IntroPineapple" Height="700" Width="700" AllowsTransparency="True" WindowStyle="None" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="IntroPineapple" Height="700" Width="1000" AllowsTransparency="True" WindowStyle="None" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Background>
         <SolidColorBrush Opacity="0.0" Color="White"/>
     </Window.Background>
     <Grid>
-        <Image x:Name="pineappleImage" HorizontalAlignment="Center" Height="376" Margin="301,234,83,90" VerticalAlignment="Center" Width="366" Source="Images/pineapple ink-logo-02.png"/>
+        <Image x:Name="pineappleImage" HorizontalAlignment="Center" Height="376" Margin="295,281,39,43" VerticalAlignment="Center" Width="366" Source="Images/pineapple ink-logo-02.png"/>
     </Grid>
 </Window>
