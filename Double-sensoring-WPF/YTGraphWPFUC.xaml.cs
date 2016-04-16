@@ -105,7 +105,7 @@ namespace Module_Graphs
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Square;
-                s.MarkerSize = 10;
+                s.MarkerSize = 20;
                 s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
                 s.BorderWidth = 3;
             }

@@ -61,6 +61,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //SettingWindow-instans
         private SettingWindow settingWindow;
 
+        //IntroPineapple-instans
+        private IntroPineapple introPineapple;
+
         ////----------------------------------------Våra egna---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
@@ -94,6 +97,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         static double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
+        static int dotSize = 20;
+
         //Filter
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
@@ -107,6 +112,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         bool lungDecreasing = true;
         double heartPulse = 60;
         double breathPulse = 30;
+
         //-------------------------------------------------------s---------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -116,11 +122,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         public MainWindow()
         {
-            //Välkomnande röst
-            string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
-            System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
-            greeting.SoundLocation = greetingsPath;
-            greeting.Play();
+            //Programmet börjar med en intro-ananas
+            this.Hide();
+            this.introPineapple = new IntroPineapple(Path.Combine(path + @"\..\..\..\pineapple.wav"));
+            this.introPineapple.Show();
+
+            //Timer start - använda dispathertimer till introt
+            dispatcherTimer.Tick += introPineappleSpin;
+            dispatcherTimer.Interval = new TimeSpan(10000);
+            dispatcherTimer.Start();
 
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
@@ -149,7 +159,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
+            //SetingWindow
+            this.settingWindow = new SettingWindow(this);
+        }
+
+        //Intro-ananas ska snurra 720 grader
+        private void introPineappleSpin(object sender, EventArgs e)
+        {
+            dispatcherTimer.Stop();
+            int angle = this.introPineapple.spinPineapple();
+
+            if (angle >= 360)
+            {
+                //Visa programmet istället för intro-ananasen
+                this.introPineapple.Close();
+                this.Show();
+
+                //Välkomnande röst
+                string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
+                System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
+                greeting.SoundLocation = greetingsPath;
+                greeting.Play();
+
             //Timer start
+                dispatcherTimer.Tick -= introPineappleSpin;
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(500000);
             dispatcherTimer.Start();
@@ -158,9 +191,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             lungTimer.Tick += lungTimer_Tick;
             lungTimer.Interval = new TimeSpan(500000);
             lungTimer.Start();
-
-            //SetingWindow
-            this.settingWindow = new SettingWindow(this);
+            }
+            else
+            {
+                dispatcherTimer.Start();
+            }
         }
 
         public void setBellyJointYPosition(double v)
@@ -244,8 +279,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
+            lung3.Visibility = Visibility.Hidden;
             heart2.Width = 50;
             heart2.Height = 50;
+            lung3.Width = 50;
+            lung3.Height = 50;
         }
 
         /// <summary>
@@ -917,6 +955,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
+                        Console.WriteLine(pulseListLina[0].Count);
                         for (int i = 0; i < pulseListLina[0].Count(); i++)
                         {
                             if (pulseListLina[0][i] >= j)
@@ -1227,11 +1266,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             grönapixlar = new List<int>();
 
                             // Rutan som följer HeadJoint
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 10);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 10); ++i)
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 10);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 10); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize); ++j)
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
@@ -1247,7 +1286,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
 
-                            //Skriver ut progress
+                            //Laddar hjärt-grafen
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
                             {
                                 TextBlock.Text = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100).ToString() + "%";
@@ -1291,11 +1330,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             if (colorSpaceSpinePoint.X > 0)
                             {
-                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - 10);
-                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + 10); ++i)
+                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - dotSize);
+                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + dotSize); ++i)
                                 {
-                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - 10);
-                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + 10); ++j)
+                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - dotSize);
+                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + dotSize); ++j)
                                     {
                                         ChangePixelColor(i, j, pixels, "blue");
                                     }
@@ -1365,6 +1404,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 plottingAndCalculations("breathing", depthList);
                             }
+
+                            //Laddar lung-grafen
+                            if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) <= 100)
+                            {
+                                TextLungLoad.Text = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100).ToString() + "%";
+                                chartBreath.Visibility = Visibility.Hidden;
+                                lung3.Visibility = Visibility.Visible;
+                                lung3.Width += 0.2;
+                                lung3.Height += 0.2;
+                            }
+                            else if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) == 101)
+                            {
+                                TextLungLoad.Text = "";
+                                chartBreath.Visibility = Visibility.Visible;
+                                lung3.Visibility = Visibility.Hidden;
+                            }
                         }
                         catch (System.IndexOutOfRangeException)
                         {
@@ -1404,6 +1459,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.ClearCurveDataPointsFromGraph();
             heart2.Width = 50;
             heart2.Height = 50;
+            lung3.Width = 50;
+            lung3.Height = 50;
         }
 
         //Timer-funktionen
@@ -1471,6 +1528,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
             System.Environment.Exit(1);
+        }
+
+        private void DotSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dotSize = (int)DotSizeSlider.Value;
         }
     }
 }
