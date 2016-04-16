@@ -49,6 +49,7 @@
             <Image x:Name="heart2" Grid.Column="1" HorizontalAlignment="Center" Height="194" Grid.Row="2" VerticalAlignment="Center" Width="194" Source="Images/Hjärta1.png" Margin="142.8,39.8,341.6,87.8"/>
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Margin="504.8,10.6,6.2,310.8" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Column="1" Grid.RowSpan="2" />
             <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" Margin="215.8,118.8,361.6,113.8" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2" Text="text"/>
+            <Slider x:Name="DotSizeSlider" Grid.Column="2" HorizontalAlignment="Left" Margin="323,40,0,0" Grid.Row="2" VerticalAlignment="Top" Height="194" Width="46" Orientation="Vertical" Maximum="40" Value="20" ValueChanged="DotSizeSlider_ValueChanged"/>
         </Grid>
     </Viewbox>
 </Window>
