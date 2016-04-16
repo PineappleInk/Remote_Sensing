@@ -339,7 +339,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 5)
+                    if (downCounter < 4)
                     {
                         upCounter += 1;
                         downCounter = 0;
@@ -348,7 +348,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid topp
                 else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (upCounter > 15)
+                    if (upCounter > 4)
                     {
                         topLocations[0].Add(Convert.ToDouble(i));
                         topLocations[1].Add(measurements[i]);
@@ -359,7 +359,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 else if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 5)
+                    if (upCounter < 4)
                     {
                         downCounter += 1;
                         upCounter = 0;
@@ -386,7 +386,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
                 {
-                    if (upCounter < 5)
+                    if (upCounter < 4)
                     {
                         downCounter += 1;
                         upCounter = 0;
@@ -396,7 +396,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 15)
+                    if (downCounter > 4)
                     {
                         upCounter = 0;
                         downCounter = 0;
@@ -409,7 +409,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 else if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 5)
+                    if (downCounter < 4)
                     {
                         upCounter += 1;
                         downCounter = 0;
@@ -873,11 +873,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers2", "valleyMarker");
-                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers3", "marker_heightSorted");
+                        //chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers2", "valleyMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers3", "marker_heightSorted");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
-                        //double average = 0;
+                        double average = 0;
 
                         /* Toppdetektering. Toppar urskiljs även från brus. */
                         // Toppdetektering. Steg (1)
@@ -965,10 +965,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
 
                         //Average är antalet pulsslag under 60 sekunder
-                        //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
+                        average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        //heartPulse = average;
+                        oldheartrateTextBlock.Text = average.ToString();
+
                         ////Skriver ut pulspeakar i programmet
                         //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
