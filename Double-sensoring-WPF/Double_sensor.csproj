@@ -90,6 +90,7 @@
     <Compile Include="SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XMLsave.cs" />
     <Compile Include="YTGraphWPFUC.xaml.cs">
       <DependentUpon>YTGraphWPFUC.xaml</DependentUpon>
     </Compile>

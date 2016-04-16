@@ -1198,7 +1198,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             List<int> grönapixlar = null;
                             grönapixlar = new List<int>();
 
-                            // Rutan som följer HeadJoint
+                            // Rutan som följer HeadJoint samt lägger till värden i röda- och grönapixellistan
                             for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 40);
                                 i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 40); ++i)
                             {
@@ -1321,14 +1321,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-
-
-                            //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
-                            //OBS spineShoulder eller dylikt måste skapas
-                            /*DepthSpacePoint depthSpacePointCompare = 
-                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
-                            double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
-
                             depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //lägg till average i listan med alla djupvärden
@@ -1422,6 +1414,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             //Skriv ut hjärtfrekvensen
             heartrateTextBlock.Text = heartPulse.ToString();
+            XMLsave XMLsave = new XMLsave();
+            XMLsave.saveToXML(heartPulse.ToString());
 
             //Sätt timertiden till att matcha hjärtfrekvensen
             dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
