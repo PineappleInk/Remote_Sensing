@@ -1474,8 +1474,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             XMLsave.saveToXML(heartPulse.ToString());
 
             //Sätt timertiden till att matcha hjärtfrekvensen
-            dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
-            dispatcherTimer.Start();
+            if (heartPulse != 0)
+            {
+                dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
+                dispatcherTimer.Start();
+            }
         }
 
         //Timer-funktionen
@@ -1504,8 +1507,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Skriver ut andningsfrekvens
             breathrateTextBlock.Text = breathPulse.ToString();
 
-            lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
-            lungTimer.Start();
+            if (breathPulse != 0)
+            {
+                lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
+                lungTimer.Start();
+            }
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
