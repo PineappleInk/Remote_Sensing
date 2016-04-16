@@ -4,7 +4,7 @@
         xmlns:Module_Graphs="clr-namespace:Module_Graphs"
         xmlns:tools="clr-namespace:MyApp.Tools"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Microsoft.Samples.Kinect.BodyBasics.MainWindow"
-        Title="FOR THE PINGUIN!" 
+        Title="Pineapple! Gott på pizza, varm macka och i fruktsalladen!" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"
@@ -48,7 +48,9 @@
             <TextBox x:Name="pulseAlarmText" Grid.Column="2" HorizontalAlignment="Left" Height="20" Margin="161.4,227.8,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Heart rate levels are low!" VerticalAlignment="Top" Width="149" Background="#FFF31111" Visibility="Hidden"/>
             <Image x:Name="heart2" Grid.Column="1" HorizontalAlignment="Center" Height="194" Grid.Row="2" VerticalAlignment="Center" Width="194" Source="Images/Hjärta1.png" Margin="142.8,39.8,341.6,87.8"/>
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Margin="504.8,10.6,6.2,310.8" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Column="1" Grid.RowSpan="2" />
-            <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" Margin="215.8,118.8,361.6,113.8" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2" Text="text"/>
+            <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" Margin="215.8,118.8,361.6,113.8" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2"/>
+            <Image x:Name="lung3" Grid.Column="1" HorizontalAlignment="Center" Height="194" Grid.Row="1" VerticalAlignment="Center" Width="194" Source="Images/laddalunga.png" Margin="147.333,88.333,336.667,39"/>
+            <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" Margin="220.333,167.333,356.667,65" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </Viewbox>
 </Window>
