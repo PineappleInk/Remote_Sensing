@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="beep-07.wav" />
+    <Content Include="welcome.wav" />
     <Resource Include="Images\Hjärta1.png" />
     <Resource Include="Images\lung1.png" />
     <Resource Include="Images\lung2.png" />
