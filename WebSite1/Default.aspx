@@ -7,7 +7,8 @@
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        Xml1.DocumentSource = @"C:\Users\Jakob\Documents\Skola\Kandidatprojekt\Remote_Sensing\WebSite1\XMLFile.xml";
+        //Xml1.DocumentSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()) + @"\..\..\.WebSite1\XMLFile.xml";
+        //Console.WriteLine(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()));
     }
 
     protected void Button1_Click(object sender, EventArgs e)
