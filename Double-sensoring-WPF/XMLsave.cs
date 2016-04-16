@@ -29,7 +29,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Save the document to a file. White space is
             // preserved (no white space).
             doc.PreserveWhitespace = true;
-            doc.Save(@"C:\Users\Jakob\Documents\Skola\Kandidatprojekt\Remote_Sensing\WebSite1\XMLFile.xml");
+            doc.Save(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()) + @"\..\..\..\..\WebSite1\XMLFile.xml");
         }
     }
 }
