@@ -720,16 +720,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
+
+            // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
+            double k = 1;
+
             // Tar bort alla peakar med för hög avikelse från medel
             for (int i = 0, j = 1; i < timeBetweenPeaks.Count; ++i)
             {
-                if (timeBetweenPeaks[i] > meanH + sigmaH * 1) // Kollar om tiden är utanför medel +- std
+                if (timeBetweenPeaks[i] > meanH + sigmaH * k) // Kollar om tiden är utanför medel +- std
                 {
                     peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
                     peaks[1].RemoveAt(i + j); // Samma
                     j--;
                 }
-                else if (timeBetweenPeaks[i] < meanH - sigmaH * 1)
+                else if (timeBetweenPeaks[i] < meanH - sigmaH * k)
                 {
                     if (i + 1 != timeBetweenPeaks.Count)
                     {
@@ -785,7 +789,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         /* Returnerar lista med: [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal 
            där toppar och dalar från brus ska ha reducerats */
-        private List<List<double>> sortOfHeight(List<List<double>> peaksPulse, List<List<double>> valleysPulse)
+        private List<List<double>> sortByHeight(List<List<double>> peaksPulse, List<List<double>> valleysPulse)
         {
             // Peakar och dalar sorterade så att dem ligger i ordning; varannan peak, varannan dal.
             // [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal
@@ -884,7 +888,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
-                        peaksAndValleysByHeight = sortOfHeight(peaksPulse, valleysPulse);
+                        peaksAndValleysByHeight = sortByHeight(peaksPulse, valleysPulse);
 
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
