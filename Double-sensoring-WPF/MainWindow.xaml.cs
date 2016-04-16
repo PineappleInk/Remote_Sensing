@@ -880,33 +880,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Daldetektering. Steg (1)
                         List<List<double>> valleysPulse = new List<List<double>>();
                         valleysPulse = locateValleysPulse(rgbFiltList);
-                        /*
+
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
-                        List<List<double>> peaksAndValleysSortedOnHeight = new List<List<double>>();
-                        peaksAndValleysSortedOnHeight.Add(new List<double>()); // x Peak
-                        peaksAndValleysSortedOnHeight.Add(new List<double>()); // y Peak
-                        peaksAndValleysSortedOnHeight.Add(new List<double>()); // x Valley
-                        peaksAndValleysSortedOnHeight.Add(new List<double>()); // y Valley
+                        List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
+                        peaksAndValleysByHeight = sortOfHeight(peaksPulse, valleysPulse);
 
-                        peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
-                        */
-                       List<List<double>> peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
-                       // Sortera toppar baserat på tiden 
-
+                        // Sortera toppar baserat på tiden
+                        List<List<double>> peaksByTime = new List<List<double>>();
+                        //peaksByTime = sortByTime(peaksPulse);
+                        peaksByTime = sortByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
-                        //////OM MAN VILL HA DET MOMENTANT
-                        //// TEST heart-rate-variability
-                        //List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
-
-                        //for (int i = 0; i < heartRateVariability.Count; ++i)
-                        //{
-                        //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
-                        //}
-                        // TEST heart-rate-variability /Lina
-                        List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
-
-                        ////OM MAN VILL HA DET SOM EN FINFIN KURVA
+                        //// OM MAN VILL HA DET SOM EN FINFIN KURVA
+                        // Plottning av pulskurva (färgvärde över tid), samt alla typer av toppdetekteringar
                         int j = 0;
                         if (rgbFiltList.Count - plotOverSeconds * fps >= 0)
                         {
@@ -921,27 +907,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        List<List<double>> pulseListLina = new List<List<double>>();
-                        pulseListLina = sortOfHeight(peaksPulse, valleysPulse);
-
-                        List<List<double>> pulseListJustus = new List<List<double>>();
-                        pulseListJustus = sortByTime(peaksPulse);
-
-                        for (int i = 0; i < pulseListJustus[0].Count(); i++)
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
-                            if (pulseListJustus[0][i] >= j)
+                            if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers2", pulseListJustus[1][i], pulseListJustus[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers3", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
-                        for (int i = 0; i < pulseListLina[0].Count(); i++)
+                        for (int i = 0; i < peaksByTime[0].Count(); i++)
                         {
-                            if (pulseListLina[0][i] >= j)
+                            if (peaksByTime[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers3", pulseListLina[1][i], pulseListLina[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers2", peaksByTime[1][i], peaksByTime[0][i] - j);
                             }
                         }
+
+                       
 
                         // Beräknar ut pulsen över den valda beräkningstiden
                         int samplesForPulseAlarm = pulseWarningInSeconds * fps;
