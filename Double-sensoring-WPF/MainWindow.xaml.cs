@@ -1199,11 +1199,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             grönapixlar = new List<int>();
 
                             // Rutan som följer HeadJoint
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 40);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 40); ++i)
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 5);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 5); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 30);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 60); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 5);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 5); ++j)
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
@@ -1461,6 +1461,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
             System.Environment.Exit(1);
+        }
+
+        private void TextLungLoad_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
         }
     }
 }
