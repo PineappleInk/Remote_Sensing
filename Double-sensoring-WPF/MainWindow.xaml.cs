@@ -1107,8 +1107,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
 
             }
-            else settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
-            breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
+            else
+            {
+                settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
+                breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
+            }
         }
 
         //Larm för pulsen
@@ -1122,7 +1125,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
+                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
@@ -1131,12 +1134,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
                 else
                 {
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
+                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
                 }
             }
-            else settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
-            breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
+            else
+            {
+                settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
+                pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
+            }
         }
 
         /// Funktion som tar ut färgvärdena för en pixel
