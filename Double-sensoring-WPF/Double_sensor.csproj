@@ -40,7 +40,7 @@
     </StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\Kinect.ico</ApplicationIcon>
+    <ApplicationIcon>pineapple_ink-icon-01.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -153,10 +153,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="beep-07.wav" />
+    <Resource Include="pineapple_ink-icon-01.ico" />
+    <Resource Include="pineapple_ink.ico" />
     <Resource Include="Images\Hjärta1.png" />
     <Resource Include="Images\lung1.png" />
     <Resource Include="Images\lung2.png" />
     <Resource Include="Images\pineapple ink-logo-02.png" />
+    <Resource Include="Images\laddalunga.png" />
     <Content Include="matlab\breath.m" />
     <Content Include="matlab\breathing_instant.m" />
     <Content Include="matlab\breath_simons.m" />
