@@ -51,7 +51,7 @@
             <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" Margin="215.8,118.8,361.6,113.8" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2"/>
             <Image x:Name="lung3" Grid.Column="1" HorizontalAlignment="Center" Height="194" Grid.Row="1" VerticalAlignment="Center" Width="194" Source="Images/laddalunga.png" Margin="147.333,88.333,336.667,39"/>
             <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" Margin="220.333,167.333,356.667,65" TextWrapping="Wrap" VerticalAlignment="Center" Height="89" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1"/>
-            <Slider x:Name="DotSizeSlider" Grid.Column="2" HorizontalAlignment="Left" Margin="323,40,0,0" Grid.Row="2" VerticalAlignment="Top" Height="194" Width="46" Orientation="Vertical" Maximum="40" Value="20" ValueChanged="DotSizeSlider_ValueChanged"/>
+            <Slider x:Name="DotSizeSlider" Grid.Column="2" HorizontalAlignment="Left" Margin="323,40,0,0" Grid.Row="2" VerticalAlignment="Top" Height="194" Width="46" Orientation="Vertical" Maximum="40" Value="20" ValueChanged="DotSizeSlider_ValueChanged" Minimum="2"/>
         </Grid>
     </Viewbox>
 </Window>
