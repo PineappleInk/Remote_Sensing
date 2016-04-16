@@ -61,6 +61,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //SettingWindow-instans
         private SettingWindow settingWindow;
 
+        //IntroPineapple-instans
+        private IntroPineapple introPineapple;
+
         ////----------------------------------------Våra egna---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
@@ -116,11 +119,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         public MainWindow()
         {
-            //Välkomnande röst
-            string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
-            System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
-            greeting.SoundLocation = greetingsPath;
-            greeting.Play();
+            //Programmet börjar med en intro-ananas
+            this.Hide();
+            this.introPineapple = new IntroPineapple(Path.Combine(path + @"\..\..\..\pineapple.wav"));
+            this.introPineapple.Show();
+
+            //Timer start - använda dispathertimer till introt
+            dispatcherTimer.Tick += introPineappleSpin;
+            dispatcherTimer.Interval = new TimeSpan(10000);
+            dispatcherTimer.Start();
 
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
@@ -149,18 +156,43 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            //Timer start
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(500000);
-            dispatcherTimer.Start();
-
-            //Timer start
-            lungTimer.Tick += lungTimer_Tick;
-            lungTimer.Interval = new TimeSpan(500000);
-            lungTimer.Start();
-
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
+        }
+
+        //Intro-ananas ska snurra 720 grader
+        private void introPineappleSpin(object sender, EventArgs e)
+        {
+            dispatcherTimer.Stop();
+            int angle = this.introPineapple.spinPineapple();
+
+            if (angle >= 360)
+            {
+                //Visa programmet istället för intro-ananasen
+                this.introPineapple.Close();
+                this.Show();
+
+                //Välkomnande röst
+                string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
+                System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
+                greeting.SoundLocation = greetingsPath;
+                greeting.Play();
+
+                //Timer start
+                dispatcherTimer.Tick -= introPineappleSpin;
+                dispatcherTimer.Tick += dispatcherTimer_Tick;
+                dispatcherTimer.Interval = new TimeSpan(500000);
+                dispatcherTimer.Start();
+
+                //Timer start
+                lungTimer.Tick += lungTimer_Tick;
+                lungTimer.Interval = new TimeSpan(500000);
+                lungTimer.Start();
+            }
+            else
+            {
+                dispatcherTimer.Start();
+            }
         }
 
         public void setBellyJointYPosition(double v)
@@ -742,7 +774,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     highEnoughPeaks[3].Add(yValleys[i]);
                 }
             }
-   
+
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
@@ -905,7 +937,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
-                            }
+                        }
 
                         //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
@@ -981,7 +1013,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0].Count > 0 && breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
-                            {
+                        {
                             breathPeaksFilt[0].RemoveAt(0);
                             breathPeaksFilt[1].RemoveAt(0);
                         }
@@ -1149,8 +1181,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (color == "transparantRed")
                 {
                     array[startposition + 3] += 30;
+                }
             }
-        }
         }
 
         /// <summary>
