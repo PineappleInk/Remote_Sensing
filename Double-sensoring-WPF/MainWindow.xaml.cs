@@ -94,6 +94,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         static double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
+        static int dotSize = 20;
+
         //Filter
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
@@ -107,6 +109,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         bool lungDecreasing = true;
         double heartPulse = 60;
         double breathPulse = 30;
+
         //-------------------------------------------------------s---------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -1199,11 +1202,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             grönapixlar = new List<int>();
 
                             // Rutan som följer HeadJoint
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 5);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 5); ++i)
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 5);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 5); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize); ++j)
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
@@ -1263,11 +1266,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             if (colorSpaceSpinePoint.X > 0)
                             {
-                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - 10);
-                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + 10); ++i)
+                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - dotSize);
+                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + dotSize); ++i)
                                 {
-                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - 10);
-                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + 10); ++j)
+                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - dotSize);
+                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + dotSize); ++j)
                                     {
                                         ChangePixelColor(i, j, pixels, "blue");
                                     }
@@ -1463,9 +1466,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             System.Environment.Exit(1);
         }
 
-        private void TextLungLoad_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void DotSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            dotSize = (int)DotSizeSlider.Value;
         }
     }
 }
