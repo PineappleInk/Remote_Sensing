@@ -9,6 +9,7 @@
     {
         //Xml1.DocumentSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()) + @"\..\..\.WebSite1\XMLFile.xml";
         //Console.WriteLine(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()));
+
     }
 
     protected void Button1_Click(object sender, EventArgs e)
