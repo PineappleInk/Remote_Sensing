@@ -768,12 +768,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int N = xPeaks.Count;
             // k är en konstant som avgör hur många std-avvikelser 
             // från medel som är tillåtna för att uppfylla höjdvillkor.
-            double k = 2;
+            double k1 = 1;
+            double k2 = 2;
 
             for (int i = 0; i < N; ++i)
             {
                 double height = yPeaks[i] - yValleys[i];
-                if (height < meanH + k * sigmaH && height > meanH - k * sigmaH)
+                if (height < meanH + k1 * sigmaH && height > meanH - k1 * sigmaH)
                 {
                     // [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal
                     highEnoughPeaks[0].Add(xPeaks[i]);
@@ -938,29 +939,29 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
 
-                        for (int i = 0; i < peaksPulse[0].Count(); i++)
-                        {
-                            if (peaksPulse[0][i] >= j)
-                            {
-                                chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
-                            }
-                        }
+                        //for (int i = 0; i < peaksPulse[0].Count(); i++)
+                        //{
+                        //    if (peaksPulse[0][i] >= j)
+                        //    {
+                        //        chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
+                        //    }
+                        //}
 
                         for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
                             if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers3", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
-                        for (int i = 0; i < peaksByTime[0].Count(); i++)
-                        {
-                            if (peaksByTime[0][i] >= j)
-                            {
-                                chartPulse.AddPointToLine("Pulsemarkers2", peaksByTime[1][i], peaksByTime[0][i] - j);
-                            }
-                        }
+                        //for (int i = 0; i < peaksByTime[0].Count(); i++)
+                        //{
+                        //    if (peaksByTime[0][i] >= j)
+                        //    {
+                        //        chartPulse.AddPointToLine("Pulsemarkers", peaksByTime[1][i], peaksByTime[0][i] - j);
+                        //    }
+                        //}
 
                        
 
