@@ -33,7 +33,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 doc.Save(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory()) + @"\..\..\..\..\WebSite1\XMLFile.xml");
             }
-            catch (System.IO.IOException) { }
+            catch (System.IO.IOException)
+            {
+                Console.WriteLine("Felmeddelande");
             }
+        }
     }
 }

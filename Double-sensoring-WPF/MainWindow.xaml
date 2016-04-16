@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"
-        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" >
+        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" Background="#FFB4EFFC" >
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
@@ -52,6 +52,10 @@
             <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Margin="198.333,121,378.667,153.333" TextWrapping="Wrap" VerticalAlignment="Center" Height="47" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2" RenderTransformOrigin="0.544,0.383" Text="loading..."/>
             <Image x:Name="lung3" Grid.Column="1" HorizontalAlignment="Center" Height="236" Grid.Row="1" VerticalAlignment="Center" Width="236" Source="Images/laddalunga.png" Margin="126.333,67.333,315.667,18"/>
             <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" TextAlignment="Center" Margin="192.333,169.333,384.667,110" TextWrapping="Wrap" VerticalAlignment="Center" Height="42" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="0.534,0.368" Text="loading..."/>
+
+            <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="211,51,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="60" Background="Transparent" TextAlignment="Center" VerticalAlignment="Top" Height="88" Width="100" Text="x"/>
+
+
         </Grid>
     </Viewbox>
 </Window>
