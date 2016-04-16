@@ -768,13 +768,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int N = xPeaks.Count;
             // k är en konstant som avgör hur många std-avvikelser 
             // från medel som är tillåtna för att uppfylla höjdvillkor.
-            double k1 = 1;
-            double k2 = 2;
+            double k1 = 2;
+            double k2 = 4;
 
             for (int i = 0; i < N; ++i)
             {
                 double height = yPeaks[i] - yValleys[i];
-                if (height < meanH + k1 * sigmaH && height > meanH - k1 * sigmaH)
+                if (height < meanH + k2 * sigmaH && height > meanH - k1 * sigmaH)
                 {
                     // [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal
                     highEnoughPeaks[0].Add(xPeaks[i]);
