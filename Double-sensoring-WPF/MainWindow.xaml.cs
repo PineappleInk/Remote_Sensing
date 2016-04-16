@@ -491,24 +491,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
-            Console.WriteLine("antal sorterade peakar och dalar: " + peaksAndValleys[0].Count);
-
-            Console.WriteLine("Dal eller topp? Visa lista: ");
-            for (int i = 0; i < peaksAndValleys[0].Count; ++i)
-            {
-                Console.WriteLine("peaksAndValleys: " + peaksAndValleys[2][i]);
-            }
-
             // HÄR BÖR peaksAndValleys vara en komplett sorterad lista.
             // Nästa steg blir att se över så att det kommer varannan topp, varannan dal.
             // Även para ihop så att det finns topp och dal
 
             if (peaksAndValleys[2][0] == 1) // Om första elementet är en topp
             {
-                Console.WriteLine("Jarå, hit kom vi allt!");
                 if (peaksAndValleys[2][1] == 0) // Och det andra värdet är en dal
                 {
-                    Console.WriteLine("Jarå, vi kom till steg 2 också!");
                     sortedPeaksAndValleys[0].Add(peaksAndValleys[0][0]);
                     sortedPeaksAndValleys[1].Add(peaksAndValleys[1][0]);
                     sortedPeaksAndValleys[2].Add(peaksAndValleys[0][1]);
@@ -518,17 +508,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < peaksAndValleys[0].Count - 1; ++i)
             {
-                Console.WriteLine("Vi kom till steg 3, in i for-loopen också!");
                 if (peaksAndValleys[2][i] == 0) // Elementet är en dal
                 {
-                    Console.WriteLine("Vi kom till steg 4, in i 1:a if:en !");
                     if (peaksAndValleys[2][i + 1] == 1) // Elementet direkt efter är en topp
                     {
-                        Console.WriteLine("Vi kom till steg 5, in i 2:a if:en !");
                         sortedPeaksAndValleys[0].Add(peaksAndValleys[0][i + 1]);
-                        Console.WriteLine("värde" + peaksAndValleys[0][i + 1]);
-                        //Console.WriteLine("Tillagt värde" + sortedPeaksAndValleys[0][);
-
                         sortedPeaksAndValleys[1].Add(peaksAndValleys[1][i + 1]);
                         sortedPeaksAndValleys[2].Add(peaksAndValleys[0][i]);
                         sortedPeaksAndValleys[3].Add(peaksAndValleys[1][i]);
@@ -536,8 +520,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-            Console.WriteLine("antal sorterade peakar: " + sortedPeaksAndValleys[0].Count);
-
             return sortedPeaksAndValleys;
         }
 
@@ -614,7 +596,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-            Console.WriteLine("correctPeaks: " + correctPeaks[0].Count);
 
             return correctPeaks;
         }
@@ -899,7 +880,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Daldetektering. Steg (1)
                         List<List<double>> valleysPulse = new List<List<double>>();
                         valleysPulse = locateValleysPulse(rgbFiltList);
-
+                        /*
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
                         List<List<double>> peaksAndValleysSortedOnHeight = new List<List<double>>();
                         peaksAndValleysSortedOnHeight.Add(new List<double>()); // x Peak
@@ -908,10 +889,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         peaksAndValleysSortedOnHeight.Add(new List<double>()); // y Valley
 
                         peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
-
-                       // List<List<double>> peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
-                        Console.WriteLine("peakar och dalar antal element: " + peaksAndValleysSortedOnHeight[0].Count);
-                        // Sortera toppar baserat på tiden 
+                        */
+                       List<List<double>> peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
+                       // Sortera toppar baserat på tiden 
 
                         /* SLUT toppdetektering */
 
@@ -941,11 +921,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        List<List<double>> pulseListJustus = new List<List<double>>();
-                        pulseListJustus = sortByTime(peaksPulse);
-
                         List<List<double>> pulseListLina = new List<List<double>>();
                         pulseListLina = sortOfHeight(peaksPulse, valleysPulse);
+
+                        List<List<double>> pulseListJustus = new List<List<double>>();
+                        pulseListJustus = sortByTime(peaksPulse);
 
                         for (int i = 0; i < pulseListJustus[0].Count(); i++)
                         {
@@ -955,7 +935,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        Console.WriteLine(pulseListLina[0].Count);
                         for (int i = 0; i < pulseListLina[0].Count(); i++)
                         {
                             if (pulseListLina[0][i] >= j)
