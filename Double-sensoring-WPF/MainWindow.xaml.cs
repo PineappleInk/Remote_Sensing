@@ -169,7 +169,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             dispatcherTimer.Stop();
             int angle = this.introPineapple.spinPineapple();
 
-            if (angle >= 360)
+            if (angle >= 720)
             {
                 //Visa programmet istället för intro-ananasen
                 this.introPineapple.Close();

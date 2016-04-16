@@ -25,23 +25,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         public IntroPineapple(string str)
         {
-            /*System.Media.SoundPlayer sound = new System.Media.SoundPlayer();
+            System.Media.SoundPlayer sound = new System.Media.SoundPlayer();
             sound.SoundLocation = str;
-            sound.Play();*/
+            sound.Play();
             InitializeComponent();
         }
 
         //Funktion för att ananasen ska snurra
         public int spinPineapple()
         {
-            if (introCounter < 360)
-            {
-                pineappleImage.Height -= 1;
-                pineappleImage.Width -= 1;
-                RotateTransform rotateTransform = new RotateTransform(introCounter*2);
-                pineappleImage.RenderTransform = rotateTransform;
-                introCounter += 1;
-            }
+            pineappleImage.Height -= 2;
+            pineappleImage.Width -= 2;
+            RotateTransform rotateTransform = new RotateTransform(introCounter);
+            pineappleImage.RenderTransform = rotateTransform;
+            introCounter += 4;
+
             return introCounter;
         }
     }
