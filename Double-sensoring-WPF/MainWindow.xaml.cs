@@ -191,7 +191,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             lungTimer.Tick += lungTimer_Tick;
             lungTimer.Interval = new TimeSpan(500000);
             lungTimer.Start();
-            }
+        }
             else
             {
                 dispatcherTimer.Start();
@@ -777,7 +777,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     highEnoughPeaks[3].Add(yValleys[i]);
                 }
             }
-
+   
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
@@ -885,7 +885,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
                         peaksAndValleysByHeight = sortOfHeight(peaksPulse, valleysPulse);
 
-                        // Sortera toppar baserat på tiden
+                        // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
                         //peaksByTime = sortByTime(peaksPulse);
                         peaksByTime = sortByTime(peaksAndValleysByHeight);
@@ -966,7 +966,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
-                        }
+                            }
 
                         //Average är antalet pulsslag under 60 sekunder
                         //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
@@ -1042,7 +1042,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0].Count > 0 && breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
-                        {
+                            {
                             breathPeaksFilt[0].RemoveAt(0);
                             breathPeaksFilt[1].RemoveAt(0);
                         }
@@ -1210,8 +1210,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (color == "transparantRed")
                 {
                     array[startposition + 3] += 30;
-                }
             }
+        }
         }
 
         /// <summary>
@@ -1382,14 +1382,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-
-
-                            //Jämför med en stationär Joint för att eliminera icke-andningesrelaterade rörelser
-                            //OBS spineShoulder eller dylikt måste skapas
-                            /*DepthSpacePoint depthSpacePointCompare = 
-                                bodySensning.getCoordinateMapper().MapCameraPointToDepthSpace(bodySensning.getSpineShoulderJoint().Position);
-                            double jointCompare = pixelData[Convert.ToInt32(Math.Round((depthSpacePointCompare.Y - 1) * 512 + depthSpacePointCompare.X))];*/
-
                             depthList.Add(depthSensing.createDepthListAvarage(bodySensning.getCoordinateMapper(), bodySensning.getBellyJoint(), pixelData));
 
                             //lägg till average i listan med alla djupvärden
@@ -1483,6 +1475,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             //Skriv ut hjärtfrekvensen
             heartrateTextBlock.Text = heartPulse.ToString();
+            XMLsave XMLsave = new XMLsave();
+            XMLsave.saveToXML(heartPulse.ToString());
 
             //Sätt timertiden till att matcha hjärtfrekvensen
             dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
