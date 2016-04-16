@@ -61,6 +61,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //SettingWindow-instans
         private SettingWindow settingWindow;
 
+        //IntroPineapple-instans
+        private IntroPineapple introPineapple;
+
         ////----------------------------------------Våra egna---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
@@ -94,6 +97,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         static double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
+        static int dotSize = 20;
+
         //Filter
         static int orderOfFilter = 27;
         OnlineFilter bpFiltBreath = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, 30, 6 / 60, 60 / 60, orderOfFilter);
@@ -107,6 +112,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         bool lungDecreasing = true;
         double heartPulse = 60;
         double breathPulse = 30;
+
         //-------------------------------------------------------s---------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -116,11 +122,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         public MainWindow()
         {
-            //Välkomnande röst
-            string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
-            System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
-            greeting.SoundLocation = greetingsPath;
-            greeting.Play();
+            //Programmet börjar med en intro-ananas
+            this.Hide();
+            this.introPineapple = new IntroPineapple(Path.Combine(path + @"\..\..\..\pineapple.wav"));
+            this.introPineapple.Show();
+
+            //Timer start - använda dispathertimer till introt
+            dispatcherTimer.Tick += introPineappleSpin;
+            dispatcherTimer.Interval = new TimeSpan(10000);
+            dispatcherTimer.Start();
 
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
@@ -149,7 +159,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
+            //SetingWindow
+            this.settingWindow = new SettingWindow(this);
+        }
+
+        //Intro-ananas ska snurra 720 grader
+        private void introPineappleSpin(object sender, EventArgs e)
+        {
+            dispatcherTimer.Stop();
+            int angle = this.introPineapple.spinPineapple();
+
+            if (angle >= 720)
+            {
+                //Visa programmet istället för intro-ananasen
+                this.introPineapple.Close();
+                this.Show();
+
+                //Välkomnande röst
+                string greetingsPath = Path.Combine(path + @"\..\..\..\welcome.wav");
+                System.Media.SoundPlayer greeting = new System.Media.SoundPlayer();
+                greeting.SoundLocation = greetingsPath;
+                greeting.Play();
+
             //Timer start
+                dispatcherTimer.Tick -= introPineappleSpin;
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(500000);
             dispatcherTimer.Start();
@@ -158,9 +191,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             lungTimer.Tick += lungTimer_Tick;
             lungTimer.Interval = new TimeSpan(500000);
             lungTimer.Start();
-
-            //SetingWindow
-            this.settingWindow = new SettingWindow(this);
+        }
+            else
+            {
+                dispatcherTimer.Start();
+            }
         }
 
         public void setBellyJointYPosition(double v)
@@ -455,6 +490,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     j++;
                 }
             }
+
             // HÄR BÖR peaksAndValleys vara en komplett sorterad lista.
             // Nästa steg blir att se över så att det kommer varannan topp, varannan dal.
             // Även para ihop så att det finns topp och dal
@@ -484,7 +520,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-
             return sortedPeaksAndValleys;
         }
 
@@ -634,7 +669,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (upCounter > 4)
+                    if (downCounter > 4) // Vände nyss tecken /Lina
                     {
                         valleyLocations[0].Add(Convert.ToDouble(i)); // Positionen på dalen läggs till i listan
                         valleyLocations[1].Add(measurements[i]); // Värdet på dalen läggs till i listan
@@ -749,16 +784,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         /* Returnerar lista med: [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal 
            där toppar och dalar från brus ska ha reducerats */
-        private List<List<double>> sortOfHeight(List<List<double>> peaks, List<List<double>> valleys)
+        private List<List<double>> sortOfHeight(List<List<double>> peaksPulse, List<List<double>> valleysPulse)
         {
-            List<List<double>> sortOfHeight = new List<List<double>>();
-            sortOfHeight.Add(new List<double>());
-            sortOfHeight.Add(new List<double>());
-
             // Peakar och dalar sorterade så att dem ligger i ordning; varannan peak, varannan dal.
             // [0] = x-peak, [1] = y-peak, [2] = x-dal, [3] = y-dal
             List<List<double>> sortedPeaksAndValleys = new List<List<double>>();
-            sortedPeaksAndValleys = sortPeaksAndValleys(peaks, valleys);
+            sortedPeaksAndValleys.Add(new List<double>()); // x Peak
+            sortedPeaksAndValleys.Add(new List<double>()); // y Peak
+            sortedPeaksAndValleys.Add(new List<double>()); // x Valley
+            sortedPeaksAndValleys.Add(new List<double>()); // y Valley
+
+            sortedPeaksAndValleys = sortPeaksAndValleys(peaksPulse, valleysPulse);
+
+            //TEST Lina
+            //Console.WriteLine("num of elements av sorterade värden: " + sortedPeaksAndValleys[0].Count);
+
             // Värden på peakar och dalar
             List<double> yPeaks = sortedPeaksAndValleys[1];
             List<double> yValleys = sortedPeaksAndValleys[3];
@@ -842,24 +882,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         valleysPulse = locateValleysPulse(rgbFiltList);
 
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
-                        List<List<double>> peaksAndValleysSortedOnHeight = new List<List<double>>();
-                        peaksAndValleysSortedOnHeight = sortOfHeight(peaksPulse, valleysPulse);
-                        // Sortera toppar baserat på tiden 
+                        List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
+                        peaksAndValleysByHeight = sortOfHeight(peaksPulse, valleysPulse);
 
+                        // Sortera toppar baserat på tiden 
+                        List<List<double>> peaksByTime = new List<List<double>>();
+                        //peaksByTime = sortByTime(peaksPulse);
+                        peaksByTime = sortByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
-                        //////OM MAN VILL HA DET MOMENTANT
-                        //// TEST heart-rate-variability
-                        //List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
-
-                        //for (int i = 0; i < heartRateVariability.Count; ++i)
-                        //{
-                        //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
-                        //}
-                        // TEST heart-rate-variability /Lina
-                        List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
-
-                        ////OM MAN VILL HA DET SOM EN FINFIN KURVA
+                        //// OM MAN VILL HA DET SOM EN FINFIN KURVA
+                        // Plottning av pulskurva (färgvärde över tid), samt alla typer av toppdetekteringar
                         int j = 0;
                         if (rgbFiltList.Count - plotOverSeconds * fps >= 0)
                         {
@@ -874,28 +907,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        List<List<double>> pulseListJustus = new List<List<double>>();
-                        pulseListJustus = sortByTime(peaksPulse);
-
-                        List<List<double>> pulseListLina = new List<List<double>>();
-                        pulseListLina = sortOfHeight(peaksPulse, valleysPulse);
-
-                        for (int i = 0; i < pulseListJustus[0].Count(); i++)
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
-                            if (pulseListJustus[0][i] >= j)
+                            if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers2", pulseListJustus[1][i], pulseListJustus[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers3", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
-                        Console.WriteLine(pulseListLina[0].Count);
-                        for (int i = 0; i < pulseListLina[0].Count(); i++)
+                        for (int i = 0; i < peaksByTime[0].Count(); i++)
                         {
-                            if (pulseListLina[0][i] >= j)
+                            if (peaksByTime[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers3", pulseListLina[1][i], pulseListLina[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers2", peaksByTime[1][i], peaksByTime[0][i] - j);
                             }
                         }
+
+                       
 
                         // Beräknar ut pulsen över den valda beräkningstiden
                         int samplesForPulseAlarm = pulseWarningInSeconds * fps;
@@ -1198,12 +1226,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             List<int> grönapixlar = null;
                             grönapixlar = new List<int>();
 
-                            // Rutan som följer HeadJoint samt lägger till värden i röda- och grönapixellistan
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - 40);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + 40); ++i)
+                            // Rutan som följer HeadJoint
+                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize);
+                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize); ++i)
                             {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - 30);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + 60); ++j)
+                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize);
+                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize); ++j)
                                 {
                                     int r = getcolorfrompixel(i, j, pixels, "red");
                                     int g = getcolorfrompixel(i, j, pixels, "green");
@@ -1263,11 +1291,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             if (colorSpaceSpinePoint.X > 0)
                             {
-                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - 10);
-                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + 10); ++i)
+                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - dotSize);
+                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + dotSize); ++i)
                                 {
-                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - 10);
-                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + 10); ++j)
+                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - dotSize);
+                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + dotSize); ++j)
                                     {
                                         ChangePixelColor(i, j, pixels, "blue");
                                     }
@@ -1455,6 +1483,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
             System.Environment.Exit(1);
+        }
+
+        private void DotSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dotSize = (int)DotSizeSlider.Value;
         }
     }
 }
