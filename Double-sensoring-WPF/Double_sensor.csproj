@@ -161,11 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="beep-07.wav" />
+    <Resource Include="Images\laddahjärta-09.png" />
+    <Resource Include="Images\Lungkrans-05.png" />
     <Content Include="pineapple.wav" />
     <Resource Include="pineapple_ink-icon-01.ico" />
     <Resource Include="pineapple_ink.ico" />
     <Resource Include="Images\Hjärta1.png" />
-    <Resource Include="Images\lung1.png" />
     <Resource Include="Images\lung2.png" />
     <Resource Include="Images\pineapple ink-logo-02.png" />
     <Resource Include="Images\laddalunga.png" />
