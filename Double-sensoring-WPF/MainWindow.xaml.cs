@@ -374,8 +374,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int downCounter = 0;
             // Lista för dalar
             List<List<double>> valleyLocations = new List<List<double>>();
-            valleyLocations.Add(new List<double>()); //[0] Dalarnas position
-            valleyLocations.Add(new List<double>()); //[1] Dalarnas värden 
+            valleyLocations.Add(new List<double>()); //[0] Dalarnas position(x-värden)
+            valleyLocations.Add(new List<double>()); //[1] Dalarnas värden  (y-värden)
 
             for (int i = 0; i < measurements.Count - 4; i++)
             {
@@ -426,7 +426,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Tiderna mellan topparna - Ny lista
             List<double> timeBwPeaks = new List<double>();
-            //timeBwPeaks.Add(new double()); // Tiderna mellan topparna lagras
 
             for (int i = 0; i < numOfPeaks - 1; ++i)
             {
@@ -438,7 +437,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 timeBwPeaks.Add(timeBwTwoPeaks);
             }
 
-            // Tiden mellan alla toppar returneras i lista. (Noggrannhet tiondels sekund).
+            // Tiden mellan alla toppar returneras i lista.
             return timeBwPeaks;
         }
 
@@ -666,7 +665,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Vid dal
                 else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
                 {
-                    if (downCounter > 4) // Vände nyss tecken /Lina
+                    if (downCounter > 4)
                     {
                         valleyLocations[0].Add(Convert.ToDouble(i)); // Positionen på dalen läggs till i listan
                         valleyLocations[1].Add(measurements[i]); // Värdet på dalen läggs till i listan
@@ -798,9 +797,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             sortedPeaksAndValleys = sortPeaksAndValleys(peaksPulse, valleysPulse);
 
-            //TEST Lina
-            //Console.WriteLine("num of elements av sorterade värden: " + sortedPeaksAndValleys[0].Count);
-
             // Värden på peakar och dalar
             List<double> yPeaks = sortedPeaksAndValleys[1];
             List<double> yValleys = sortedPeaksAndValleys[3];
@@ -917,7 +913,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         heartPulse = heartrate;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
-                        // Plottning av pulskurva (färgvärde över tid), samt alla typer av toppdetekteringar
+                        // Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt alla typer av toppdetekteringar.
                         int j = 0;
                         if (rgbFiltList.Count - plotOverSeconds * fps >= 0)
                         {
