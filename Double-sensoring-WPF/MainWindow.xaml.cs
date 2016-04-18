@@ -181,17 +181,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 greeting.SoundLocation = greetingsPath;
                 greeting.Play();
 
-            //Timer start
+                //Timer start
                 dispatcherTimer.Tick -= introPineappleSpin;
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(500000);
-            dispatcherTimer.Start();
+                dispatcherTimer.Tick += dispatcherTimer_Tick;
+                dispatcherTimer.Interval = new TimeSpan(500000);
+                dispatcherTimer.Start();
 
-            //Timer start
-            lungTimer.Tick += lungTimer_Tick;
-            lungTimer.Interval = new TimeSpan(500000);
-            lungTimer.Start();
-        }
+                //Timer start
+                lungTimer.Tick += lungTimer_Tick;
+                lungTimer.Interval = new TimeSpan(500000);
+                lungTimer.Start();
+            }
             else
             {
                 dispatcherTimer.Start();
@@ -688,18 +688,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return valleyLocations;
         }
 
-        private List<List<double>> sortByTime(List<List<double>> peaks)
+        private List<List<double>> removeByTime(List<List<double>> peaks)
         {
-            List<List<double>> sortByAllTime = new List<List<double>>();
-            sortByAllTime.Add(new List<double>());
-            sortByAllTime.Add(new List<double>());
+            List<List<double>> sortByTime = new List<List<double>>();
+            sortByTime.Add(new List<double>());
+            sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
 
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             //Peakarna som ska returneras. Ifall dåliga finns så tas de bort nedan.
-            sortByAllTime = peaks;
+            sortByTime = peaks;
 
             double meanH = 0;
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
@@ -740,7 +740,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             //Returnerar peakarna, där dåliga peakar ska ha tagits bort
-            return sortByAllTime;
+            return sortByTime;
         }
 
         /* Kollar om pekarna och dalarna ligger inom tillåtet intervall.
@@ -778,7 +778,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     highEnoughPeaks[3].Add(yValleys[i]);
                 }
             }
-   
+
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
@@ -886,16 +886,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
                         //peaksByTime = sortByTime(peaksPulse);
-                        peaksByTime = sortByTime(peaksAndValleysByHeight);
+                        peaksByTime = removeByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
                         //Beräkning av hjärtfrekvens
                         double heartrate = 0;
-                        double calcHeartRateOverSeconds = 10;
                         double periods = 0;
                         List<double> timeBetweenHeartBeats = new List<double>();
                         timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime);
-                        double xStart = rgbFiltList.Count - (calcHeartRateOverSeconds * fps);
+                        double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
+
                         for (int i = 0; i < peaksByTime[0].Count - 1; ++i)
                         {
                             if (peaksByTime[0][i] >= xStart)
@@ -944,7 +944,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    }
                         //}
 
-                       
+
 
                         // Beräknar ut pulsen över den valda beräkningstiden
                         int samplesForPulseAlarm = pulseWarningInSeconds * fps;
@@ -954,7 +954,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
-                            }
+                        }
 
                         //Average är antalet pulsslag under 60 sekunder
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
@@ -1031,7 +1031,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int samplesForBreathAlarm = breathingWarningInSeconds * fps;
 
                         while (breathPeaksFilt[0].Count > 0 && breathPeaksFilt[0][0] < breathingFiltList.Count - samplesForBreathAlarm)
-                            {
+                        {
                             breathPeaksFilt[0].RemoveAt(0);
                             breathPeaksFilt[1].RemoveAt(0);
                         }
@@ -1205,8 +1205,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else if (color == "transparantRed")
                 {
                     array[startposition + 3] += 30;
+                }
             }
-        }
         }
 
         /// <summary>
