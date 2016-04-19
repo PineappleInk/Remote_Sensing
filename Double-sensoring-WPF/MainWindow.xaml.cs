@@ -845,6 +845,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             Console.WriteLine("Höjd, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + sigmaH * sigmaH / (meanH * meanH));
             
             /* Slut medel och Std*/
+            Console.WriteLine(sigmaH);
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
