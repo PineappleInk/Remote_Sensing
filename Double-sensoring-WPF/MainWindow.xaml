@@ -62,7 +62,8 @@
             <Image x:Name="lung3" Grid.Column="1" HorizontalAlignment="Center" Height="236" Grid.Row="1" VerticalAlignment="Center" Width="236" Source="Images/laddalunga.png" Margin="126.333,67.333,315.667,18" MaxWidth="236" MaxHeight="236"/>
             <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" TextAlignment="Center" Margin="192.333,169.333,384.667,110" TextWrapping="Wrap" VerticalAlignment="Center" Height="42" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="0.534,0.368" Text="loading..." Foreground="White"/>
 
-            <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="211,51,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="60" Background="Transparent" TextAlignment="Center" VerticalAlignment="Top" Height="88" Width="100" Text="x"/>
+            <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="211,71,0,0" Grid.Row="2" TextWrapping="Wrap" Background="Transparent" VerticalAlignment="Top" Height="68" Width="99" Text="Old heartrate: "/>
+            <TextBlock x:Name="momentaryHeartrate" Grid.Column="2" HorizontalAlignment="Left" Margin="211,180,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Momentary heartrate: " VerticalAlignment="Top" Height="54" Width="100"/>
 
 
         </Grid>

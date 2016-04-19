@@ -911,6 +911,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Skriver ut heartrate på skärmen
                         heartPulse = heartrate;
+                        momentaryHeartrate.Text = "Momentary heartrate: " + Convert.ToString(Math.Round(60 / timeBetweenHeartBeats[timeBetweenHeartBeats.Count - 1]));
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
                         // Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt alla typer av toppdetekteringar.
@@ -960,7 +961,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = average.ToString();
+                        oldheartrateTextBlock.Text = "Old heartrate: " + average.ToString();
 
                         ////Skriver ut pulspeakar i programmet
                         //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
