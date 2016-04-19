@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int samplesOfMeasurement =
             secondsOfMeasurement * fps;                //Över hur många bilder vi ska mäta (sekunder * fps)
         static int runPlotModulo = 5;                  //Hur ofta plottarna ska köras (anges som antalet bilder som ska gå emellan plottningen)
-        static int plotOverSeconds = 10;               //Anger över hur många sekunder plottarna ska visas
+        static int plotOverSeconds = 20;               //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
         public int lowNumPulse = 30; //OBS gör privata
@@ -607,7 +607,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int upCounter = 0;
             int downCounter = 0;
 
-            for (int i = 0; i < measurements.Count - 4; i++)
+            for (int i = 0; i < measurements.Count - 5; i++)
             {
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
@@ -619,7 +619,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
                 //Vid topp
-                else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                else if (measurements[i] > (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i + 5]) / 5)
                 {
                     if (upCounter > 4)
                     {
@@ -650,7 +650,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int upCounter = 0;
             int downCounter = 0;
 
-            for (int i = 0; i < measurements.Count - 4; i++)
+            for (int i = 0; i < measurements.Count - 5; i++)
             {
                 //Påväg nedåt
                 if (measurements[i] > measurements[i + 1])
@@ -663,7 +663,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
 
                 //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4]) / 4)
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i+5]) / 5)
                 {
                     if (downCounter > 4)
                     {
@@ -695,11 +695,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-
+            
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
-            //Peakarna som ska returneras. Ifall dåliga finns så tas de bort nedan.
-            sortByTime = peaks;
+            // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
+            double k1 = 1;
+            double k2 = 1;
 
             double meanH = 0;
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
@@ -716,29 +717,45 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
 
-            // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
-            double k = 1;
+            Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            Console.WriteLine("Tid, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
 
-            // Tar bort alla peakar med för hög avikelse från medel
-            for (int i = 0, j = 1; i < timeBetweenPeaks.Count; ++i)
+            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
             {
-                if (timeBetweenPeaks[i] > meanH + sigmaH * k) // Kollar om tiden är utanför medel +- std
+                if (timeBetweenPeaks[i] > meanH - sigmaH * k1 && timeBetweenPeaks[i] < meanH + sigmaH * k2)
                 {
-                    peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
-                    peaks[1].RemoveAt(i + j); // Samma
-                    j--;
+                    sortByTime[0].Add(peaks[0][i]);
+                    sortByTime[1].Add(peaks[1][i]);
                 }
-                else if (timeBetweenPeaks[i] < meanH - sigmaH * k)
+                else if (timeBetweenPeaks[i] < meanH - sigmaH * k1)
                 {
-                    if (i + 1 != timeBetweenPeaks.Count)
+                    if (i != timeBetweenPeaks.Count - 1)
                     {
                         timeBetweenPeaks[i + 1] += timeBetweenPeaks[i];
                     }
-                    peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
-                    peaks[1].RemoveAt(i + j); // Samma
-                    j--;
                 }
             }
+
+            //// Tar bort alla peakar med för hög avikelse från medel
+            //for (int i = 0, j = 1; i < timeBetweenPeaks.Count; ++i)
+            //{
+            //    if (timeBetweenPeaks[i] > meanH + sigmaH * k) // Kollar om tiden är utanför medel +- std
+            //    {
+            //        peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
+            //        peaks[1].RemoveAt(i + j); // Samma
+            //        j--;
+            //    }
+            //    else if (timeBetweenPeaks[i] < meanH - sigmaH * k)
+            //    {
+            //        if (i + 1 != timeBetweenPeaks.Count)
+            //        {
+            //            timeBetweenPeaks[i + 1] += timeBetweenPeaks[i];
+            //        }
+            //        peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
+            //        peaks[1].RemoveAt(i + j); // Samma
+            //        j--;
+            //    }
+            //}
             //Returnerar peakarna, där dåliga peakar ska ha tagits bort
             return sortByTime;
         }
@@ -763,8 +780,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int N = xPeaks.Count;
             // k är en konstant som avgör hur många std-avvikelser 
             // från medel som är tillåtna för att uppfylla höjdvillkor.
-            double k1 = 2;
-            double k2 = 4;
+            double k1 = 1;
+            double k2 = 1;
 
             for (int i = 0; i < N; ++i)
             {
@@ -820,9 +837,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-
+            
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
+            
+            Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+            
             /* Slut medel och Std*/
 
             // Sortera ut värden  
@@ -865,8 +886,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                        //chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers2", "valleyMarker");
-                        //chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers3", "marker_heightSorted");
+                        chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "valleyMarker");
+                        chartPulse.CheckAndAddSeriesToGraph("TimeMarkers", "marker_heightSorted");
+                        chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
                         double average = 0;
@@ -885,15 +907,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
-                        //peaksByTime = sortByTime(peaksPulse);
-                        peaksByTime = removeByTime(peaksAndValleysByHeight);
+                        peaksByTime = removeByTime(peaksPulse);
+
+                        //List<List<double>> comboPulse = new List<List<double>>();
+                        //comboPulse = removeByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
-                        //Beräkning av hjärtfrekvens
+                        ////Beräkning av hjärtfrekvens
                         double heartrate = 0;
                         double periods = 0;
                         List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime);
+                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
                         double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
 
                         for (int i = 0; i < peaksByTime[0].Count - 1; ++i)
@@ -909,6 +933,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
                         heartrate = Math.Round(heartrate / periods);
 
+                        //////OM MAN VILL HA DET MOMENTANT
+                        //// TEST heart-rate-variability
+                        //List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
+
+                        //for (int i = 0; i < heartRateVariability.Count; ++i)
+                        //{
+                        //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
+                        //}
+
                         //Skriver ut heartrate på skärmen
                         heartPulse = heartrate;
 
@@ -920,31 +953,37 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
 
-                        //for (int i = 0; i < peaksPulse[0].Count(); i++)
-                        //{
-                        //    if (peaksPulse[0][i] >= j)
-                        //    {
-                        //        chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
-                        //    }
-                        //}
+                        for (int i = 0; i < peaksPulse[0].Count(); i++)
+                        {
+                            if (peaksPulse[0][i] >= j)
+                            {
+                                chartPulse.AddPointToLine("Pulsemarkers", peaksPulse[1][i], peaksPulse[0][i] - j);
+                            }
+                        }
 
                         for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
                             if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Pulsemarkers", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
+                                chartPulse.AddPointToLine("HeightMarkers", peaksAndValleysByHeight[1][i] + 0.002, peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
-                        //for (int i = 0; i < peaksByTime[0].Count(); i++)
+                        for (int i = 0; i < peaksByTime[0].Count(); i++)
+                        {
+                            if (peaksByTime[0][i] >= j)
+                            {
+                                chartPulse.AddPointToLine("TimeMarkers", peaksByTime[1][i] + 0.004, peaksByTime[0][i] - j);
+                            }
+                        }
+
+                        //for (int i = 0; i < comboPulse[0].Count(); i++)
                         //{
-                        //    if (peaksByTime[0][i] >= j)
+                        //    if (comboPulse[0][i] >= j)
                         //    {
-                        //        chartPulse.AddPointToLine("Pulsemarkers", peaksByTime[1][i], peaksByTime[0][i] - j);
+                        //        chartPulse.AddPointToLine("CcccomboMarkers", comboPulse[1][i] + 0.006, comboPulse[0][i] - j);
                         //    }
                         //}
-
-
 
                         // Beräknar ut pulsen över den valda beräkningstiden
                         int samplesForPulseAlarm = pulseWarningInSeconds * fps;
@@ -1276,16 +1315,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
 
                             //Laddar hjärt-grafen
-                            if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
+                            if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100) <= 100)
                             {
-                                double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100);
+                                double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100);
                                 TextBlock.Text = procent.ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
                                 heart2.Width = heart2.MaxWidth * procent / 100;
                                 heart2.Height = heart2.MaxHeight * procent / 100;
                             }
-                            else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
+                            else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100) == 101)
                             {
                                 TextBlock.Text = "";
                                 chartPulse.Visibility = Visibility.Visible;
@@ -1388,16 +1427,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
 
                             //Laddar lung-grafen
-                            if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) <= 100)
+                            if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps + fps) * 100) <= 100)
                             {
-                                double procent = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100);
+                                double procent = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps + fps) * 100);
                                 TextLungLoad.Text = procent.ToString() + "%";
                                 chartBreath.Visibility = Visibility.Hidden;
                                 lung3.Visibility = Visibility.Visible;
                                 lung3.Width = lung3.MaxWidth * procent / 100;
                                 lung3.Height = lung3.MaxHeight * procent / 100;
                             }
-                            else if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps) * 100) == 101)
+                            else if (Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps + fps) * 100) == 101)
                             {
                                 TextLungLoad.Text = "";
                                 chartBreath.Visibility = Visibility.Visible;
