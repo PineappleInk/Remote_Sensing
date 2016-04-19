@@ -824,6 +824,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
             /* Slut medel och Std*/
+            Console.WriteLine(sigmaH);
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
