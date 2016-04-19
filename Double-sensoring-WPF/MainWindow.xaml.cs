@@ -718,7 +718,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
 
             Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Tid, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+            Console.WriteLine("Tid, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + sigmaH * sigmaH / (meanH * meanH));
 
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
             {
@@ -842,7 +842,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double sigmaH = Math.Sqrt((1 / N) * sum);
             
             Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+            Console.WriteLine("Höjd, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + sigmaH * sigmaH / (meanH * meanH));
             
             /* Slut medel och Std*/
 
