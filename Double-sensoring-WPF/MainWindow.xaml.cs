@@ -1120,6 +1120,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             heartrate = Math.Round(heartrate / periods);
                         }
+
                         //////OM MAN VILL HA DET MOMENTANT
                         //// TEST heart-rate-variability
                         //List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
