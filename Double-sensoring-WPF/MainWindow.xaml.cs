@@ -491,7 +491,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Nästa steg blir att se över så att det kommer varannan topp, varannan dal.
             // Även para ihop så att det finns topp och dal
 
-            if (peaksAndValleys[2][0] == 1) // Om första elementet är en topp
+            if (peaksAndValleys[2].Count > 1 && peaksAndValleys[2][0] == 1) // Om första elementet är en topp
             {
                 if (peaksAndValleys[2][1] == 0) // Och det andra värdet är en dal
                 {
@@ -517,6 +517,115 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             return sortedPeaksAndValleys;
+        }
+
+        //TEST för dubbelamplitud koll
+        private List<List<double>> doubleAmplitudePeaks(List<List<double>> peaks, List<List<double>> valleys)
+        {
+            List<List<double>> doubleAmplitudePeaks = new List<List<double>>();
+            doubleAmplitudePeaks.Add(new List<double>());
+            doubleAmplitudePeaks.Add(new List<double>());
+
+            List<List<double>> ampPeaks = new List<List<double>>();
+            ampPeaks.Add(new List<double>());
+            ampPeaks.Add(new List<double>());
+            ampPeaks.Add(new List<double>());
+
+            List<List<double>> peaksAndValleys = new List<List<double>>();
+            peaksAndValleys.Add(new List<double>());
+            peaksAndValleys.Add(new List<double>());
+            peaksAndValleys.Add(new List<double>()); // 0 = dal, 1 = topp
+
+            for (int i = 0, j = 0; i < peaks[0].Count || j < valleys[0].Count;)
+            {
+                if (i == peaks[0].Count)
+                {
+                    peaksAndValleys[0].Add(valleys[0][j]);
+                    peaksAndValleys[1].Add(valleys[1][j]);
+                    peaksAndValleys[2].Add(0);
+                    j++;
+                }
+                else if (j == valleys[0].Count)
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
+                    peaksAndValleys[1].Add(peaks[1][i]);
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
+                else if (peaks[0][i] < valleys[0][j])
+                {
+                    peaksAndValleys[0].Add(peaks[0][i]);
+                    peaksAndValleys[1].Add(peaks[1][i]);
+                    peaksAndValleys[2].Add(1);
+                    i++;
+                }
+                else
+                {
+                    peaksAndValleys[0].Add(valleys[0][j]);
+                    peaksAndValleys[1].Add(valleys[1][j]);
+                    peaksAndValleys[2].Add(0);
+                    j++;
+                }
+            }
+
+            // HÄR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
+
+            //if (peaksAndValleys[2].Count > 2 && peaksAndValleys[2][0] == 1) // Om första värdet i listan är en topp 
+            //{
+            //    if (peaksAndValleys[2][1] == 0) // Och det andra värdet i listan är en dal
+            //    {
+            //        ampPeaks[0].Add(peaksAndValleys[0][0]);
+            //        ampPeaks[1].Add(peaksAndValleys[1][0]);
+            //    }
+            //}
+
+            double mean = 0;
+
+            for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
+            {
+                if (peaksAndValleys[2][i] == 0)
+                {
+                    if (peaksAndValleys[2][i + 1] == 1)
+                    {
+                        if (peaksAndValleys[2][i + 2] == 0)
+                        {
+                            ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
+                            ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
+                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
+                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                            ++i;
+                        }
+                        else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
+                        {
+                            ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
+                            ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
+                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
+                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                            ++i;
+                        }
+                    }
+                }
+            }
+            
+            if (ampPeaks[2].Count != 0)
+            {
+                mean = mean / ampPeaks[2].Count;
+            }
+
+            //Console.WriteLine(ampPeaks[2].Count);
+
+            for (int i = 0; i < ampPeaks[2].Count; ++i)
+            {
+                if (ampPeaks[2][i] > mean * 0.4 && ampPeaks[2][i] < mean * 2.5) //UNDERSÖK MER HÄR!!! :-) VERKAR VARA BRA NU! :-)
+                {
+                    doubleAmplitudePeaks[0].Add(ampPeaks[0][i]);
+                    doubleAmplitudePeaks[1].Add(ampPeaks[1][i]);
+                }
+            }
+
+            //Console.WriteLine(doubleAmplitudePeaks[1].Count);
+
+            return doubleAmplitudePeaks;
         }
 
         // Returnerar "korrekta peakar" för andning. Krav; ska vara tillräckligt höga.
@@ -565,7 +674,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // HÄR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
 
-            if (peaksAndValleys[2][0] == 1) // Om första värdet i listan är en topp 
+            if (peaksAndValleys[2].Count > 2 && peaksAndValleys[2][0] == 1) // Om första värdet i listan är en topp 
             {
                 if (peaksAndValleys[2][1] == 0) // Och det andra värdet i listan är en dal
                 {
@@ -663,7 +772,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
 
                 //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i+5]) / 5)
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i + 5]) / 5)
                 {
                     if (downCounter > 4)
                     {
@@ -695,12 +804,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-            
+
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
-            double k1 = 1;
-            double k2 = 1;
+            double k1 = 0.9;
+            double k2 = 0.9;
 
             double meanH = 0;
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
@@ -717,8 +826,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
 
-            Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Tid, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + sigmaH * sigmaH / (meanH * meanH));
+            //Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            //Console.WriteLine("Tid, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + ((sigmaH * sigmaH) / (meanH * meanH)));
 
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
             {
@@ -780,8 +889,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             int N = xPeaks.Count;
             // k är en konstant som avgör hur många std-avvikelser 
             // från medel som är tillåtna för att uppfylla höjdvillkor.
-            double k1 = 1;
-            double k2 = 1;
+            double k1 = 0.8;
+            double k2 = 1.5;
 
             for (int i = 0; i < N; ++i)
             {
@@ -837,15 +946,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-            
+
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
-            
-            Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Höjd, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + sigmaH * sigmaH / (meanH * meanH));
-            
-            /* Slut medel och Std*/
-            Console.WriteLine(sigmaH);
+
+            //Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            //Console.WriteLine("Höjd, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + ((sigmaH * sigmaH) / (meanH * meanH)));
+
+            ///* Slut medel och Std*/
+            //Console.WriteLine(sigmaH);
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
@@ -861,6 +970,54 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return filteredByH;
         }
         /* SLUT: Sortera bort en del pulsvärden på bas av höjd */
+
+        //Beräkning av hjärtfrekvensen
+        private double meanHeartPulse(List<List<double>> peakList)
+        {
+            ////Beräkning av hjärtfrekvens
+            double heartRate = 0;
+            double periods = 0;
+            double average = 0;
+            List<double> timeBetweenHeartBeats = new List<double>();
+            timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
+            List<List<double>> resultedTime = new List<List<double>>();
+            resultedTime.Add(new List<double>());
+            resultedTime.Add(new List<double>());
+
+            for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
+            {
+                average += timeBetweenHeartBeats[i];
+            }
+
+            if (timeBetweenHeartBeats.Count != 0)
+            {
+                average = average / timeBetweenHeartBeats.Count;
+            }
+
+            for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
+            {
+                if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
+                {
+                    heartRate += timeBetweenHeartBeats[i];
+                    periods++;
+                }
+                else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
+                    timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
+                {
+                    heartRate += timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1];
+                    periods++;
+                }
+            }
+
+            if (periods != 0)
+            {
+                heartRate = heartRate / periods;
+                heartRate = Math.Round(60 / heartRate);
+            }
+
+            return heartRate;
+        }
+
 
         /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
         /// <param name="codeString">definierar detektion av puls ("pulse") eller andning ("breathing") som en sträng</param>
@@ -886,8 +1043,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         rgbFiltList.RemoveRange(0, fps);
 
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                        chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                        chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "valleyMarker");
+                        chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
+                        chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
                         chartPulse.CheckAndAddSeriesToGraph("TimeMarkers", "marker_heightSorted");
                         chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
@@ -904,36 +1063,63 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
-                        peaksAndValleysByHeight = sortByHeight(peaksPulse, valleysPulse);
+                        peaksAndValleysByHeight = doubleAmplitudePeaks(peaksPulse, valleysPulse);
 
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
                         peaksByTime = removeByTime(peaksPulse);
 
-                        //List<List<double>> comboPulse = new List<List<double>>();
-                        //comboPulse = removeByTime(peaksAndValleysByHeight);
+                        List<List<double>> comboPulse = new List<List<double>>();
+                        comboPulse = removeByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
                         ////Beräkning av hjärtfrekvens
                         double heartrate = 0;
                         double periods = 0;
                         List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTime); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
+                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksAndValleysByHeight); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
                         double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
 
-                        for (int i = 0; i < peaksByTime[0].Count - 1; ++i)
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count; ++i)
                         {
-                            if (peaksByTime[0][i] >= xStart)
+                            if (peaksAndValleysByHeight[0][i] >= xStart)
                             {
-                                double T = timeBetweenHeartBeats[i];
-                                double f = 1 / T;
-                                double fOneMinute = f * 60;
-                                heartrate += fOneMinute;
+                                heartrate += 60 / timeBetweenHeartBeats[i];
                                 periods += 1;
+
+                                if (i == peaksAndValleysByHeight[0].Count - 1)
+                                {
+                                    average = 60 / timeBetweenHeartBeats[i];
+                                    average = Math.Round(average);
+                                }
                             }
                         }
-                        heartrate = Math.Round(heartrate / periods);
 
+                        List<List<double>> heartRateList = new List<List<double>>();
+                        heartRateList.Add(new List<double>());
+                        heartRateList.Add(new List<double>());
+                        
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count; ++i)
+                        {
+                            if (peaksAndValleysByHeight[0][i] >= xStart)
+                            {
+                                heartRateList[0].Add(peaksAndValleysByHeight[0][i]);
+                                heartRateList[1].Add(peaksAndValleysByHeight[1][i]);
+
+                                //if (i == peaksAndValleysByHeight[0].Count - 2)
+                                //{
+                                //    average = 60 / timeBetweenHeartBeats[i];
+                                //    average = Math.Round(average);
+                                //}
+                            }
+                        }
+
+                        //heartrate = meanHeartPulse(peaksAndValleysByHeight);
+
+                        if (periods != 0)
+                        {
+                            heartrate = Math.Round(heartrate / periods);
+                        }
                         //////OM MAN VILL HA DET MOMENTANT
                         //// TEST heart-rate-variability
                         //List<double> heartRateVariability = timeBetweenAllPeaks(peaksPulse);
@@ -962,21 +1148,29 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
+                        for (int i = 0; i < valleysPulse[0].Count(); i++)
+                        {
+                            if (valleysPulse[0][i] >= j)
+                            {
+                                chartPulse.AddPointToLine("ValleyMarkers", valleysPulse[1][i], valleysPulse[0][i] - j);
+                            }
+                        }
+
                         for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
                             if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("HeightMarkers", peaksAndValleysByHeight[1][i] + 0.002, peaksAndValleysByHeight[0][i] - j);
+                                chartPulse.AddPointToLine("HeightMarkers", peaksAndValleysByHeight[1][i] + 0.001, peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
-                        for (int i = 0; i < peaksByTime[0].Count(); i++)
-                        {
-                            if (peaksByTime[0][i] >= j)
-                            {
-                                chartPulse.AddPointToLine("TimeMarkers", peaksByTime[1][i] + 0.004, peaksByTime[0][i] - j);
-                            }
-                        }
+                        //for (int i = 0; i < peaksByTime[0].Count(); i++)
+                        //{
+                        //    if (peaksByTime[0][i] >= j)
+                        //    {
+                        //        chartPulse.AddPointToLine("TimeMarkers", peaksByTime[1][i] + 0.004, peaksByTime[0][i] - j);
+                        //    }
+                        //}
 
                         //for (int i = 0; i < comboPulse[0].Count(); i++)
                         //{
@@ -997,10 +1191,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         //Average är antalet pulsslag under 60 sekunder
-                        average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
+                        //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = average.ToString();
+                        oldheartrateTextBlock.Text = average.ToString() + " " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds) + " " +
+                            + meanHeartPulse(peaksAndValleysByHeight);
 
                         ////Skriver ut pulspeakar i programmet
                         //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
@@ -1012,6 +1207,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
                             chartPulse.AddPointToLine("Pulse", rgbFiltList[k], k - j);
+                        }
+
+                        for (int k = 0; k < heartRateList[0].Count(); k++)
+                        {
+                            chartPulse.AddPointToLine("TopLines", heartRateList[1][k], heartRateList[0][k] - j);
                         }
 
                         if (rgbFiltList.Count >= samplesOfMeasurement)

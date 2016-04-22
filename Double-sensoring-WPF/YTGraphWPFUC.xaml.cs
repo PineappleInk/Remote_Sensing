@@ -91,13 +91,22 @@ namespace Module_Graphs
                 s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
                 s.BorderWidth = 3;
             }
-            else if (strUnit == "valleyMarker")
+            else if (strUnit == "heightMarker")
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Diamond;
                 s.MarkerSize = 10;
                 s.Color = System.Drawing.Color.FromArgb(255, 255, 135, 0);
+                s.BorderWidth = 3;
+            }
+            else if (strUnit == "valleyMarker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Circle;
+                s.MarkerSize = 5;
+                s.Color = System.Drawing.Color.FromArgb(255, 20, 135, 66);
                 s.BorderWidth = 3;
             }
             else if (strUnit == "marker_heightSorted")
