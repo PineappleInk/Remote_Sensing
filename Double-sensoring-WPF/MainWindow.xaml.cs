@@ -24,6 +24,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Markup;
     using System.Windows.Data;
 
+
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -1080,6 +1081,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
+                clearGraphs();
+                kinectSensor.Close();
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                this.Hide();
+                breathAlarm.Show();
+                /*
                 if (!settingWindow.checkBoxSound.HasContent)
                 {
                     Console.WriteLine("Det fanns inget värde i checkBoxSound");
@@ -1087,7 +1094,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
                     breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                     beep.SoundLocation = soundpath;
@@ -1097,7 +1104,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                }
+                }*/
 
             }
             else
@@ -1436,6 +1443,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            clearGraphs();
+        }
+
+        private void clearGraphs()
         {
             depthList.Clear();
             colorSensing.gDrList.Clear();
