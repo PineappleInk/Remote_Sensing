@@ -77,6 +77,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         /*Globala variabler*/
 
+        // Test Lina och Elli
+        double stdHeight = 0;
+
+        // Standarsavvikelse höjd peakar, medel över 5 minuter
+        List<double> stdMeanLst = new List<double>();
+        double stdMean = 0;
+        // Standardavvikelse höjd peakar, senaste 10 sekunder
+        double stdH10 = 0;
+
+
         // Info om mätdata
         static int secondsOfMeasurement = 60;          //Anger över hur många sekunder vi ska mäta
         static int fps = 30;                           //Frames Per Second (Antalet bilder/sekund)
@@ -663,7 +673,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
 
                 //Vid dal
-                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i+5]) / 5)
+                else if (measurements[i] < (measurements[i + 1] + measurements[i + 2] + measurements[i + 3] + measurements[i + 4] + measurements[i + 5]) / 5)
                 {
                     if (downCounter > 4)
                     {
@@ -695,7 +705,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-            
+
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
@@ -717,8 +727,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
 
-            Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Tid, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+            //Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            //Console.WriteLine("Tid, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
 
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
             {
@@ -815,8 +825,48 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortedPeaksAndValleys = sortPeaksAndValleys(peaksPulse, valleysPulse);
 
             // Värden på peakar och dalar
+            List<double> xPeaks = sortedPeaksAndValleys[0];
+            List<double> xValleys = sortedPeaksAndValleys[2];
+
             List<double> yPeaks = sortedPeaksAndValleys[1];
             List<double> yValleys = sortedPeaksAndValleys[3];
+
+            /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) senaste 10 s*/
+            // Tar fram medelhöjd meanH (x-streck)
+            double meanH10 = 0;
+            double M = 0;
+
+            Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+            Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
+            for (int i = 0; i < xPeaks.Count; ++i)
+            {
+                Console.WriteLine("Går in i for-loopen. ");
+                // Fortsätt här i morgon! if-satsen fungerar ej!
+                if (xPeaks[i] > (samplesOfMeasurement - 1 - fps * 10) && xPeaks[i] < (samplesOfMeasurement - 1))
+                {
+                    meanH10 += (yPeaks[i] - yValleys[i]);
+                    M += 1;
+                }
+            }
+            meanH10 = meanH10 / M;
+            Console.WriteLine("M: " + M);
+
+            Console.WriteLine("meanH10: " + meanH10);
+
+            // Tar fram summa av höjden
+            double sum10 = 0;
+            for (int i = 0; xPeaks[i] > samplesOfMeasurement - 1 - fps * 10 && xPeaks[i] < samplesOfMeasurement - 1; ++i)
+            {
+                double xi10 = yPeaks[i] - yValleys[i];
+                sum10 += (xi10 - meanH10) * (xi10 - meanH10);
+            }
+            Console.WriteLine("sum10: " + sum10);
+
+            // Tar fram std-avvikelsen sigmaH10
+            double sigmaH10 = Math.Sqrt((1 / M) * sum10);
+            stdH10 = sigmaH10;
+            Console.WriteLine("stdH10: " + stdH10);
+            /* Slut */
 
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
             // Tar fram medelhöjd meanH (x-streck)
@@ -837,15 +887,36 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-            
+
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
-            
-            Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
-            
+
+            // Korrigera std listan
+            double lengthLst = stdMeanLst.Count;
+
+            if (lengthLst < 1800) // för 5 minuter
+            {
+                stdMeanLst.Add(sigmaH);
+            }
+            else
+            {
+                stdMeanLst.RemoveAt(0);
+                stdMeanLst.Add(sigmaH);
+            }
+            //Uppdatera till ny medel-std
+            stdMean = stdMeanLst.Average();
+            Console.WriteLine("stdMean global: " + stdMean);
+
+            // För test
+            if ((bool)checkBox.IsChecked)
+            {
+                Console.WriteLine(sigmaH);
+            }
+
+            // Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
+            //Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+
             /* Slut medel och Std*/
-            Console.WriteLine(sigmaH);
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
@@ -1560,6 +1631,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void DotSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dotSize = (int)DotSizeSlider.Value;
+        }
+
+        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(stdHeight);
         }
     }
 }

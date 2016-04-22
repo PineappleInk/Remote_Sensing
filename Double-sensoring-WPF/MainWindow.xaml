@@ -54,6 +54,7 @@
             <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" TextAlignment="Center" Margin="192.333,169.333,384.667,110" TextWrapping="Wrap" VerticalAlignment="Center" Height="42" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="0.534,0.368" Text="loading..."/>
 
             <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="211,51,0,0" Grid.Row="2" TextWrapping="Wrap" FontSize="60" Background="Transparent" TextAlignment="Center" VerticalAlignment="Top" Height="88" Width="100" Text="x"/>
+            <CheckBox x:Name="checkBox" Content="Skriv ut std H" Grid.Column="2" HorizontalAlignment="Left" Margin="180,228,0,0" Grid.Row="2" VerticalAlignment="Top" Checked="checkBox_Checked"/>
 
 
         </Grid>
