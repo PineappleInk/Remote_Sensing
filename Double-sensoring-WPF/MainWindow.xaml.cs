@@ -705,7 +705,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-
+            
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
@@ -887,10 +887,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-
+            
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
-
+            
             // Korrigera std listan
             double lengthLst = stdMeanLst.Count;
 
@@ -915,7 +915,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
             //Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
-
+            
             /* Slut medel och Std*/
 
             // Sortera ut värden  
