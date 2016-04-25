@@ -844,27 +844,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-
-            //// Tar bort alla peakar med för hög avikelse från medel
-            //for (int i = 0, j = 1; i < timeBetweenPeaks.Count; ++i)
-            //{
-            //    if (timeBetweenPeaks[i] > meanH + sigmaH * k) // Kollar om tiden är utanför medel +- std
-            //    {
-            //        peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
-            //        peaks[1].RemoveAt(i + j); // Samma
-            //        j--;
-            //    }
-            //    else if (timeBetweenPeaks[i] < meanH - sigmaH * k)
-            //    {
-            //        if (i + 1 != timeBetweenPeaks.Count)
-            //        {
-            //            timeBetweenPeaks[i + 1] += timeBetweenPeaks[i];
-            //        }
-            //        peaks[0].RemoveAt(i + j); // Tar bort nästa peak om tiden mellan är dålig
-            //        peaks[1].RemoveAt(i + j); // Samma
-            //        j--;
-            //    }
-            //}
             //Returnerar peakarna, där dåliga peakar ska ha tagits bort
             return sortByTime;
         }
@@ -949,12 +928,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
-
-            //Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            //Console.WriteLine("Höjd, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + ((sigmaH * sigmaH) / (meanH * meanH)));
-
-            ///* Slut medel och Std*/
-            //Console.WriteLine(sigmaH);
+            /* Slut medel och Std*/
 
             // Sortera ut värden  
             List<List<double>> filteredByH = new List<List<double>>();
@@ -1084,7 +1058,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (peaksAndValleysByHeight[0][i] >= xStart)
                             {
-                                heartrate += 60 / timeBetweenHeartBeats[i];
+                                heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
                                 periods += 1;
 
                                 if (i == peaksAndValleysByHeight[0].Count - 2)
@@ -1118,7 +1092,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         if (periods != 0)
                         {
-                            heartrate = Math.Round(heartrate / periods);
+                        heartrate = Math.Round(heartrate / periods);
                         }
 
                         //////OM MAN VILL HA DET MOMENTANT
@@ -1132,6 +1106,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Skriver ut heartrate på skärmen
                         heartPulse = heartrate;
+                        momentaryHeartrate.Text = "Momentary heartrate: " + Convert.ToString(Math.Round(60 / timeBetweenHeartBeats[timeBetweenHeartBeats.Count - 1]));
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
                         // Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt alla typer av toppdetekteringar.
@@ -1195,8 +1170,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = average.ToString() + " " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds) + " " +
-                            + meanHeartPulse(peaksAndValleysByHeight);
+                        oldheartrateTextBlock.Text = "Old heartrate: " + average.ToString() + " " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
+                            + " " + meanHeartPulse(peaksAndValleysByHeight);
 
                         ////Skriver ut pulspeakar i programmet
                         //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
@@ -1320,6 +1295,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averageBreathing < lowNum)
             {
+                clearGraphs();
+                kinectSensor.Close();
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                this.Hide();
+                breathAlarm.Show();
+                /*
                 if (!settingWindow.checkBoxSound.HasContent)
                 {
                     Console.WriteLine("Det fanns inget värde i checkBoxSound");
@@ -1327,7 +1308,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if ((bool)settingWindow.checkBoxSound.IsChecked)
                 {
                     breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
                     string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
                     System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
                     beep.SoundLocation = soundpath;
@@ -1337,7 +1318,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
                     breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                }
+                }*/
 
             }
             else
@@ -1676,6 +1657,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            clearGraphs();
+        }
+
+        private void clearGraphs()
         {
             depthList.Clear();
             colorSensing.gDrList.Clear();

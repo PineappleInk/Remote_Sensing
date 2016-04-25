@@ -52,7 +52,7 @@ namespace Module_Graphs
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
-            chart1.BackColor = Color.GhostWhite;
+            chart1.BackColor = System.Drawing.Color.FromArgb(180, 131, 221, 255);
 
             //set legend position and properties as required
             chart1.Legends[0].LegendStyle = LegendStyle.Table;
@@ -131,7 +131,7 @@ namespace Module_Graphs
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-                s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
+                s.BorderColor = System.Drawing.Color.FromArgb(180, 43, 197, 255);
                 s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
                 s.ShadowOffset = 1;
                 s.IsVisibleInLegend = true;
