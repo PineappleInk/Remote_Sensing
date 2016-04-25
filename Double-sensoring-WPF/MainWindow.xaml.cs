@@ -606,7 +606,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
             }
-            
+
             if (ampPeaks[2].Count != 0)
             {
                 mean = mean / ampPeaks[2].Count;
@@ -1025,7 +1025,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
-                        double average = 0;
+                        double momentaryPulse = 0;
 
                         /* Toppdetektering. Toppar urskiljs även från brus. */
                         // Toppdetektering. Steg (1)
@@ -1061,25 +1061,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
                                 periods += 1;
 
-                                if (i == peaksAndValleysByHeight[0].Count - 2)
-                                {
-                                    average = 60 / timeBetweenHeartBeats[i];
-                                    average = Math.Round(average);
-                                }
-                            }
-                        }
-
-                        List<List<double>> heartRateList = new List<List<double>>();
-                        heartRateList.Add(new List<double>());
-                        heartRateList.Add(new List<double>());
-                        
-                        for (int i = 0; i < peaksAndValleysByHeight[0].Count; ++i)
-                        {
-                            if (peaksAndValleysByHeight[0][i] >= xStart)
-                            {
-                                heartRateList[0].Add(peaksAndValleysByHeight[0][i]);
-                                heartRateList[1].Add(peaksAndValleysByHeight[1][i]);
-
                                 //if (i == peaksAndValleysByHeight[0].Count - 2)
                                 //{
                                 //    average = 60 / timeBetweenHeartBeats[i];
@@ -1088,12 +1069,28 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
+                        List<List<double>> heartRateList = new List<List<double>>();
+                        heartRateList.Add(new List<double>());
+                        heartRateList.Add(new List<double>());
+
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count; ++i)
+                        {
+                            if (peaksAndValleysByHeight[0][i] >= xStart)
+                            {
+                                heartRateList[0].Add(peaksAndValleysByHeight[0][i]);
+                                heartRateList[1].Add(peaksAndValleysByHeight[1][i]);
+
+                                if (i == peaksAndValleysByHeight[0].Count - 2)
+                                {
+                                    momentaryPulse = 60 / timeBetweenHeartBeats[i];
+                                    momentaryPulse = Math.Round(momentaryPulse);
+                                }
+                            }
+                        }
+
                         //heartrate = meanHeartPulse(peaksAndValleysByHeight);
 
-                        if (periods != 0)
-                        {
                         heartrate = Math.Round(heartrate / periods);
-                        }
 
                         //////OM MAN VILL HA DET MOMENTANT
                         //// TEST heart-rate-variability
@@ -1105,8 +1102,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //}
 
                         //Skriver ut heartrate på skärmen
-                        heartPulse = heartrate;
-                        momentaryHeartrate.Text = "Momentary heartrate: " + Convert.ToString(Math.Round(60 / timeBetweenHeartBeats[timeBetweenHeartBeats.Count - 1]));
+                        heartPulse = meanHeartPulse(heartRateList);
+                        momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
                         // Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt alla typer av toppdetekteringar.
@@ -1170,15 +1167,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
 
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = "Old heartrate: " + average.ToString() + " " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
-                            + " " + meanHeartPulse(peaksAndValleysByHeight);
+                        oldheartrateTextBlock.Text = "Old heartrate: " + momentaryPulse.ToString() + ", * 6 puls: " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
+                            + ", Puls utan tidsperspektiv: " + heartrate;
 
                         ////Skriver ut pulspeakar i programmet
                         //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(heartrate, lowNumPulse);
+                        pulseAlarm(heartPulse, lowNumPulse);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1215,8 +1212,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
                         chartBreath.ClearCurveDataPointsFromGraph();
 
-                        double average = 0;
-
                         // Toppdetektering
 
                         List<List<double>> peaks = new List<List<double>>();
@@ -1252,18 +1247,35 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             breathPeaksFilt[1].RemoveAt(0);
                         }
 
+                        ////Beräkning av hjärtfrekvens
+                        double breathingRate = 0;
+                        double average = 0;
+                        List<double> timeBetweenHeartBeats = new List<double>();
+                        timeBetweenHeartBeats = timeBetweenAllPeaks(breathPeaksFilt);
+
+                        for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
+                        {
+                            breathingRate += timeBetweenHeartBeats[i];
+                        }
+
+                        if (timeBetweenHeartBeats.Count != 0)
+                        {
+                            breathingRate = breathingRate / timeBetweenHeartBeats.Count;
+                            breathingRate = Math.Round(60 / breathingRate);
+                        }
+
                         // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
-
+                        Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
-                        breathPulse = average;
+                        breathPulse = breathingRate;
 
                         // Ritar ut andningspeakar i programmet
                         //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
                         //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        breathingAlarm(average, lowNumBreathing);
+                        breathingAlarm(breathPulse, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
