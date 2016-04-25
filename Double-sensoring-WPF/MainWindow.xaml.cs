@@ -1333,6 +1333,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             if (averagePulse < lowNum)
             {
+                clearGraphs();
+                kinectSensor.Close();
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                this.Hide();
+                breathAlarm.Show();
+
+                /*
                 if (!settingWindow.checkBoxSound.HasContent)
                 {
                     Console.WriteLine("Det fanns inget värde i checkBoxSound");
@@ -1350,7 +1357,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                }
+                }*/
             }
             else
             {

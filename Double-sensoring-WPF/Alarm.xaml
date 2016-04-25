@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.BodyBasics"
         mc:Ignorable="d"
-        Title="Alarm" Height="300" Width="300" Background="Red" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Alarm" Height="365.655" Width="637.336" Background="Red" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False">
     <Grid>
-        <Button x:Name="okButton" Content="Everything is OK&#xD;&#xA;      Continue" HorizontalAlignment="Left" Margin="93,93,0,0" VerticalAlignment="Top" Width="104" Height="46" RenderTransformOrigin="0.5,0.5" Click="okButton_Click">
+        <Button x:Name="okButton" Content="Close alarm" HorizontalAlignment="Left" Margin="271,160,0,0" VerticalAlignment="Top" Width="104" Height="46" RenderTransformOrigin="0.5,0.5" Click="okButton_Click" Background="#FF83DDFF" Foreground="White">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
