@@ -1300,33 +1300,34 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
-                /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                }*/
-
-            }
-            else
-            {
-                settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
-                breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
             }
         }
+        /*
+        if (!settingWindow.checkBoxSound.HasContent)
+        {
+            Console.WriteLine("Det fanns inget värde i checkBoxSound");
+        }
+        if ((bool)settingWindow.checkBoxSound.IsChecked)
+        {
+            breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
+            settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
+            string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+            System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+            beep.SoundLocation = soundpath;
+            beep.Play();
+        }
+        else
+        {
+            settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
+            breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
+        }
+
+    }
+    else
+    {
+        settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
+        breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
+    }*/
 
         //Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum)
@@ -1338,6 +1339,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
+            }
+        }
 
                 /*
                 if (!settingWindow.checkBoxSound.HasContent)
@@ -1357,14 +1360,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
                     settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                }*/
+                }
             }
             else
             {
                 settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
                 pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
             }
-        }
+        }*/
 
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
