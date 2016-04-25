@@ -1354,32 +1354,32 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-                /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                }
-            }
-            else
-            {
-                settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
-                pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
-            }
-        }*/
+        /*
+        if (!settingWindow.checkBoxSound.HasContent)
+        {
+            Console.WriteLine("Det fanns inget värde i checkBoxSound");
+        }
+        if ((bool)settingWindow.checkBoxSound.IsChecked)
+        {
+            pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
+            settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+            string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
+            System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
+            beep.SoundLocation = soundpath;
+            beep.Play();
+        }
+        else
+        {
+            pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
+            settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
+        }
+    }
+    else
+    {
+        settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
+        pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
+    }
+}*/
 
         /// Funktion som tar ut färgvärdena för en pixel
         /// 
@@ -1513,7 +1513,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                         rödapixlar.Add(r);
                                         grönapixlar.Add(g);
                                     }
-                                    ChangePixelColor(i, j, pixels, "red");
+                                    if (i == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize) || i == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize)
+                                        || j == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize) || j == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize))
+                                    {
+                                        ChangePixelColor(i, j, pixels, "red");
+                                    }
                                 }
                             }
 
