@@ -1080,14 +1080,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         timeBetweenHeartBeats = timeBetweenAllPeaks(peaksAndValleysByHeight); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
                         double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
 
-                        for (int i = 0; i < peaksAndValleysByHeight[0].Count; ++i)
+                        for (int i = 0; i < peaksAndValleysByHeight[0].Count - 1; ++i)
                         {
                             if (peaksAndValleysByHeight[0][i] >= xStart)
                             {
                                 heartrate += 60 / timeBetweenHeartBeats[i];
                                 periods += 1;
 
-                                if (i == peaksAndValleysByHeight[0].Count - 1)
+                                if (i == peaksAndValleysByHeight[0].Count - 2)
                                 {
                                     average = 60 / timeBetweenHeartBeats[i];
                                     average = Math.Round(average);
