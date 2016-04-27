@@ -47,12 +47,12 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 60; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
-            chart1.BackColor = Color.GhostWhite;
+            chart1.BackColor = System.Drawing.Color.FromArgb(180, 131, 221, 255);
 
             //set legend position and properties as required
             chart1.Legends[0].LegendStyle = LegendStyle.Table;
@@ -91,13 +91,22 @@ namespace Module_Graphs
                 s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
                 s.BorderWidth = 3;
             }
-            else if (strUnit == "valleyMarker")
+            else if (strUnit == "heightMarker")
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Diamond;
                 s.MarkerSize = 10;
-                s.Color = System.Drawing.Color.FromArgb(255, 255, 255, 0);
+                s.Color = System.Drawing.Color.FromArgb(255, 255, 135, 0);
+                s.BorderWidth = 3;
+            }
+            else if (strUnit == "valleyMarker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Circle;
+                s.MarkerSize = 5;
+                s.Color = System.Drawing.Color.FromArgb(255, 20, 135, 66);
                 s.BorderWidth = 3;
             }
             else if (strUnit == "marker_heightSorted")
@@ -106,14 +115,23 @@ namespace Module_Graphs
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Star10;
                 s.MarkerSize = 8;
-                s.Color = System.Drawing.Color.FromArgb(130, 0, 0, 255);
+                s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
+                s.BorderWidth = 3;
+            }
+            else if (strUnit == "comboMarker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Triangle;
+                s.MarkerSize = 8;
+                s.Color = System.Drawing.Color.FromArgb(255, 12, 213, 122);
                 s.BorderWidth = 3;
             }
             else
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-                s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
+                s.BorderColor = System.Drawing.Color.FromArgb(180, 43, 197, 255);
                 s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
                 s.ShadowOffset = 1;
                 s.IsVisibleInLegend = true;
