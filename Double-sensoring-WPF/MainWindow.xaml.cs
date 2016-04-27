@@ -23,6 +23,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Resources;
     using System.Windows.Markup;
     using System.Windows.Data;
+    using System.Drawing.Imaging;
+    using System.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -63,6 +65,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //IntroPineapple-instans
         private IntroPineapple introPineapple;
+
+        //XMLSave-instans
+        private XMLsave XMLsave;
 
         ////----------------------------------------Våra egna---------------------
         /// Current directory
@@ -161,6 +166,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
+
+            //XMLsave
+            this.XMLsave = new XMLsave();
+
+            //Thread
         }
 
         //Intro-ananas ska snurra 720 grader
@@ -182,7 +192,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 greeting.Play();
 
             //Timer start
-                dispatcherTimer.Tick -= introPineappleSpin;
+            dispatcherTimer.Tick -= introPineappleSpin;
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(500000);
             dispatcherTimer.Start();
@@ -1254,53 +1264,62 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             List<int> grönapixlar = null;
                             grönapixlar = new List<int>();
 
-                            // Rutan som följer HeadJoint
-                            for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize);
-                                i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize); ++i)
-                            {
-                                for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize);
-                                    j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize); ++j)
-                                {
-                                    int r = getcolorfrompixel(i, j, pixels, "red");
-                                    int g = getcolorfrompixel(i, j, pixels, "green");
+                            List<double> pulseList = new List<double>();
 
-                                    if ((0 < r && r < 255) && (0 < g && g < 255))
+                            if (bodySensning.bodies.Length != 0)
+                            {
+                                // Rutan som följer HeadJoint
+                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize);
+                                    i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize); ++i)
+                                {
+                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize);
+                                        j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize); ++j)
                                     {
-                                        rödapixlar.Add(r);
-                                        grönapixlar.Add(g);
+                                        int r = getcolorfrompixel(i, j, pixels, "red");
+                                        int g = getcolorfrompixel(i, j, pixels, "green");
+
+                                        if ((0 < r && r < 255) && (0 < g && g < 255))
+                                        {
+                                            rödapixlar.Add(r);
+                                            grönapixlar.Add(g);
+                                        }
+                                        ChangePixelColor(i, j, pixels, "red");
                                     }
-                                    ChangePixelColor(i, j, pixels, "red");
+                                }
+
+                                pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
+                                Console.WriteLine(bodySensning.bodies.Length);
+
+
+                                //Laddar hjärt-grafen
+                                if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
+                                {
+                                    double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100);
+                                    TextBlock.Text = procent.ToString() + "%";
+                                    chartPulse.Visibility = Visibility.Hidden;
+                                    heart2.Visibility = Visibility.Visible;
+                                    heart2.Width = heart2.MaxWidth * procent / 100;
+                                    heart2.Height = heart2.MaxHeight * procent / 100;
+                                }
+                                else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
+                                {
+                                    TextBlock.Text = "";
+                                    chartPulse.Visibility = Visibility.Visible;
+                                    heart2.Visibility = Visibility.Hidden;
+                                }
+
+                                //definiera hur ofta och hur stor listan är här innan.
+                                if (pulseList.Count % runPlotModulo == 0)
+                                {
+                                    //Analys av puls i matlab
+                                    plottingAndCalculations("pulse", pulseList, pulseList);
                                 }
                             }
-
-                            List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
-
-                            //Laddar hjärt-grafen
-                            if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) <= 100)
-                            {
-                                double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100);
-                                TextBlock.Text = procent.ToString() + "%";
-                                chartPulse.Visibility = Visibility.Hidden;
-                                heart2.Visibility = Visibility.Visible;
-                                heart2.Width = heart2.MaxWidth * procent / 100;
-                                heart2.Height = heart2.MaxHeight * procent / 100;
-                            }
-                            else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps) * 100) == 101)
-                            {
-                                TextBlock.Text = "";
-                                chartPulse.Visibility = Visibility.Visible;
-                                heart2.Visibility = Visibility.Hidden;
-                            }
-
-                            //definiera hur ofta och hur stor listan är här innan.
-                            if (pulseList.Count % runPlotModulo == 0)
-                            {
-                                //Analys av puls i matlab
-                                plottingAndCalculations("pulse", pulseList, pulseList);
-                            }
                         }
-                        catch
-                        { }
+                        catch (System.IndexOutOfRangeException)
+                        {
+                            System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
+                        }
 
                     }
 
@@ -1308,31 +1327,37 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         try
                         {
-                            // Rutan som följer SpineMidJoint
-                            bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X +
+                            if (bodySensning.bodies.Length != 0)
+                            {
+
+                                // Rutan som följer SpineMidJoint
+                                bodySensning.setBellyJointPos(bodySensning.getSpineMidJoint().Position.X +
                                 (bodySensning.getSpineBase().Position.X - bodySensning.getSpineMidJoint().Position.X) * (float)bellyJointXPosition,
                                 bodySensning.getSpineMidJoint().Position.Y +
                                 (bodySensning.getSpineBase().Position.Y - bodySensning.getSpineMidJoint().Position.Y) * (float)bellyJointYPosition,
                                 bodySensning.getSpineMidJoint().Position.Z);
 
-                            ColorSpacePoint colorSpaceSpinePoint = bodySensning.getCoordinateMapper().
-                            MapCameraPointToColorSpace(bodySensning.getBellyJoint().Position);
+                                ColorSpacePoint colorSpaceSpinePoint = bodySensning.getCoordinateMapper().
+                                MapCameraPointToColorSpace(bodySensning.getBellyJoint().Position);
 
-                            if (colorSpaceSpinePoint.X > 0)
-                            {
-                                for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - dotSize);
-                                 i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + dotSize); ++i)
+                                if (colorSpaceSpinePoint.X > 0)
                                 {
-                                    for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - dotSize);
-                                        j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + dotSize); ++j)
+                                    for (int i = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) - 10);
+                                     i <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.X)) + 10); ++i)
                                     {
-                                        ChangePixelColor(i, j, pixels, "blue");
+                                        for (int j = (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) - 10);
+                                            j <= (Convert.ToInt32(Math.Round(colorSpaceSpinePoint.Y)) + 10); ++j)
+                                        {
+                                            ChangePixelColor(i, j, pixels, "blue");
+                                        }
                                     }
                                 }
                             }
                         }
-                        catch
-                        { }
+                        catch (System.IndexOutOfRangeException)
+                        {
+                            System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
+                        }
                     }
 
                     using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
@@ -1374,7 +1399,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && bodySensning.bodies.Length != 0)
                     {
                         try
                         {
@@ -1406,7 +1431,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
                         catch (System.IndexOutOfRangeException)
                         {
-                            //System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
+                            System.Windows.MessageBox.Show("Baby has escaped, baby can't be far");
                         }
                     }
                 }
@@ -1468,8 +1493,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             //Skriv ut hjärtfrekvensen
             heartrateTextBlock.Text = heartPulse.ToString();
-            XMLsave XMLsave = new XMLsave();
-            XMLsave.saveToXML(heartPulse.ToString());
+            XMLsave.saveToXML(heartPulse.ToString(), "pulse");
 
             //Sätt timertiden till att matcha hjärtfrekvensen
             if (heartPulse != 0)
@@ -1504,6 +1528,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             //Skriver ut andningsfrekvens
             breathrateTextBlock.Text = breathPulse.ToString();
+            XMLsave.saveToXML(breathPulse.ToString(), "breath");
 
             if (breathPulse != 0)
             {

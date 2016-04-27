@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Array for the bodies
         /// </summary>
-        private Body[] bodies = null;
+        public Body[] bodies = null;
 
         /// <summary>
         /// definition of bones
@@ -267,7 +267,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         this.bodies = new Body[bodyFrame.BodyCount];
                     }
-
+                    if (bodyFrame.BodyCount == 0)
+                    {
+                        this.bodies = new Body[bodyFrame.BodyCount];
+                    }
                     // The first time GetAndRefreshBodyData is called, Kinect will allocate each Body in the array.
                     // As long as those body objects are not disposed and not set to null in the array,
                     // those body objects will be re-used.
