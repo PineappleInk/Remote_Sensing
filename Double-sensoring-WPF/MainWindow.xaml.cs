@@ -59,7 +59,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private BodySensing bodySensning;
 
         //SettingWindow-instans
-        private SettingWindow settingWindow;
+        public SettingWindow settingWindow;
 
         //IntroPineapple-instans
         private IntroPineapple introPineapple;
@@ -1312,6 +1312,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
+                breathPulse = 12;
             }
         }
         /*
@@ -1351,6 +1352,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
+                heartPulse = 60;
             }
         }
 

@@ -54,7 +54,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void soundAlarm(object sender, EventArgs e)
         {
             alarmTimer.Stop();
-            beep.Play();
+            if (parent.settingWindow.checkBoxSound.IsChecked == true)
+            {
+                beep.Play();
+            }
             colorAlarm(sender, e);
             alarmTimer.Start();
         }
@@ -62,7 +65,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void colorAlarm(object sender, EventArgs e)
         {
             if (this.Background == Brushes.WhiteSmoke)
-            { 
+            {
                 Background = Brushes.Red;
             }
             else
