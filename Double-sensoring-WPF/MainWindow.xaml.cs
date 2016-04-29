@@ -1232,7 +1232,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //if (averagePulse < lowNum)
 
-            // Detta villkor måste finslipas !!!
+            // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
             if (averagePulse < lowNum || ( (lastSample >= fps * 20) && (diff * 1000) > staticDiff) ) 
             {
                 if (!settingWindow.checkBoxSound.HasContent)
