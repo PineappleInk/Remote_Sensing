@@ -1256,7 +1256,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(heartrate, lowNumPulse, lastSample);
+                        //pulseAlarm(heartrate, lowNumPulse, lastSample);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1356,7 +1356,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        breathingAlarm(breathPulse, lowNumBreathing);
+                        //breathingAlarm(breathPulse, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
