@@ -1605,8 +1605,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                         rödapixlar.Add(r);
                                         grönapixlar.Add(g);
                                     }
-                                    if (i == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize) || i == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize)
-                                        || j == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize) || j == (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize))
+                                    if (i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize * 0.9) || i >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize * 0.9)
+                                        || j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize * 0.9) || j >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize * 0.9))
                                     {
                                     ChangePixelColor(i, j, pixels, "red");
                                 }
