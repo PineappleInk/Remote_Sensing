@@ -928,8 +928,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-//            Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-  //          Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
+         // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+         // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
                 // Console.WriteLine("Går in i for-loopen. ");
@@ -1347,7 +1347,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
-                        Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
+                        //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
                         breathPulse = breathingRate;
 
