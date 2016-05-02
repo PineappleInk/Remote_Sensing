@@ -8,7 +8,8 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"
-        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" Background="#FF00C6FF" BorderBrush="#FF83DDFF" Foreground="#FF83DDFF" >
+        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" Background="#FF00C6FF" BorderBrush="#FF83DDFF" Foreground="#FF83DDFF"
+        KeyDown="Window_KeyDown" >
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />

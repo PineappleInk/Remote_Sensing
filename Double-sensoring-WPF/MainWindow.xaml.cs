@@ -23,6 +23,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Resources;
     using System.Windows.Markup;
     using System.Windows.Data;
+    using System.Windows.Input;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -1775,6 +1776,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void DotSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dotSize = (int)DotSizeSlider.Value;
+        }
+
+        //___________________TANGENTER__________________________
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                settingWindow.Save_Click(sender, e);
+            }
         }
     }
 }

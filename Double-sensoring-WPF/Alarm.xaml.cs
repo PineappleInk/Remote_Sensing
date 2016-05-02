@@ -75,5 +75,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //Timern startas om i soundAlarm() iställer för här!
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            okButton_Click(sender, e);
+        }
     }
 }
