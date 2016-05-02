@@ -47,7 +47,7 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 60; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
@@ -97,7 +97,7 @@ namespace Module_Graphs
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Diamond;
                 s.MarkerSize = 10;
-                s.Color = System.Drawing.Color.FromArgb(255, 255, 255, 0);
+                s.Color = System.Drawing.Color.FromArgb(255, 255, 135, 0);
                 s.BorderWidth = 3;
             }
             else if (strUnit == "marker_heightSorted")
@@ -106,7 +106,16 @@ namespace Module_Graphs
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                 s.MarkerStyle = MarkerStyle.Star10;
                 s.MarkerSize = 8;
-                s.Color = System.Drawing.Color.FromArgb(130, 0, 0, 255);
+                s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
+                s.BorderWidth = 3;
+            }
+            else if (strUnit == "comboMarker")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Triangle;
+                s.MarkerSize = 8;
+                s.Color = System.Drawing.Color.FromArgb(255, 12, 213, 122);
                 s.BorderWidth = 3;
             }
             else
