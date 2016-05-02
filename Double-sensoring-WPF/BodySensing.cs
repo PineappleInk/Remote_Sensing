@@ -120,6 +120,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private Joint bellyJoint;
 
+        private Joint rightHandJoint;
+
         public BodySensing(KinectSensor kinectSensor)
         {
             this.kinectSensor = kinectSensor;
@@ -197,6 +199,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Skapar joints
             headJoint = new Joint(); //används i matlabfunktion i mainwindow
             bellyJoint = new Joint();
+            rightHandJoint = new Joint();
         }
 
         // Get- och setfunktioner
@@ -231,6 +234,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         public Joint getHeadJoint()
         {
             return headJoint;
+        }
+
+        public Joint getRightHandJoint()
+        {
+            return rightHandJoint;
         }
 
         public Joint getBellyJoint()
@@ -368,6 +376,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             else if (joint1.JointType == JointType.Head)
             {
                 headJoint = joint1;
+            }
+            //höger hand - puls - För tester
+            if (joint0.JointType == JointType.HandRight)
+            {
+                rightHandJoint = joint0;
+            }
+            else if (joint1.JointType == JointType.HandRight)
+            {
+                rightHandJoint = joint1;
             }
             //midspine - puls
             if (joint0.JointType == JointType.SpineMid)

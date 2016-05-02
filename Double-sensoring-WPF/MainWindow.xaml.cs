@@ -1430,7 +1430,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double diff = Math.Abs(stdH10 - stdMean);
             Console.WriteLine("diff*1000: " + diff*1000);
 
-            double staticDiff = 2;
+            double staticDiff = 200;
 
             //if (averagePulse < lowNum)
 
@@ -1575,12 +1575,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    //if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
-                                MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
+                                MapCameraPointToColorSpace(bodySensning.getRightHandJoint().Position);
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
