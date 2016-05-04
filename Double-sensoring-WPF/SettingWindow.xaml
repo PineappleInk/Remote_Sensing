@@ -5,9 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.BodyBasics"
         mc:Ignorable="d"
-        Title="Settings" Height="221.429" Width="504.73" Loaded="Window_Loaded" ShowInTaskbar="False" Topmost="True" WindowStyle="None" Focusable="False" MinWidth="504.73" MinHeight="247.522" MaxWidth="504.73" MaxHeight="247.522" 
-                Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" Background="#FFF99E9E" BorderBrush="#FF83DDFF" Foreground="White"
->
+        Title="Settings" Height="221.429" Width="504.73" Loaded="Window_Loaded" ShowInTaskbar="False" Topmost="True" WindowStyle="None" Focusable="False" MinWidth="504.73" MinHeight="247.522" MaxWidth="504.73" MaxHeight="247.522" Background="#FFFEA4A4" >
     <Grid Margin="0,0,0.4,-0.2">
         <TextBlock x:Name="informationTextPulse" Margin="17,86,0,0" TextWrapping="Wrap" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Foreground="Black">
             <TextBlock.Background>
@@ -19,7 +17,7 @@
         <TextBox x:Name="inputTextBreathing" Margin="17,167,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
         <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="426,107,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="215,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="130" Foreground="Black"><Run Text="Ändra position för att mäta andning"/><Run Text=":"/><Run Text="&#xA;"/></TextBlock>
-        <Button x:Name="Save" Content="Spara och stäng" HorizontalAlignment="Left" Margin="383,207,0,0" VerticalAlignment="Top" Width="99" Click="Save_Click"/>
+        <Button x:Name="Save" Content="Spara och stäng" HorizontalAlignment="Left" Margin="374,199,0,0" VerticalAlignment="Top" Width="99" Click="Save_Click"/>
         <Button x:Name="resetButton" Content="Återställ " HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Width="80" Click="resetButton_Click"/>
         <RadioButton x:Name="Position_High" Content="Högt (på bröstet)" HorizontalAlignment="Left" Margin="217,127,0,0" VerticalAlignment="Top" Checked="Position_High_Checked" Foreground="#FF363636"/>
         <RadioButton x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="217,148,0,0" VerticalAlignment="Top" IsChecked="True" Checked="Position_Normal_Checked" Foreground="#FF363636"/>
@@ -33,7 +31,7 @@
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background>
         </TextBlock>
-        <TextBlock x:Name="Settings" Margin="19,7,316.6,203.867" TextWrapping="Wrap" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" Width="162" Text="Inställningar" FontSize="21.333" Foreground="Black">
+        <TextBlock x:Name="Settings" Margin="19,7,0,0" TextWrapping="Wrap" Height="39" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Text="Inställningar" FontSize="21.333" Foreground="Black">
             <TextBlock.Background>
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background>
