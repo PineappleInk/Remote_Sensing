@@ -4,11 +4,11 @@
         xmlns:Module_Graphs="clr-namespace:Module_Graphs"
         xmlns:tools="clr-namespace:MyApp.Tools"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Microsoft.Samples.Kinect.BodyBasics.MainWindow"
-        Title="Pineapple! Gott på pizza, varm macka och i fruktsalladen!" 
+        Title="Ananas! Good on pizza, hot sandwich and in fruit salad!" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Loaded="MainWindow_Loaded"
-        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" Background="#FF00C6FF" BorderBrush="#FF83DDFF" Foreground="#FF83DDFF"
+        Closing="MainWindow_Closing" Icon="Images/pineapple ink-logo-02.png" BorderBrush="#FF83DDFF" Foreground="White"
         KeyDown="Window_KeyDown" >
 
     <Window.Resources>
@@ -16,6 +16,13 @@
         <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f" />
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
     </Window.Resources>
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="White"/>
+            <GradientStop Color="#FF00BAFF" Offset="0.994"/>
+            <GradientStop Color="#FFAEDCED" Offset="0.534"/>
+        </LinearGradientBrush>
+    </Window.Background>
 
     <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
@@ -34,7 +41,7 @@
                 <RowDefinition Height="526.5*"/>
                 <RowDefinition Height="18*"/>
             </Grid.RowDefinitions>
-            <Button x:Name="Settings" Content="Settings" Grid.Column="2" HorizontalAlignment="Left" Margin="235.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Settings_Click" IsCancel="True" RenderTransformOrigin="0.526,-0.915" Foreground="White" Background="#FF83DDFF" BorderBrush="#FF83DDFF">
+            <Button x:Name="Settings" Content="Inställningar" Grid.Column="2" HorizontalAlignment="Left" Margin="228.333,3.667,0,-13" Grid.Row="3" VerticalAlignment="Top" Width="75" Click="Settings_Click" IsCancel="True" RenderTransformOrigin="0.526,-0.915" Foreground="White" Background="#FF83DDFF" BorderBrush="#FF83DDFF">
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -44,7 +51,7 @@
                     </TransformGroup>
                 </Button.RenderTransform>
             </Button>
-            <Button x:Name="Clear" Content="Clear" Grid.Column="2" HorizontalAlignment="Left" Margin="145.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Clear_Click" RenderTransformOrigin="3.55,12.581" Background="#FF83DDFF" Foreground="White" BorderBrush="#FF83DDFF" />
+            <Button x:Name="Clear" Content="Starta om" Grid.Column="2" HorizontalAlignment="Left" Margin="138.333,3.667,0,-13" Grid.Row="3" VerticalAlignment="Top" Width="75" Click="Clear_Click" RenderTransformOrigin="3.55,12.581" Background="#FF83DDFF" Foreground="White" BorderBrush="#FF83DDFF" />
 
             <Module_Graphs:YTGraphWPFUC x:Name="chartBreath" Grid.Row="1" Margin="0,5,4,5" Grid.Column="1" HorizontalAlignment="Left" Height="300" Width="500" d:IsHidden="True" />
             <Module_Graphs:YTGraphWPFUC x:Name="chartPulse" Grid.Row="2" Margin="0,5,4,5" Grid.Column="1" HorizontalAlignment="Left" Height="300" Width="500" d:IsHidden="True" />
@@ -53,18 +60,21 @@
             <Image x:Name="heart" Grid.Column="1" HorizontalAlignment="Center" Height="100" Margin="568.8,192.8,9.6,28.8" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Hjärta1.png"/>
             <Image x:Name="lung2" Grid.Column="1" HorizontalAlignment="Center" Height="100" Margin="568.8,71.8,9.6,149.8" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lung2.png"/>
             <Image x:Name="lungkrans" Grid.Column="1" HorizontalAlignment="Center" Height="100" Margin="568.8,71.8,9.6,149.8" Grid.Row="2" VerticalAlignment="Center" Width="100" Source="Images/Lungkrans-05.png"/>
-            <Button x:Name="Exit_Button" Content="Exit" Grid.Column="2" HorizontalAlignment="Left" Margin="323.4,277.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="Exit_Button_Click" BorderBrush="#FF83DDFF" Background="#FF83DDFF" Foreground="White"/>
+            <Button x:Name="Exit_Button" Content="Avsluta" Grid.Column="2" HorizontalAlignment="Left" Margin="316.333,3.667,0,-13" Grid.Row="3" VerticalAlignment="Top" Width="75" Click="Exit_Button_Click" BorderBrush="#FF83DDFF" Background="#FF83DDFF" Foreground="White"/>
             <TextBox x:Name="breathingAlarmText" Grid.Column="2" HorizontalAlignment="Left" Height="20" Margin="161.4,118.8,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Breathing levels are low!" VerticalAlignment="Top" Width="149" Background="#FFF31111" Visibility="Hidden"/>
             <TextBox x:Name="pulseAlarmText" Grid.Column="2" HorizontalAlignment="Left" Height="20" Margin="161.4,227.8,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Heart rate levels are low!" VerticalAlignment="Top" Width="149" Background="#FFF31111" Visibility="Hidden"/>
             <Image x:Name="heart2" Grid.Column="1" HorizontalAlignment="Center" Height="236" Grid.Row="2" VerticalAlignment="Center" Width="236" Source="Images/laddaHjärta-09.png" Margin="152.333,39,331.667,88.333" MaxHeight="236" MaxWidth="236"/>
             <Image Source="{Binding ImageSource2}" Stretch="UniformToFill" Margin="504.8,10.6,6.2,310.8" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Column="1" Grid.RowSpan="2" />
             <Slider x:Name="DotSizeSlider" Grid.Column="2" HorizontalAlignment="Left" Margin="323,40,0,0" Grid.Row="2" VerticalAlignment="Top" Height="194" Width="46" Orientation="Vertical" Maximum="40" Value="20" ValueChanged="DotSizeSlider_ValueChanged" Minimum="2" Foreground="#FF83DDFF"/>
-            <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Margin="198.333,121,378.667,153.333" TextWrapping="Wrap" VerticalAlignment="Center" Height="47" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2" RenderTransformOrigin="0.544,0.383" Text="loading..." Foreground="White"/>
+            <TextBlock x:Name="TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Margin="198.333,121,378.667,153.333" TextWrapping="Wrap" VerticalAlignment="Center" Height="47" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="2" RenderTransformOrigin="0.544,0.383" Text="laddar..." Foreground="White"/>
             <Image x:Name="lung3" Grid.Column="1" HorizontalAlignment="Center" Height="236" Grid.Row="1" VerticalAlignment="Center" Width="236" Source="Images/laddalunga.png" Margin="126.333,67.333,315.667,18" MaxWidth="236" MaxHeight="236"/>
-            <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" TextAlignment="Center" Margin="192.333,169.333,384.667,110" TextWrapping="Wrap" VerticalAlignment="Center" Height="42" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="0.534,0.368" Text="loading..." Foreground="White"/>
+            <TextBlock x:Name="TextLungLoad" HorizontalAlignment="Center" TextAlignment="Center" Margin="192.333,169.333,384.667,110" TextWrapping="Wrap" VerticalAlignment="Center" Height="42" Width="101" FontSize="21.333" FontFamily="Segoe UI Black" FontWeight="Bold" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="0.534,0.368" Text="laddar..." Foreground="White"/>
 
-            <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="211,71,0,0" Grid.Row="2" TextWrapping="Wrap" Background="Transparent" VerticalAlignment="Top" Height="68" Width="99" Text="Old heartrate: "/>
-            <TextBlock x:Name="momentaryHeartrate" Grid.Column="2" HorizontalAlignment="Left" Margin="211,180,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Momentary heartrate: " VerticalAlignment="Top" Height="54" Width="100"/>
+            <TextBlock x:Name="oldheartrateTextBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="166.333,70,0,0" Grid.Row="2" TextWrapping="Wrap" Background="Transparent" VerticalAlignment="Top" Height="68" Width="99" Text="Old heartrate: "/>
+            <TextBlock x:Name="momentaryHeartrate" Grid.Column="2" HorizontalAlignment="Left" Margin="166.333,179,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Momentary heartrate: " VerticalAlignment="Top" Height="54" Width="100"/>
+            <TextBlock x:Name="textBlock" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,217,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Liten" VerticalAlignment="Top"/>
+            <TextBlock x:Name="textBlock_Copy" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,42,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Stor" VerticalAlignment="Top"/>
+            <TextBlock x:Name="textBlock_Copy1" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,132,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Medel" VerticalAlignment="Top"/>
 
 
         </Grid>
