@@ -818,7 +818,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-            
+
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
@@ -928,25 +928,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-         // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-         // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
+            // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+            // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
                 // Console.WriteLine("Går in i for-loopen. ");
                 // Fortsätt här i morgon! if-satsen fungerar ej!: 
                 //Console.WriteLine("xPeaks[i]" + xPeaks[i]);
-               // Console.WriteLine("lastSample: " + lastSample);
+                // Console.WriteLine("lastSample: " + lastSample);
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
-                   // Console.WriteLine("Går in i if:en");
+                    // Console.WriteLine("Går in i if:en");
                     meanH10 += (yPeaks[i] - yValleys[i]);
                     M += 1;
                 }
             }
             meanH10 = meanH10 / M;
-           // Console.WriteLine("M: " + M);
+            // Console.WriteLine("M: " + M);
 
-           // Console.WriteLine("meanH10: " + meanH10);
+            // Console.WriteLine("meanH10: " + meanH10);
 
             // Tar fram summa av höjden
             double sum10 = 0;
@@ -964,6 +964,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double sigmaH10 = Math.Sqrt((1 / M) * sum10);
             stdH10 = sigmaH10; // stdH10 är global variabel
             Console.WriteLine("stdH10: " + stdH10);
+
+            textBlock.Text = "sigmaH10: " + sigmaH10.ToString() + "meanH: " + meanH10;
             /* Slut */
 
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
@@ -985,7 +987,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-            
+
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
 
@@ -1256,7 +1258,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        //pulseAlarm(heartrate, lowNumPulse, lastSample);
+                        pulseAlarm(heartrate, lowNumPulse, lastSample);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1427,15 +1429,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
             //if (averagePulse < lowNum)
-            double diff = Math.Abs(stdH10 - stdMean);
-            Console.WriteLine("diff*1000: " + diff*1000);
+            //double diff = Math.Abs(stdH10 - stdMean);
+            //Console.WriteLine("diff*1000: " + diff*1000);
 
-            double staticDiff = 200;
+            //double staticDiff = 200;
 
             //if (averagePulse < lowNum)
 
             // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
-            if (averagePulse < lowNum || ( (lastSample >= fps * 20) && (diff * 1000) > staticDiff) ) 
+            //if (averagePulse < lowNum || ( (lastSample >= fps * 20) && stdH10 < stdMean / 2) ) 
+            if ((lastSample >= fps * 20) && stdH10 < (stdMean / 3) )
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1609,9 +1612,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     if (i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize * 0.9) || i >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize * 0.9)
                                         || j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize * 0.9) || j >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize * 0.9))
                                     {
-                                    ChangePixelColor(i, j, pixels, "red");
+                                        ChangePixelColor(i, j, pixels, "red");
+                                    }
                                 }
-                            }
                             }
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
@@ -1786,6 +1789,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            stdMean = 0;
+            stdH10 = 0;
         }
 
         //Timer-funktionen
@@ -1876,6 +1881,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 settingWindow.Save_Click(sender, e);
             }
         }
+
+
     }
 }
 
