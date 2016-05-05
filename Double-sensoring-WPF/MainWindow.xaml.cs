@@ -898,6 +898,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
+            // Testa rensa listorna
+            xPeaks.Clear();
+            xPeaks = null;
+            yPeaks.Clear();
+            yPeaks = null;
+            xValleys.Clear();
+            xValleys = null;
+            yValleys.Clear();
+            yValleys = null;
+
+            // Returnera
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
