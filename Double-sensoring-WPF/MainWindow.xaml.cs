@@ -128,6 +128,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         double heartPulse = 60;
         double breathRate = 30;
 
+        //Ljud
+        string nightSoundPath;
+        System.Media.SoundPlayer nightSound = new System.Media.SoundPlayer();
+
+        string daySoundPath;
+        System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
+
+
         //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
@@ -182,6 +190,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //Bakgrund
             this.bgBrush = this.Background;
+
+            //Ljud
+            nightSoundPath = Path.Combine(path + @"\..\..\..\nighttime.wav");
+            nightSound.SoundLocation = nightSoundPath;
+
+            daySoundPath = Path.Combine(path + @"\..\..\..\daytime.wav");
+            daySound.SoundLocation = daySoundPath;
         }
 
         // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
@@ -1899,9 +1914,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             var bc = new BrushConverter();
             this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
             movieFrame.Source = ImageSource3;
-            string nightSoundPath = Path.Combine(path + @"\..\..\..\nighttime.wav");
-            System.Media.SoundPlayer nightSound = new System.Media.SoundPlayer();
-            nightSound.SoundLocation = nightSoundPath;
             nightSound.Play();
 
 
@@ -1912,9 +1924,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             var bc = new BrushConverter();
             this.Background = bgBrush;
             movieFrame.Source = ImageSource2;
-            string daySoundPath = Path.Combine(path + @"\..\..\..\daytime.wav");
-            System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
-            daySound.SoundLocation = daySoundPath;
             daySound.Play();
         }
 
