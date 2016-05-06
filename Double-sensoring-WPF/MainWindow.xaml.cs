@@ -54,7 +54,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        //private IRSensing irSensing;
+        private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -166,6 +166,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
+            //IR
+            this.irSensing = new IRSensing(kinectSensor, this);
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
@@ -240,6 +243,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        public ImageSource ImageSource3
+        {
+            get
+            {
+                return irSensing.ImageSource;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the current status text to display
         /// </summary>
@@ -286,6 +297,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
+
+            if (irSensing.getInfraredFrameReader() != null)
+            {
+                irSensing.getInfraredFrameReader().FrameArrived += irSensing.Reader_InfraredFrameArrived;
+            }
+
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
