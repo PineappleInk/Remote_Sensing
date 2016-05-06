@@ -65,6 +65,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //IntroPineapple-instans
         private IntroPineapple introPineapple;
 
+        ////----------------------------------------Pinapple Inc: kod ---------------------
         //Bakgrund
         private System.Windows.Media.Brush bgBrush;
 
@@ -84,7 +85,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Test Lina och Elli
         double stdHeight = 0;
 
-        // Standarsavvikelse höjd peakar, medel över 5 max minuter
+        // Standardavvikelse höjd peakar, medel över 5 max minuter
         List<double> stdMeanLst = new List<double>();
         double stdMean = 0;
         // Standardavvikelse höjd peakar, senaste 10 sekunder
@@ -110,7 +111,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         static double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
-        static int dotSize = 20;
+        static int dotSize = 20;                       //Anger ramstorleken på kvadraterna vid mage och huvud
 
         //Filter
         static int orderOfFilter = 27;
@@ -123,10 +124,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
-        double heartPulse = 60;
-        double breathPulse = 30;
 
-        //-------------------------------------------------------s---------------------------------
+        double heartPulse = 60;
+        double breathRate = 30;
+
+        //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
@@ -182,6 +184,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.bgBrush = this.Background;
         }
 
+        // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
         //Intro-ananas ska snurra 720 grader
         private void introPineappleSpin(object sender, EventArgs e)
         {
@@ -221,6 +224,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.bellyJointYPosition = v;
         }
+// -----------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -343,6 +347,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             System.Environment.Exit(1);
         }
 
+        // --------------------------------- Pineapple Inc: kod ----------------------------------------------------
+
         // Lokalisera toppen i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
         // [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
@@ -350,6 +356,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
+        
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -455,10 +462,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < numOfPeaks - 1; ++i)
             {
                 double timeBwTwoPeaks = (peaks[0][i + 1] - peaks[0][i]) / fps;
-                //double timesTen = 10 * timeBwTwoPeaks;
-                //double rounded = Math.Round(timesTen);
-                //double dividedByTen = rounded / 10;
-                //timeBwPeaks.Add(dividedByTen);
                 timeBwPeaks.Add(timeBwTwoPeaks);
             }
 
@@ -542,17 +545,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             int numOfElements = peaksAndValleys[0].Count;
-            //Console.WriteLine("Sista x-värdet: " + peaksAndValleys[0][numOfElements - 1]);
             return sortedPeaksAndValleys;
         }
 
-        //TEST för dubbelamplitud koll
+        /* Dubbelamplitud koll
+          Kollar hur hög amplituden är i förhållande till vänster och höger sida,
+          och bildar medelvärde av dessa. Utifrån det sker sortering */
+
         private List<List<double>> doubleAmplitudePeaks(List<List<double>> peaks, List<List<double>> valleys)
         {
             List<List<double>> doubleAmplitudePeaks = new List<List<double>>();
             doubleAmplitudePeaks.Add(new List<double>());
             doubleAmplitudePeaks.Add(new List<double>());
 
+            // Här ska topparnas positioner x [0], höjd y [1] och medelamplitud [2] lagras
             List<List<double>> ampPeaks = new List<List<double>>();
             ampPeaks.Add(new List<double>());
             ampPeaks.Add(new List<double>());
@@ -595,25 +601,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
-            // HÄR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
-
-            //if (peaksAndValleys[2].Count > 2 && peaksAndValleys[2][0] == 1) // Om första värdet i listan är en topp 
-            //{
-            //    if (peaksAndValleys[2][1] == 0) // Och det andra värdet i listan är en dal
-            //    {
-            //        ampPeaks[0].Add(peaksAndValleys[0][0]);
-            //        ampPeaks[1].Add(peaksAndValleys[1][0]);
-            //    }
-            //}
+            // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud.
 
             double mean = 0;
 
             for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
             {
-                if (peaksAndValleys[2][i] == 0)
+                if (peaksAndValleys[2][i] == 0 && peaksAndValleys[2][i + 1] == 1)
                 {
-                    if (peaksAndValleys[2][i + 1] == 1)
-                    {
                         if (peaksAndValleys[2][i + 2] == 0)
                         {
                             ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
@@ -632,14 +627,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
                     }
                 }
-            }
 
             if (ampPeaks[2].Count != 0)
             {
                 mean = mean / ampPeaks[2].Count;
             }
-
-            //Console.WriteLine(ampPeaks[2].Count);
 
             for (int i = 0; i < ampPeaks[2].Count; ++i)
             {
@@ -649,8 +641,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     doubleAmplitudePeaks[1].Add(ampPeaks[1][i]);
                 }
             }
-
-            //Console.WriteLine(doubleAmplitudePeaks[1].Count);
 
             return doubleAmplitudePeaks;
         }
@@ -729,14 +719,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             int num = peaksAndValleys[0].Count;
-            //Console.WriteLine("Sista x-värdet i correctPeaks: " + peaksAndValleys[0][num - 1]);
 
             return correctPeaks;
         }
 
         //Lokalisera topparna i lista för puls
-        // Returvärdet är en lista med listor för [0]=positioner och 
-        // [1]=toppvärde till respektive position av topp (alltså från tidsaxeln)
+        // Returvärdet är en lista med listor för [0] = positioner (x) och 
+        // [1]=toppvärde till respektive position av topp (y) (alltså från tidsaxeln)
         private List<List<double>> locatePeaksPulse(List<double> measurements)
         {
             List<List<double>> topLocations = new List<List<double>>();
@@ -750,7 +739,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    if (downCounter < 4) //om det gått nedåt i max 0,1 sekunder, eller inte alls, kan det gå uppåt
                     {
                         upCounter += 1;
                         downCounter = 0;
@@ -815,7 +804,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //Påväg uppåt
                 else if (measurements[i] < measurements[i + 1])
                 {
-                    if (downCounter < 4) //om det inte gått nedåt i max 0,1 sekunder kan det gå uppåt
+                    if (downCounter < 4) //om det gått nedåt i max 0,1 sekunder, eller inte alls, kan det gå uppåt
                     {
                         upCounter += 1;
                         downCounter = 0;
@@ -854,9 +843,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
-
-            //Console.WriteLine("Tid, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            //Console.WriteLine("Tid, S*S/M: " + sigmaH * sigmaH / meanH + " S/(M*M): " + sigmaH / (meanH * meanH) + " S*S/(M*M): " + ((sigmaH * sigmaH) / (meanH * meanH)));
 
             for (int i = 0; i < timeBetweenPeaks.Count; ++i)
             {
@@ -915,13 +901,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Testa rensa listorna
             xPeaks.Clear();
-            xPeaks = null;
             yPeaks.Clear();
-            yPeaks = null;
             xValleys.Clear();
-            xValleys = null;
             yValleys.Clear();
-            yValleys = null;
 
             // Returnera
             return highEnoughPeaks;
@@ -954,14 +936,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-         // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-         // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
-                // Console.WriteLine("Går in i for-loopen. ");
-                // Fortsätt här i morgon! if-satsen fungerar ej!: 
-                //Console.WriteLine("xPeaks[i]" + xPeaks[i]);
-               // Console.WriteLine("lastSample: " + lastSample);
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
                    // Console.WriteLine("Går in i if:en");
@@ -984,7 +960,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     sum10 += (xi10 - meanH10) * (xi10 - meanH10);
                 }
             }
-            //Console.WriteLine("sum10: " + sum10);
 
             // Tar fram std-avvikelsen sigmaH10
             double sigmaH10 = Math.Sqrt((1 / M) * sum10);
@@ -1018,7 +993,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Korrigera std listan
             double lengthLst = stdMeanLst.Count;
 
-            if (lengthLst < 1800) // för 5 minuter
+            // Lägg till värden i listan för max senaste 5 minuterna
+            // 1800 värden / (6 ggr per sekund * 60 sekunder) = 5 minuter
+            if (lengthLst < 1800) 
             {
                 stdMeanLst.Add(sigmaH);
             }
@@ -1028,11 +1005,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 stdMeanLst.Add(sigmaH);
             }
             //Uppdatera till ny medel-std
-            stdMean = stdMeanLst.Average(); // Global variabel, std över max senaste 5 min
-            Console.WriteLine("stdMean: " + stdMean);
-
-            // Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            //Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
+            stdMean = stdMeanLst.Average(); // Global variabel, std-värden över max senaste 5 min
 
             /* Slut medel och Std*/
 
@@ -1121,7 +1094,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<double> rgbFiltList = rgbListFilt.ToList();
 
                         rgbFiltList.RemoveRange(0, fps);
+                        // Slut filtrering
 
+                        // Initialisering av markeringar i pulsplot
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
@@ -1144,7 +1119,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
                         int lastSample = rgbFiltList.Count;
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
-                        peaksAndValleysByHeight = sortByHeight(peaksPulse, valleysPulse, lastSample);
+                        peaksAndValleysByHeight = doubleAmplitudePeaks(peaksPulse, valleysPulse);
 
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
@@ -1210,6 +1185,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Skriver ut heartrate på skärmen
                         heartPulse = meanHeartPulse(heartRateList);
+                        Console.WriteLine("HeartPulse: " + heartPulse);
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
@@ -1282,7 +1258,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        //pulseAlarm(heartrate, lowNumPulse, lastSample);
+                        pulseAlarm(heartrate, lowNumPulse, lastSample);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1293,8 +1269,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("TopLines", heartRateList[1][k], heartRateList[0][k] - j);
                         }
-
-                        if (rgbFiltList.Count >= samplesOfMeasurement)
+                        // Justus hade rgbFiltList innan.
+                        if (rgbList.Count() >= samplesOfMeasurement)
                         {
                             rgbList.RemoveRange(0, runPlotModulo);
                         }
@@ -1357,17 +1333,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         ////Beräkning av hjärtfrekvens
                         double breathingRate = 0;
                         double average = 0;
-                        List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(breathPeaksFilt);
+                        List<double> timeBetweenBreaths = new List<double>();
+                        timeBetweenBreaths = timeBetweenAllPeaks(breathPeaksFilt);
 
-                        for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
+                        for (int i = 0; i < timeBetweenBreaths.Count; ++i)
                         {
-                            breathingRate += timeBetweenHeartBeats[i];
+                            breathingRate += timeBetweenBreaths[i];
                         }
 
-                        if (timeBetweenHeartBeats.Count != 0)
+                        if (timeBetweenBreaths.Count != 0)
                         {
-                            breathingRate = breathingRate / timeBetweenHeartBeats.Count;
+                            breathingRate = breathingRate / timeBetweenBreaths.Count;
                             breathingRate = Math.Round(60 / breathingRate);
                         }
 
@@ -1375,7 +1351,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
                         //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
-                        breathPulse = breathingRate;
+                        breathRate = breathingRate;
 
                         // Ritar ut andningspeakar i programmet
                         //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
@@ -1419,7 +1395,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
-                breathPulse = 12;
+                breathRate = 12;
             }
         }
         /*
@@ -1452,16 +1428,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
-            //if (averagePulse < lowNum)
-            double diff = Math.Abs(stdH10 - stdMean);
-            Console.WriteLine("diff*1000: " + diff*1000);
-
-            double staticDiff = 200;
-
-            //if (averagePulse < lowNum)
-
-            // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
-            if (averagePulse < lowNum || ( (lastSample >= fps * 20) && (diff * 1000) > staticDiff) ) 
+            if (averagePulse < lowNum || ( (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8)) )
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1601,13 +1568,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    //if (bodySensning.getHeadJoint().JointType == JointType.Head)
-                    if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
-                                MapCameraPointToColorSpace(bodySensning.getRightHandJoint().Position);
+                                MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -1804,6 +1771,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             clearGraphs();
+
         }
 
         private void clearGraphs()
@@ -1812,6 +1780,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+
+            //Rensa data för standardavvikelsen
+            stdMeanLst.Clear();
+            stdMean = 0;
+            stdH10 = 0;
+
         }
 
         //Timer-funktionen
@@ -1849,6 +1823,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
                 dispatcherTimer.Start();
             }
+            else
+            {
+                dispatcherTimer.Interval = new TimeSpan(10000000 / 14);
+                dispatcherTimer.Start();
+            }
         }
 
         //Timer-funktionen
@@ -1875,11 +1854,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 lungDecreasing = true;
             }
             //Skriver ut andningsfrekvens
-            breathrateTextBlock.Text = breathPulse.ToString();
+            breathrateTextBlock.Text = breathRate.ToString();
 
-            if (breathPulse != 0)
+            if (breathRate != 0)
             {
-                lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
+                lungTimer.Interval = new TimeSpan(60 / (long)breathRate * 10000000 / 28);
+                lungTimer.Start();
+            }
+            else
+            {
+                lungTimer.Interval = new TimeSpan(60 / 20 * 10000000 / 28);
                 lungTimer.Start();
             }
         }
@@ -1916,6 +1900,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             var bc = new BrushConverter();
             this.Background = bgBrush;
         }
+
+
     }
 }
 
