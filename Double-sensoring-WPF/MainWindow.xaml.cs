@@ -711,8 +711,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Lokalisera topparna i lista för puls
-        // Returvärdet är en lista med listor för [0]=positioner och 
-        // [1]=toppvärde till respektive position av topp (alltså från tidsaxeln)
+        // Returvärdet är en lista med listor för [0] = positioner (x) och 
+        // [1]=toppvärde till respektive position av topp (y) (alltså från tidsaxeln)
         private List<List<double>> locatePeaksPulse(List<double> measurements)
         {
             List<List<double>> topLocations = new List<List<double>>();
@@ -925,10 +925,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < xPeaks.Count; ++i)
             {
-                // Console.WriteLine("Går in i for-loopen. ");
-                // Fortsätt här i morgon! if-satsen fungerar ej!: 
-                //Console.WriteLine("xPeaks[i]" + xPeaks[i]);
-                // Console.WriteLine("lastSample: " + lastSample);
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
                     // Console.WriteLine("Går in i if:en");
@@ -951,7 +947,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     sum10 += (xi10 - meanH10) * (xi10 - meanH10);
                 }
             }
-            //Console.WriteLine("sum10: " + sum10);
 
             // Tar fram std-avvikelsen sigmaH10
             double sigmaH10 = Math.Sqrt((1 / M) * sum10);
@@ -984,8 +979,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Korrigera std listan
             double lengthLst = stdMeanLst.Count;
-
-            if (lengthLst < 1800) // för 5 minuter
+            
+            // Lägg till värden i listan för max senaste 5 minuterna
+            // 1800 värden / (6 ggr per sekund * 60 sekunder) = 5 minuter
+            if (lengthLst < 1800) 
             {
                 stdMeanLst.Add(sigmaH);
             }
@@ -995,12 +992,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 stdMeanLst.Add(sigmaH);
             }
             //Uppdatera till ny medel-std
-            stdMean = stdMeanLst.Average(); // Global variabel, std över max senaste 5 min
-            //Console.WriteLine("stdMean: " + stdMean);
-
-            // Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
-            //Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
-
+            stdMean = stdMeanLst.Average(); // Global variabel, std-värden över max senaste 5 min
+        
             /* Slut medel och Std*/
 
             // Sortera ut värden  
