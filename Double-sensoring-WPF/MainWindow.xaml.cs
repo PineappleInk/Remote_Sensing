@@ -1438,7 +1438,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
             //if (averagePulse < lowNum || ( (lastSample >= fps * 20) && stdH10 < stdMean / 2) ) 
-            if ((lastSample >= fps * 20) && stdH10 < (stdMean / 3) )
+            if ((lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean / 3) )
             {
                 clearGraphs();
                 kinectSensor.Close();
