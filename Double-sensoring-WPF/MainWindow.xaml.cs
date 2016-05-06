@@ -898,6 +898,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
+            // Testa rensa listorna
+            xPeaks.Clear();
+            xPeaks = null;
+            yPeaks.Clear();
+            yPeaks = null;
+            xValleys.Clear();
+            xValleys = null;
+            yValleys.Clear();
+            yValleys = null;
+
+            // Returnera
             return highEnoughPeaks;
         }
         /* SLUT checkHeights*/
@@ -1095,7 +1106,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<double> rgbFiltList = rgbListFilt.ToList();
 
                         rgbFiltList.RemoveRange(0, fps);
+                        // Slut filtrering
 
+                        // Initialisering av markeringar i pulsplot
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
