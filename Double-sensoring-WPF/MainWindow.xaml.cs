@@ -1831,6 +1831,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 dispatcherTimer.Interval = new TimeSpan(60 / (long)heartPulse * 10000000 / 14);
                 dispatcherTimer.Start();
             }
+            else
+            {
+                dispatcherTimer.Interval = new TimeSpan(10000000 / 14);
+                dispatcherTimer.Start();
+            }
         }
 
         //Timer-funktionen
