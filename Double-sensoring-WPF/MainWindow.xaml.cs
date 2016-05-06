@@ -54,7 +54,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        //private IRSensing irSensing;
+        private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -66,6 +66,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private IntroPineapple introPineapple;
 
         ////----------------------------------------Pinapple Inc: kod ---------------------
+        //Bakgrund
+        private System.Windows.Media.Brush bgBrush;
+
+        ////----------------------------------------Våra egna---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
@@ -167,15 +171,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
+            //IR
+            this.irSensing = new IRSensing(kinectSensor, this);
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
+
+            //Bakgrund
+            this.bgBrush = this.Background;
         }
 
         // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
-        //Intro-ananas ska snurra 720 grader 
+        //Intro-ananas ska snurra 720 grader
         private void introPineappleSpin(object sender, EventArgs e)
         {
             dispatcherTimer.Stop();
@@ -243,6 +253,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        public ImageSource ImageSource3
+        {
+            get
+            {
+                return irSensing.ImageSource;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the current status text to display
         /// </summary>
@@ -289,6 +307,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
+
+            if (irSensing.getInfraredFrameReader() != null)
+            {
+                irSensing.getInfraredFrameReader().FrameArrived += irSensing.Reader_InfraredFrameArrived;
+            }
+
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
@@ -592,7 +616,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
             {
                 if (peaksAndValleys[2][i] == 0 && peaksAndValleys[2][i + 1] == 1)
-                {
+                    {
                         if (peaksAndValleys[2][i + 2] == 0)
                         {
                             ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
@@ -1017,9 +1041,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double average = 0;
             List<double> timeBetweenHeartBeats = new List<double>();
             timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
-            List<List<double>> resultedTime = new List<List<double>>();
-            resultedTime.Add(new List<double>());
-            resultedTime.Add(new List<double>());
 
             for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
             {
@@ -1147,7 +1168,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 heartRateList[0].Add(peaksAndValleysByHeight[0][i]);
                                 heartRateList[1].Add(peaksAndValleysByHeight[1][i]);
-
                                 if (i == peaksAndValleysByHeight[0].Count - 2)
                                 {
                                     momentaryPulse = 60 / timeBetweenHeartBeats[i];
@@ -1169,8 +1189,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
                         //}
 
-                        //Skriver ut heartrate på skärmen
+                        //Skriver ut heartPulse på skärmen
                         heartPulse = meanHeartPulse(heartRateList);
+                        //Console.WriteLine("HeartPulse: " + heartPulse);
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
@@ -1180,6 +1201,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
+
 
                         for (int i = 0; i < peaksPulse[0].Count(); i++)
                         {
@@ -1243,7 +1265,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(heartrate, lowNumPulse, lastSample);
+                        pulseAlarm(heartPulse, lowNumPulse, lastSample);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1413,8 +1435,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
-            // Console.WriteLine("Längd stdMeanLst: " + stdMeanLst.Count());
-            if (averagePulse < lowNum || (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8))
+            if (averagePulse < lowNum || ( (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8)) )
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1871,6 +1892,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 settingWindow.Save_Click(sender, e);
             }
+        }
+
+        private void nighttime_Checked(object sender, RoutedEventArgs e)
+        {
+            var bc = new BrushConverter();
+            this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
+            movieFrame.Source = ImageSource3;
+            string nightSoundPath = Path.Combine(path + @"\..\..\..\nighttime.wav");
+            System.Media.SoundPlayer nightSound = new System.Media.SoundPlayer();
+            nightSound.SoundLocation = nightSoundPath;
+            nightSound.Play();
+
+
+        }
+
+        private void nighttime_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var bc = new BrushConverter();
+            this.Background = bgBrush;
+            movieFrame.Source = ImageSource2;
+            string daySoundPath = Path.Combine(path + @"\..\..\..\daytime.wav");
+            System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
+            daySound.SoundLocation = daySoundPath;
+            daySound.Play();
         }
 
 
