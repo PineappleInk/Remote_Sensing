@@ -542,6 +542,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             doubleAmplitudePeaks.Add(new List<double>());
             doubleAmplitudePeaks.Add(new List<double>());
 
+            // Här ska topparnas positioner x [0], höjd y [1] och medelamplitud [2] lagras
             List<List<double>> ampPeaks = new List<List<double>>();
             ampPeaks.Add(new List<double>());
             ampPeaks.Add(new List<double>());
@@ -922,8 +923,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-            // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-            // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
                 // Console.WriteLine("Går in i for-loopen. ");
