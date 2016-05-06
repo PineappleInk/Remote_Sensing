@@ -1026,11 +1026,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 average += timeBetweenHeartBeats[i];
             }
 
+            // Medeltiden mellan 2 st hjärtslag, beräknat från senaste ??? sekunderna
             if (timeBetweenHeartBeats.Count != 0)
             {
                 average = average / timeBetweenHeartBeats.Count;
             }
 
+            // Hjärtslaget ska avvika max 30% nedåt och max 40% uppåt från medeltiden, för att vara "korrekt".
             for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
             {
                 if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
