@@ -1106,7 +1106,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         List<double> rgbFiltList = rgbListFilt.ToList();
 
                         rgbFiltList.RemoveRange(0, fps);
+                        // Slut filtrering
 
+                        // Initialisering av markeringar i pulsplot
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
                         chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
