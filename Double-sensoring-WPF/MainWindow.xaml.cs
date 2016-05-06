@@ -65,7 +65,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //IntroPineapple-instans
         private IntroPineapple introPineapple;
 
-        ////----------------------------------------Våra egna---------------------
+        ////----------------------------------------Pinapple Inc: kod ---------------------
         /// Current directory
         string path = Path.Combine(Directory.GetCurrentDirectory());
 
@@ -107,7 +107,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         static double minimiDepthBreath = 0.5;         //Anger det minsta djup som andningen måste variera för att upptäckas av peakdetektionen
 
-        static int dotSize = 20;
+        static int dotSize = 20;                       //Anger ramstorleken på kvadraterna vid mage och huvud
 
         //Filter
         static int orderOfFilter = 27;
@@ -120,10 +120,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
+
         double heartPulse = 60;
         double breathingRate = 30;
 
-        //-------------------------------------------------------s---------------------------------
+        //----------------------------------------------------------------------------------------
 
         private static readonly int Bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
@@ -173,7 +174,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.settingWindow = new SettingWindow(this);
         }
 
-        //Intro-ananas ska snurra 720 grader
+        // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
+        //Intro-ananas ska snurra 720 grader 
         private void introPineappleSpin(object sender, EventArgs e)
         {
             dispatcherTimer.Stop();
@@ -212,6 +214,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.bellyJointYPosition = v;
         }
+// -----------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -328,6 +331,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             System.Environment.Exit(1);
         }
 
+        // --------------------------------- Pineapple Inc: kod ----------------------------------------------------
+
         // Lokalisera toppen i lista för andning
         // Returvärdet är en lista med listor för [0] - positioner och 
         // [1] - värde i respektive position som innehåller toppar (alltså från tidsaxeln)
@@ -335,6 +340,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
+        
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -440,10 +446,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < numOfPeaks - 1; ++i)
             {
                 double timeBwTwoPeaks = (peaks[0][i + 1] - peaks[0][i]) / fps;
-                //double timesTen = 10 * timeBwTwoPeaks;
-                //double rounded = Math.Round(timesTen);
-                //double dividedByTen = rounded / 10;
-                //timeBwPeaks.Add(dividedByTen);
                 timeBwPeaks.Add(timeBwTwoPeaks);
             }
 
@@ -527,11 +529,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             int numOfElements = peaksAndValleys[0].Count;
-            //Console.WriteLine("Sista x-värdet: " + peaksAndValleys[0][numOfElements - 1]);
             return sortedPeaksAndValleys;
         }
 
-        //TEST för dubbelamplitud koll
+        /* Dubbelamplitud koll
+          Kollar hur hög amplituden är i förhållande till vänster och höger sida,
+          och bildar medelvärde av dessa. Utifrån det sker sortering */
+
         private List<List<double>> doubleAmplitudePeaks(List<List<double>> peaks, List<List<double>> valleys)
         {
             List<List<double>> doubleAmplitudePeaks = new List<List<double>>();
@@ -580,16 +584,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
-            // HÄR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud :-)
-
-            //if (peaksAndValleys[2].Count > 2 && peaksAndValleys[2][0] == 1) // Om första värdet i listan är en topp 
-            //{
-            //    if (peaksAndValleys[2][1] == 0) // Och det andra värdet i listan är en dal
-            //    {
-            //        ampPeaks[0].Add(peaksAndValleys[0][0]);
-            //        ampPeaks[1].Add(peaksAndValleys[1][0]);
-            //    }
-            //}
+            // HÄR BÖR peaksAndValleys vara en komplett sorterad lista. Nästa steg blir att se över dess amplitud.
 
             double mean = 0;
 
@@ -624,8 +619,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 mean = mean / ampPeaks[2].Count;
             }
 
-            //Console.WriteLine(ampPeaks[2].Count);
-
             for (int i = 0; i < ampPeaks[2].Count; ++i)
             {
                 if (ampPeaks[2][i] > mean * 0.4 && ampPeaks[2][i] < mean * 2.5) //UNDERSÖK MER HÄR!!! :-) VERKAR VARA BRA NU! :-)
@@ -634,8 +627,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     doubleAmplitudePeaks[1].Add(ampPeaks[1][i]);
                 }
             }
-
-            //Console.WriteLine(doubleAmplitudePeaks[1].Count);
 
             return doubleAmplitudePeaks;
         }
@@ -714,7 +705,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             int num = peaksAndValleys[0].Count;
-            //Console.WriteLine("Sista x-värdet i correctPeaks: " + peaksAndValleys[0][num - 1]);
 
             return correctPeaks;
         }
