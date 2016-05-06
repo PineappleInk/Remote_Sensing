@@ -1900,6 +1900,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             var bc = new BrushConverter();
             this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
             movieFrame.Source = ImageSource3;
+            string nightSoundPath = Path.Combine(path + @"\..\..\..\nighttime.wav");
+            System.Media.SoundPlayer nightSound = new System.Media.SoundPlayer();
+            nightSound.SoundLocation = nightSoundPath;
+            nightSound.Play();
 
 
         }
@@ -1909,6 +1913,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             var bc = new BrushConverter();
             this.Background = bgBrush;
             movieFrame.Source = ImageSource2;
+            string daySoundPath = Path.Combine(path + @"\..\..\..\daytime.wav");
+            System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
+            daySound.SoundLocation = daySoundPath;
+            daySound.Play();
         }
 
 

@@ -171,6 +171,8 @@
     <Content Include="beep-07.wav" />
     <Resource Include="Images\laddahjärta-09.png" />
     <Resource Include="Images\Lungkrans-05.png" />
+    <Content Include="daytime.wav" />
+    <Content Include="nighttime.wav" />
     <Content Include="pineapple.wav" />
     <Resource Include="pineapple_ink-icon-01.ico" />
     <Resource Include="pineapple_ink.ico" />
