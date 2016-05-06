@@ -1017,9 +1017,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double average = 0;
             List<double> timeBetweenHeartBeats = new List<double>();
             timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
-            List<List<double>> resultedTime = new List<List<double>>();
-            resultedTime.Add(new List<double>());
-            resultedTime.Add(new List<double>());
 
             for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
             {
@@ -1145,7 +1142,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 heartRateList[0].Add(peaksAndValleysByHeight[0][i]);
                                 heartRateList[1].Add(peaksAndValleysByHeight[1][i]);
-
                                 if (i == peaksAndValleysByHeight[0].Count - 2)
                                 {
                                     momentaryPulse = 60 / timeBetweenHeartBeats[i];
@@ -1167,9 +1163,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
                         //}
 
-                        //Skriver ut heartrate på skärmen
+                        //Skriver ut heartPulse på skärmen
                         heartPulse = meanHeartPulse(heartRateList);
-                        Console.WriteLine("HeartPulse: " + heartPulse);
+                        //Console.WriteLine("HeartPulse: " + heartPulse);
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
@@ -1179,6 +1175,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
+
 
                         for (int i = 0; i < peaksPulse[0].Count(); i++)
                         {
@@ -1242,7 +1239,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Tar in larmgränsen och jämför med personens uppskattade puls.
-                        pulseAlarm(heartrate, lowNumPulse, lastSample);
+                        pulseAlarm(heartPulse, lowNumPulse, lastSample);
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
