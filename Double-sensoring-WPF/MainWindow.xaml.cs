@@ -54,7 +54,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private DepthSensing depthSensing;
 
         //IR-instans
-        //private IRSensing irSensing;
+        private IRSensing irSensing;
 
         //BODY-instans
         private BodySensing bodySensning;
@@ -64,6 +64,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         //IntroPineapple-instans
         private IntroPineapple introPineapple;
+
+        //Bakgrund
+        private System.Windows.Media.Brush bgBrush;
 
         ////----------------------------------------Våra egna---------------------
         /// Current directory
@@ -166,11 +169,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Depth
             this.depthSensing = new DepthSensing(kinectSensor);
 
+            //Ir
+            this.irSensing = new IRSensing(kinectSensor);
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
             //SetingWindow
             this.settingWindow = new SettingWindow(this);
+
+            //Bakgrund
+            this.bgBrush = this.Background;
         }
 
         //Intro-ananas ska snurra 720 grader
@@ -225,7 +234,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             get
             {
-                return bodySensning.getImageSource();
+                return irSensing.getInfraredBitmap();
             }
         }
 
@@ -286,6 +295,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 depthSensing.getDepthFrameReader().FrameArrived += breathingDepthAverage;
             }
+
+            //if (irSensing.getInfraredFrameReader() != null)
+            //{
+            //    irSensing.getInfraredFrameReader().FrameArrived += SensorColorFrameReady;
+            //}
+
             chartPulse.Visibility = Visibility.Hidden;
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
@@ -1886,6 +1901,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 settingWindow.Save_Click(sender, e);
             }
+        }
+
+        private void nighttime_Checked(object sender, RoutedEventArgs e)
+        {
+            var bc = new BrushConverter();
+            this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
+
+
+        }
+
+        private void nighttime_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var bc = new BrushConverter();
+            this.Background = bgBrush;
         }
     }
 }
