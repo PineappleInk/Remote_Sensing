@@ -1176,6 +1176,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         //Skriver ut heartrate på skärmen
                         heartPulse = meanHeartPulse(heartRateList);
+                        Console.WriteLine("HeartPulse: " + heartPulse);
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
