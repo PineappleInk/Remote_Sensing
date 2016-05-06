@@ -121,7 +121,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
         double heartPulse = 60;
-        double breathingRate = 30;
+        double breathRate = 30;
 
         //-------------------------------------------------------s---------------------------------
 
@@ -595,26 +595,23 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
             {
-                if (peaksAndValleys[2][i] == 0)
+                if (peaksAndValleys[2][i] == 0 && peaksAndValleys[2][i + 1] == 1)
                 {
-                    if (peaksAndValleys[2][i + 1] == 1)
+                    if (peaksAndValleys[2][i + 2] == 0)
                     {
-                        if (peaksAndValleys[2][i + 2] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
-                        else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
+                    }
+                    else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
+                    {
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
                     }
                 }
             }
@@ -818,7 +815,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-            
+
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
@@ -935,25 +932,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-         // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-         // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
+            // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+            // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
                 // Console.WriteLine("Går in i for-loopen. ");
                 // Fortsätt här i morgon! if-satsen fungerar ej!: 
                 //Console.WriteLine("xPeaks[i]" + xPeaks[i]);
-               // Console.WriteLine("lastSample: " + lastSample);
+                // Console.WriteLine("lastSample: " + lastSample);
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
-                   // Console.WriteLine("Går in i if:en");
+                    // Console.WriteLine("Går in i if:en");
                     meanH10 += (yPeaks[i] - yValleys[i]);
                     M += 1;
                 }
             }
             meanH10 = meanH10 / M;
-           // Console.WriteLine("M: " + M);
+            // Console.WriteLine("M: " + M);
 
-           // Console.WriteLine("meanH10: " + meanH10);
+            // Console.WriteLine("meanH10: " + meanH10);
 
             // Tar fram summa av höjden
             double sum10 = 0;
@@ -992,7 +989,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-            
+
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
 
@@ -1127,7 +1124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Sortera toppar och dalar baserat på höjd. Steg (2)
                         int lastSample = rgbFiltList.Count;
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
-                        peaksAndValleysByHeight = sortByHeight(peaksPulse, valleysPulse, lastSample);
+                        peaksAndValleysByHeight = doubleAmplitudePeaks(peaksPulse, valleysPulse);
 
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTime = new List<List<double>>();
@@ -1358,7 +1355,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
                         //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
-                        this.breathingRate = breathingRate;
+                        this.breathRate = breathingRate;
 
                         // Ritar ut andningspeakar i programmet
                         //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
@@ -1402,7 +1399,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
-                breathingRate = 12;
+                breathRate = 12;
             }
         }
         /*
@@ -1436,7 +1433,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
             // Console.WriteLine("Längd stdMeanLst: " + stdMeanLst.Count());
-            if (averagePulse < lowNum || (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1/8))
+            if (averagePulse < lowNum || (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8))
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1610,9 +1607,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     if (i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize * 0.9) || i >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize * 0.9)
                                         || j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize * 0.9) || j >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize * 0.9))
                                     {
-                                    ChangePixelColor(i, j, pixels, "red");
+                                        ChangePixelColor(i, j, pixels, "red");
+                                    }
                                 }
-                            }
                             }
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
@@ -1857,11 +1854,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 lungDecreasing = true;
             }
             //Skriver ut andningsfrekvens
-            breathrateTextBlock.Text = breathingRate.ToString();
+            breathrateTextBlock.Text = breathRate.ToString();
 
-            if (breathingRate != 0)
+            if (breathRate != 0)
             {
-                lungTimer.Interval = new TimeSpan(60 / (long)breathingRate * 10000000 / 28);
+                lungTimer.Interval = new TimeSpan(60 / (long)breathRate * 10000000 / 28);
                 lungTimer.Start();
             }
         }
