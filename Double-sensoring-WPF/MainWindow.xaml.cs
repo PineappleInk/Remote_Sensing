@@ -1899,6 +1899,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             var bc = new BrushConverter();
             this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
+            movieFrame.Source = ImageSource3;
 
 
         }
@@ -1907,6 +1908,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             var bc = new BrushConverter();
             this.Background = bgBrush;
+            movieFrame.Source = ImageSource2;
         }
 
 
