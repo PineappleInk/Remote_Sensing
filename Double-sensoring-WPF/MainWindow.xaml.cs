@@ -81,7 +81,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Test Lina och Elli
         double stdHeight = 0;
 
-        // Standarsavvikelse höjd peakar, medel över 5 max minuter
+        // Standardavvikelse höjd peakar, medel över 5 max minuter
         List<double> stdMeanLst = new List<double>();
         double stdMean = 0;
         // Standardavvikelse höjd peakar, senaste 10 sekunder
@@ -1005,7 +1005,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
             //Uppdatera till ny medel-std
             stdMean = stdMeanLst.Average(); // Global variabel, std över max senaste 5 min
-            Console.WriteLine("stdMean: " + stdMean);
+            //Console.WriteLine("stdMean: " + stdMean);
 
             // Console.WriteLine("Höjd, std: " + sigmaH + " Medel: " + meanH + " Std/medel: " + sigmaH / meanH);
             //Console.WriteLine("Höjd, Std*Std/Medel: " + sigmaH * sigmaH / meanH + " Std/(Medel*Medel): " + sigmaH / (meanH * meanH));
@@ -1269,8 +1269,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("TopLines", heartRateList[1][k], heartRateList[0][k] - j);
                         }
+                        Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+                        Console.WriteLine("rgbList: " + rgbList.Count() );
+                        Console.WriteLine("runPlotModulo: " + runPlotModulo);
 
-                        if (rgbFiltList.Count >= samplesOfMeasurement)
+                        if (rgbList.Count() >= samplesOfMeasurement)
                         {
                             rgbList.RemoveRange(0, runPlotModulo);
                         }
@@ -1428,17 +1431,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
-            //if (averagePulse < lowNum)
-            //double diff = Math.Abs(stdH10 - stdMean);
-            //Console.WriteLine("diff*1000: " + diff*1000);
-
-            //double staticDiff = 200;
-
-            //if (averagePulse < lowNum)
-
-            // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
-            //if (averagePulse < lowNum || ( (lastSample >= fps * 20) && stdH10 < stdMean / 2) ) 
-            if ((lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean / 3) )
+            // Console.WriteLine("Längd stdMeanLst: " + stdMeanLst.Count());
+            if (averagePulse < lowNum || (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1/8))
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1578,13 +1572,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    //if (bodySensning.getHeadJoint().JointType == JointType.Head)
-                    if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
-                                MapCameraPointToColorSpace(bodySensning.getRightHandJoint().Position);
+                                MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -1781,6 +1775,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             clearGraphs();
+
         }
 
         private void clearGraphs()
@@ -1789,8 +1784,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+
+            //Rensa data för standardavvikelsen
+            stdMeanLst.Clear();
             stdMean = 0;
             stdH10 = 0;
+
         }
 
         //Timer-funktionen
