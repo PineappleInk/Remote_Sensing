@@ -121,7 +121,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         System.Windows.Threading.DispatcherTimer lungTimer = new System.Windows.Threading.DispatcherTimer();
         bool lungDecreasing = true;
         double heartPulse = 60;
-        double breathPulse = 30;
+        double breathingRate = 30;
 
         //-------------------------------------------------------s---------------------------------
 
@@ -818,7 +818,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             sortByTime.Add(new List<double>());
 
             List<double> timeBetweenPeaks = new List<double>();
-            
+
             timeBetweenPeaks = timeBetweenAllPeaks(peaks);
 
             // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
@@ -928,25 +928,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             double meanH10 = 0;
             double M = 0;
 
-         // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
-         // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
+            // Console.WriteLine("samplesOfMeasurement: " + samplesOfMeasurement);
+            // Console.WriteLine("xPeaks.Count: " + xPeaks.Count);
             for (int i = 0; i < xPeaks.Count; ++i)
             {
                 // Console.WriteLine("Går in i for-loopen. ");
                 // Fortsätt här i morgon! if-satsen fungerar ej!: 
                 //Console.WriteLine("xPeaks[i]" + xPeaks[i]);
-               // Console.WriteLine("lastSample: " + lastSample);
+                // Console.WriteLine("lastSample: " + lastSample);
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
-                   // Console.WriteLine("Går in i if:en");
+                    // Console.WriteLine("Går in i if:en");
                     meanH10 += (yPeaks[i] - yValleys[i]);
                     M += 1;
                 }
             }
             meanH10 = meanH10 / M;
-           // Console.WriteLine("M: " + M);
+            // Console.WriteLine("M: " + M);
 
-           // Console.WriteLine("meanH10: " + meanH10);
+            // Console.WriteLine("meanH10: " + meanH10);
 
             // Tar fram summa av höjden
             double sum10 = 0;
@@ -985,7 +985,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 double xi = yPeaks[i] - yValleys[i];
                 sum += (xi - meanH) * (xi - meanH);
             }
-            
+
             // Tar fram std-avvikelsen sigmaH
             double sigmaH = Math.Sqrt((1 / N) * sum);
 
@@ -1331,17 +1331,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         ////Beräkning av hjärtfrekvens
                         double breathingRate = 0;
                         double average = 0;
-                        List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(breathPeaksFilt);
+                        List<double> timeBetweenBreaths = new List<double>();
+                        timeBetweenBreaths = timeBetweenAllPeaks(breathPeaksFilt);
 
-                        for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
+                        for (int i = 0; i < timeBetweenBreaths.Count; ++i)
                         {
-                            breathingRate += timeBetweenHeartBeats[i];
+                            breathingRate += timeBetweenBreaths[i];
                         }
 
-                        if (timeBetweenHeartBeats.Count != 0)
+                        if (timeBetweenBreaths.Count != 0)
                         {
-                            breathingRate = breathingRate / timeBetweenHeartBeats.Count;
+                            breathingRate = breathingRate / timeBetweenBreaths.Count;
                             breathingRate = Math.Round(60 / breathingRate);
                         }
 
@@ -1349,7 +1349,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
                         //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
-                        breathPulse = breathingRate;
+                        this.breathingRate = breathingRate;
 
                         // Ritar ut andningspeakar i programmet
                         //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
@@ -1393,7 +1393,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 Alarm breathAlarm = new Alarm(this, kinectSensor, path);
                 this.Hide();
                 breathAlarm.Show();
-                breathPulse = 12;
+                breathingRate = 12;
             }
         }
         /*
@@ -1428,14 +1428,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             //if (averagePulse < lowNum)
             double diff = Math.Abs(stdH10 - stdMean);
-            Console.WriteLine("diff*1000: " + diff*1000);
+            Console.WriteLine("diff*1000: " + diff * 1000);
 
             double staticDiff = 200;
 
             //if (averagePulse < lowNum)
 
             // Detta if-villkor måste finslipas !!! (När vi fått kuff och kan testa vad som verkligen händer).
-            if (averagePulse < lowNum || ( (lastSample >= fps * 20) && (diff * 1000) > staticDiff) ) 
+            if (averagePulse < lowNum || ((lastSample >= fps * 20) && (diff * 1000) > staticDiff))
             {
                 clearGraphs();
                 kinectSensor.Close();
@@ -1575,13 +1575,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    //if (bodySensning.getHeadJoint().JointType == JointType.Head)
-                    if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
-                                MapCameraPointToColorSpace(bodySensning.getRightHandJoint().Position);
+                                MapCameraPointToColorSpace(bodySensning.getHeadJoint().Position);
 
                             // Här tar vi ut alla röda värden i de intressanta pixlarna
                             List<int> rödapixlar = null;
@@ -1609,9 +1609,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                     if (i <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) - dotSize * 0.9) || i >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.X)) + dotSize * 0.9)
                                         || j <= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) - dotSize * 0.9) || j >= (Convert.ToInt32(Math.Round(colorSpaceHeadPoint.Y)) + dotSize * 0.9))
                                     {
-                                    ChangePixelColor(i, j, pixels, "red");
+                                        ChangePixelColor(i, j, pixels, "red");
+                                    }
                                 }
-                            }
                             }
 
                             List<double> pulseList = colorSensing.createPulseList(rödapixlar, grönapixlar);
@@ -1849,11 +1849,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 lungDecreasing = true;
             }
             //Skriver ut andningsfrekvens
-            breathrateTextBlock.Text = breathPulse.ToString();
+            breathrateTextBlock.Text = breathingRate.ToString();
 
-            if (breathPulse != 0)
+            if (breathingRate != 0)
             {
-                lungTimer.Interval = new TimeSpan(60 / (long)breathPulse * 10000000 / 28);
+                lungTimer.Interval = new TimeSpan(60 / (long)breathingRate * 10000000 / 28);
                 lungTimer.Start();
             }
         }
