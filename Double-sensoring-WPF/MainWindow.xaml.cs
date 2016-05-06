@@ -1412,8 +1412,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
-            // Console.WriteLine("Längd stdMeanLst: " + stdMeanLst.Count());
-            if (averagePulse < lowNum || (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8))
+            if (averagePulse < lowNum || ( (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8)) )
             {
                 clearGraphs();
                 kinectSensor.Close();
