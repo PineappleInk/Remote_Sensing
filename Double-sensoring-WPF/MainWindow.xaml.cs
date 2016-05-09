@@ -1953,12 +1953,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void excel_button_Click(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < stdMeanLst.Count; i++)
+            {
+                oSheet.Cells[(i + 1).ToString(), "A"].Value2 = stdMeanLst.ToString();
+            }
+
             oXL.Visible = false;
             oXL.UserControl = false;
             oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                 false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-
-            oSheet.get_Range("A2", "A11").Value2 = stdMeanLst;
 
             //Create a new bitmap.
             var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
