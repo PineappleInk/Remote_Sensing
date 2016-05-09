@@ -1105,7 +1105,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             try
             {
                 // Analys av puls
-                if (codeString == "pulse")
+                if (codeString == "pulse" && nighttime.IsChecked == false)
                 {
                     if (rgbList.Count >= startPulseAfterSeconds * fps + fps)
                     {
@@ -1380,7 +1380,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        //breathingAlarm(breathPulse, lowNumBreathing);
+                        breathingAlarm(breathRate, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
@@ -1918,8 +1918,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#FF000000");
             movieFrame.Source = ImageSource3;
             nightSound.Play();
-
-
+            chartPulse.Visibility = Visibility.Hidden;
+            heartrateTextBlock.Visibility = Visibility.Hidden;
+            heart.Visibility = Visibility.Hidden;
         }
 
         private void nighttime_Unchecked(object sender, RoutedEventArgs e)
@@ -1928,6 +1929,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.Background = bgBrush;
             movieFrame.Source = ImageSource2;
             daySound.Play();
+            chartPulse.Visibility = Visibility.Visible;
+            heartrateTextBlock.Visibility = Visibility.Visible;
+            heart.Visibility = Visibility.Visible;
+
         }
 
 
