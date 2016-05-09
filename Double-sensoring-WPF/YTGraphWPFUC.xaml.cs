@@ -22,13 +22,13 @@ namespace Module_Graphs
         private void SetupChartProperties()
         {
             //customize the X-Axis to properly display Time 
-            //chart1.Customize += chart1_Customize;
+            chart1.Customize += chart1_Customize;
             chart1.Series.Clear(); //first remove all series completely
 
             //// Enable all elements
             //chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
             //chart1.ChartAreas[0].AxisX.MinorTickMark.Enabled = true;
-            //chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 15;
+            //chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 150;
 
             // Set Grid lines and tick marks interval
             //chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 30;
@@ -47,11 +47,13 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 300; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
+            chart1.ChartAreas[0].AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            
             chart1.BackColor = System.Drawing.Color.FromArgb(180, 131, 221, 255);
 
             //set legend position and properties as required
@@ -65,7 +67,7 @@ namespace Module_Graphs
 
             // Set legend alignment
             chart1.Legends[0].Alignment = StringAlignment.Center;
-
+            
             // Set Antialiasing mode
             //this can be set lower if there are any performance issues!
             chart1.AntiAliasing = AntiAliasingStyles.All;
@@ -192,18 +194,8 @@ namespace Module_Graphs
             CustomLabelsCollection xAxisLabels = ((Chart)sender).ChartAreas[0].AxisX.CustomLabels;
             for (int cnt = 0; cnt < xAxisLabels.Count; cnt++)
             {
-                TimeSpan ts = TimeSpan.FromSeconds(double.Parse(xAxisLabels[cnt].Text));
-                if (ts.Days > 0)
-                    xAxisLabels[cnt].Text = ts.Days.ToString("00") + ":" + ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                else
-                {
-                    if (ts.Hours > 0)
-                        xAxisLabels[cnt].Text = ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                    else
-                        xAxisLabels[cnt].Text = ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                }
+                xAxisLabels[cnt].Text = (double.Parse(xAxisLabels[cnt].Text) / 30).ToString() + " s";
             }
-
         }
 
         private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
