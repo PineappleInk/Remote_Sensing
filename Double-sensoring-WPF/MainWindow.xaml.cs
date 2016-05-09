@@ -82,8 +82,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         /*Globala variabler*/
 
-        // Test Lina och Elli
-        double stdHeight = 0;
+        // Excel-flagga för heart-rate variability
+        bool heartRateVariabilityFlag = false;
 
         // Standardavvikelse höjd peakar, medel över 5 max minuter
         List<double> stdMeanLst = new List<double>();
@@ -239,7 +239,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.bellyJointYPosition = v;
         }
-// -----------------------------------------------------------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -379,7 +379,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
-        
+
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -631,25 +631,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
             {
                 if (peaksAndValleys[2][i] == 0 && peaksAndValleys[2][i + 1] == 1)
+                {
+                    if (peaksAndValleys[2][i + 2] == 0)
                     {
-                        if (peaksAndValleys[2][i + 2] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
-                        else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
+                    }
+                    else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
+                    {
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
                     }
                 }
+            }
 
             if (ampPeaks[2].Count != 0)
             {
@@ -969,7 +969,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Lägg till värden i listan för max senaste 5 minuterna
             // 1800 värden / (6 ggr per sekund * 60 sekunder) = 5 minuter
-            if (lengthLst < 1800) 
+            if (lengthLst < 1800)
             {
                 stdMeanLst.Add(sigmaH);
             }
@@ -999,11 +999,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /* SLUT: Sortera bort en del pulsvärden på bas av höjd */
 
         //Utsållning med avseende till tiden
+        // Returnerar double-lista med peakar där peakar som ligger för nära varandra sållats bort
+        // [0] = Peakarnas x-position, [1] = Peakarnas y-position
         private List<List<double>> removeByTime(List<List<double>> peakList)
         {
             // Lista med alla tider mellan alla toppar
             List<double> timeBetweenHeartBeats = new List<double>();
             timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
+
+            // Lista med peakar sorterade på tid.
             List<List<double>> sortedByTime = new List<List<double>>();
             sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
@@ -1016,7 +1020,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 average += timeBetweenHeartBeats[i];
             }
 
-            // Medeltiden mellan 2 st hjärtslag, beräknat över mättiden (bör vara 10 sekunder).
+            // MEDELtiden mellan 2 st hjärtslag, beräknat över mättiden (bör vara 10 sekunder).
             // Medeltiden = average = t_tot / antal intervall
             if (timeBetweenHeartBeats.Count != 0)
             {
@@ -1028,27 +1032,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]);
-                    sortedByTime[1].Add(peakList[1][i]);
+                    sortedByTime[0].Add(peakList[0][i]); // x-pos = tiden
+                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
                 }
                 else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
                     timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]);
-                    sortedByTime[1].Add(peakList[1][i]);
+                    sortedByTime[0].Add(peakList[0][i]); // x-pos = Tiden
+                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
                     i++;
                 }
             }
 
-            return sortedByTime;
-            }
-            /* HUR GÖRA DETTA? Fixa
-            else
+            if (heartRateVariabilityFlag == true)
             {
-                throw(System.Exception);
+                // Kör excelfunktionen Elli
             }
-            */ 
-            // Bör ha else { throw... } här! av något slag.
+
+            return sortedByTime;
+        }
 
 
         /// Härifrån körs alla kommandon som har med signalbehandling och detektion av frekvenser att göra.
