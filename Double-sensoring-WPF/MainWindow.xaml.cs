@@ -24,6 +24,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Markup;
     using System.Windows.Data;
     using System.Windows.Input;
+    using Microsoft.Office.Core;
+    using Excel = Microsoft.Office.Interop.Excel;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -135,6 +137,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         string daySoundPath;
         System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
 
+        //HRV - excel
+        Excel.Application oXL;
+        Excel._Workbook oWB;
+        Excel._Worksheet oSheet;
 
         //----------------------------------------------------------------------------------------
 
@@ -197,6 +203,26 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             daySoundPath = Path.Combine(path + @"\..\..\..\daytime.wav");
             daySound.SoundLocation = daySoundPath;
+
+            //HRV - excel
+            object misvalue = System.Reflection.Missing.Value;
+            try
+            {
+                oXL = new Excel.Application();             //Start Excel and get Application object.
+                oXL.Visible = true;
+                oWB = (Excel._Workbook)(oXL.Workbooks.Add(""));             //Get a new workbook.
+                oSheet = (Excel._Worksheet)oWB.ActiveSheet;
+                oSheet.Cells[1, 1] = "Tid";             //Add table headers going cell by cell.
+
+                oXL.Visible = false;
+                oXL.UserControl = false;
+                oWB.SaveAs("C:\\Users\\Ellinor\\Documents\\VT16\\Kandidat (Projekt i Medicinsk Teknik) TBMT14\\Excel\\test505.xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                    false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            }
+            catch
+            {
+                Console.WriteLine("Fel när det försöker skapa Excel");
+            }
         }
 
         // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
@@ -239,7 +265,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             this.bellyJointYPosition = v;
         }
-// -----------------------------------------------------------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
@@ -379,7 +405,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             int upCounter = 0;
             int downCounter = 0;
-        
+
             // Lista för peakar
             List<List<double>> topLocations = new List<List<double>>();
             topLocations.Add(new List<double>()); //[0] Topparnas position
@@ -631,25 +657,25 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             for (int i = 0; i < peaksAndValleys[0].Count - 2; ++i)
             {
                 if (peaksAndValleys[2][i] == 0 && peaksAndValleys[2][i + 1] == 1)
+                {
+                    if (peaksAndValleys[2][i + 2] == 0)
                     {
-                        if (peaksAndValleys[2][i + 2] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
-                        else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
-                        {
-                            ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
-                            ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
-                            ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
-                            mean += ampPeaks[2][ampPeaks[2].Count - 1];
-                            ++i;
-                        }
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 1]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 1]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 1] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 2]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
+                    }
+                    else if (i < peaksAndValleys[0].Count - 3 && peaksAndValleys[2][i + 3] == 0)
+                    {
+                        ampPeaks[0].Add(peaksAndValleys[0][i + 2]);
+                        ampPeaks[1].Add(peaksAndValleys[1][i + 2]);
+                        ampPeaks[2].Add(2 * peaksAndValleys[1][i + 2] - peaksAndValleys[1][i] - peaksAndValleys[1][i + 3]);
+                        mean += ampPeaks[2][ampPeaks[2].Count - 1];
+                        ++i;
                     }
                 }
+            }
 
             if (ampPeaks[2].Count != 0)
             {
@@ -1018,7 +1044,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Lägg till värden i listan för max senaste 5 minuterna
             // 1800 värden / (6 ggr per sekund * 60 sekunder) = 5 minuter
-            if (lengthLst < 1800) 
+            if (lengthLst < 1800)
             {
                 stdMeanLst.Add(sigmaH);
             }
@@ -1450,7 +1476,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
         {
-            if (averagePulse < lowNum || ( (lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8)) )
+            if (averagePulse < lowNum || ((lastSample >= fps * startPulseAfterSeconds) && stdH10 < (stdMean * 1 / 8)))
             {
                 clearGraphs();
                 kinectSensor.Close();
