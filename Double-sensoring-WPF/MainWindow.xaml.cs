@@ -1071,7 +1071,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
                         //chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
-                        //chartPulse.CheckAndAddSeriesToGraph("TimeMarkers", "marker_heightSorted");
+                        chartPulse.CheckAndAddSeriesToGraph("TimeAndHeightMarker", "TimeAndHeightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
