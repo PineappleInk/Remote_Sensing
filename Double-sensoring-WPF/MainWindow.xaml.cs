@@ -1803,6 +1803,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
 
+            heartPulse = 60;
+            breathRate = 30;
+
             //Rensa data för standardavvikelsen
             stdMeanLst.Clear();
             stdMean = 0;
