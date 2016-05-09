@@ -1188,22 +1188,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }
 
-                        //for (int i = 0; i < peaksByTime[0].Count(); i++)
-                        //{
-                        //    if (peaksByTime[0][i] >= j)
-                        //    {
-                        //        chartPulse.AddPointToLine("TimeMarkers", peaksByTime[1][i] + 0.004, peaksByTime[0][i] - j);
-                        //    }
-                        //}
-
-                        //for (int i = 0; i < comboPulse[0].Count(); i++)
-                        //{
-                        //    if (comboPulse[0][i] >= j)
-                        //    {
-                        //        chartPulse.AddPointToLine("CcccomboMarkers", comboPulse[1][i] + 0.006, comboPulse[0][i] - j);
-                        //    }
-                        //}
-
                         // Beräknar ut pulsen över den valda beräkningstiden
                         int samplesForPulseAlarm = pulseWarningInSeconds * fps;
 
@@ -1214,19 +1198,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaksPulse[1].RemoveAt(0);
                         }
 
-                        //Average är antalet pulsslag under 60 sekunder
-                        //average = peaksPulse[0].Count() * 60 / pulseWarningInSeconds;
-
                         //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
                         oldheartrateTextBlock.Text = "Old heartrate: " + momentaryPulse.ToString() + ", * 6 puls: " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
                             + ", Puls utan tidsperspektiv: " + heartrate;
 
-                        ////Skriver ut pulspeakar i programmet
-                        //textBlockpeak.Text = "Antal peaks i puls: " + System.Environment.NewLine + peaks[0].Count()
-                        //    + System.Environment.NewLine + "Uppskattad BPM: " + average;
-
-                        //Tar in larmgränsen och jämför med personens uppskattade puls.
+                        // <Tar in larmgränsen och jämför med personens uppskattade puls.>
                         pulseAlarm(heartPulse, lowNumPulse, lastSample);
+                        // <Slut larm>
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
@@ -1237,6 +1215,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("TopLines", heartRateList[1][k], heartRateList[0][k] - j);
                         }
+
                         // Justus hade rgbFiltList innan.
                         if (rgbList.Count() >= samplesOfMeasurement)
                         {
