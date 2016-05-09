@@ -50,6 +50,7 @@ namespace Module_Graphs
             chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
+            chart1.ChartAreas[0].AxisX.Name = "S";
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
             chart1.BackColor = System.Drawing.Color.FromArgb(180, 131, 221, 255);
@@ -193,17 +194,8 @@ namespace Module_Graphs
             for (int cnt = 0; cnt < xAxisLabels.Count; cnt++)
             {
                 TimeSpan ts = TimeSpan.FromSeconds(double.Parse(xAxisLabels[cnt].Text));
-                if (ts.Days > 0)
-                    xAxisLabels[cnt].Text = ts.Days.ToString("00") + ":" + ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                else
-                {
-                    if (ts.Hours > 0)
-                        xAxisLabels[cnt].Text = ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                    else
-                        xAxisLabels[cnt].Text = ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
-                }
+                xAxisLabels[cnt].Text = ts.Seconds.ToString("00");
             }
-
         }
 
         private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
