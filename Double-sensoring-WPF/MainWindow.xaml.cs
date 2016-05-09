@@ -97,7 +97,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         static int samplesOfMeasurement =
             secondsOfMeasurement * fps;                //Över hur många bilder vi ska mäta (sekunder * fps)
         static int runPlotModulo = 5;                  //Hur ofta plottarna ska köras (anges som antalet bilder som ska gå emellan plottningen)
-        static int plotOverSeconds = 20;               //Anger över hur många sekunder plottarna ska visas
+        static int plotOverSeconds = 10;               //Anger över hur många sekunder plottarna ska visas
 
         // Alarmparametrar
         public int lowNumPulse = 30; //OBS gör privata
@@ -1120,12 +1120,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Initialisering av markeringar i pulsplot
                         chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
-                        chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
+                        //chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
                         chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
-                        chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
-                        chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
-                        chartPulse.CheckAndAddSeriesToGraph("TimeMarkers", "marker_heightSorted");
-                        chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("TimeMarkers", "marker_heightSorted");
+                        //chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
                         double momentaryPulse = 0;
@@ -1217,7 +1217,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             j = rgbFiltList.Count - plotOverSeconds * fps;
                         }
 
-
+                        /*
                         for (int i = 0; i < peaksPulse[0].Count(); i++)
                         {
                             if (peaksPulse[0][i] >= j)
@@ -1232,13 +1232,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 chartPulse.AddPointToLine("ValleyMarkers", valleysPulse[1][i], valleysPulse[0][i] - j);
                             }
-                        }
+                        }*/
 
                         for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
                         {
                             if (peaksAndValleysByHeight[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("HeightMarkers", peaksAndValleysByHeight[1][i] + 0.001, peaksAndValleysByHeight[0][i] - j);
+                                chartPulse.AddPointToLine("Pulsemarkers", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
                             }
                         }
 
@@ -1286,11 +1286,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             chartPulse.AddPointToLine("Pulse", rgbFiltList[k], k - j);
                         }
-
+                        /*
                         for (int k = 0; k < heartRateList[0].Count(); k++)
                         {
                             chartPulse.AddPointToLine("TopLines", heartRateList[1][k], heartRateList[0][k] - j);
                         }
+                        */
                         // Justus hade rgbFiltList innan.
                         if (rgbList.Count() >= samplesOfMeasurement)
                         {

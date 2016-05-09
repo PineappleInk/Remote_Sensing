@@ -28,7 +28,7 @@ namespace Module_Graphs
             //// Enable all elements
             //chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
             //chart1.ChartAreas[0].AxisX.MinorTickMark.Enabled = true;
-            //chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 15;
+            //chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 150;
 
             // Set Grid lines and tick marks interval
             //chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 30;
@@ -47,12 +47,13 @@ namespace Module_Graphs
             //chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 1;    
 
             
-            chart1.ChartAreas[0].AxisX.Interval = 600; //let's show a minute of data
+            chart1.ChartAreas[0].AxisX.Interval = 300; //let's show a minute of data
             chart1.ChartAreas[0].AxisX.IsStartedFromZero = true;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
-            chart1.ChartAreas[0].AxisX.Name = "S";
 
             chart1.ChartAreas[0].AxisY.IsStartedFromZero = false;
+            chart1.ChartAreas[0].AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            
             chart1.BackColor = System.Drawing.Color.FromArgb(180, 131, 221, 255);
 
             //set legend position and properties as required
@@ -66,7 +67,7 @@ namespace Module_Graphs
 
             // Set legend alignment
             chart1.Legends[0].Alignment = StringAlignment.Center;
-
+            
             // Set Antialiasing mode
             //this can be set lower if there are any performance issues!
             chart1.AntiAliasing = AntiAliasingStyles.All;
@@ -193,7 +194,7 @@ namespace Module_Graphs
             CustomLabelsCollection xAxisLabels = ((Chart)sender).ChartAreas[0].AxisX.CustomLabels;
             for (int cnt = 0; cnt < xAxisLabels.Count; cnt++)
             {
-                xAxisLabels[cnt].Text = (double.Parse(xAxisLabels[cnt].Text) / 30).ToString();
+                xAxisLabels[cnt].Text = (double.Parse(xAxisLabels[cnt].Text) / 30).ToString() + " s";
             }
         }
 
