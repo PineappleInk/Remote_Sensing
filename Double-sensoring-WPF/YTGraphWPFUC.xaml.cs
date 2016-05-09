@@ -118,7 +118,7 @@ namespace Module_Graphs
                 s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
                 s.BorderWidth = 3;
             }
-            else if (strUnit == "comboMarker")
+            else if (strUnit == "TimeAndHeightMarker")
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
