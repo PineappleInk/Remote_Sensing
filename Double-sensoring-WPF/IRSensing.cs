@@ -24,7 +24,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// The value by which the infrared source data will be scaled
         /// </summary>
-        private const float InfraredSourceScale = 0.75f;
+        private const float InfraredSourceScale = 2f;
 
         /// <summary>
         /// Smallest value to display when the infrared data is normalized
@@ -34,7 +34,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Largest value to display when the infrared data is normalized
         /// </summary>
-        private const float InfraredOutputValueMaximum = 1.0f;
+        private const float InfraredOutputValueMaximum = 2.0f;
 
         /// <summary>
         /// Active Kinect sensor
@@ -85,21 +85,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // create the bitmap to display
             this.infraredBitmap = new WriteableBitmap(this.infraredFrameDescription.Width, this.infraredFrameDescription.Height, 96.0, 96.0, PixelFormats.Gray32Float, null);
 
-            // set IsAvailableChanged event notifier
-           // this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
-
-            // open the sensor
-            //this.kinectSensor.Open();
-
-            // set the status text
-           // this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
-             //                                               : Properties.Resources.NoSensorStatusText;
-
-            // use the window object as the view model in this simple example
-           // parent.DataContext = this;
-
-            // initialize the components (controls) of the window
-           // this.InitializeComponent();
         }
 
         // Get- och setfunktioner
@@ -148,66 +133,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
         }
-
-        /// <summary>
-        /// Execute shutdown tasks
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-       /* private void MainWindow_Closing(object sender, CancelEventArgs e)
-        {
-            if (this.infraredFrameReader != null)
-            {
-                // InfraredFrameReader is IDisposable
-                this.infraredFrameReader.Dispose();
-                this.infraredFrameReader = null;
-            }
-
-            if (this.kinectSensor != null)
-            {
-                this.kinectSensor.Close();
-                this.kinectSensor = null;
-            }
-        }*/
-
-        /// <summary>
-        /// Handles the user clicking on the screenshot button
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-        /*private void ScreenshotButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.infraredBitmap != null)
-            {
-                // create a png bitmap encoder which knows how to save a .png file
-                BitmapEncoder encoder = new PngBitmapEncoder();
-
-                // create frame from the writable bitmap and add to encoder
-                encoder.Frames.Add(BitmapFrame.Create(this.infraredBitmap));
-
-                string time = System.DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
-
-                string myPhotos = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-
-                string path = Path.Combine(myPhotos, "KinectScreenshot-Infrared-" + time + ".png");
-
-                // write the new file to disk
-                try
-                {
-                    // FileStream is IDisposable
-                    using (FileStream fs = new FileStream(path, FileMode.Create))
-                    {
-                        encoder.Save(fs);
-                    }
-
-                    //this.StatusText = string.Format(CultureInfo.CurrentCulture, Properties.Resources.SavedScreenshotStatusTextFormat, path);
-                }
-                catch (IOException)
-                {
-                    this.StatusText = string.Format(CultureInfo.CurrentCulture, Properties.Resources.FailedScreenshotStatusTextFormat, path);
-                }
-            }
-        }*/
 
         /// <summary>
         /// Handles the infrared frame data arriving from the sensor
