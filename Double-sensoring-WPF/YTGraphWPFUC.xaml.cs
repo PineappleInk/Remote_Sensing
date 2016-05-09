@@ -22,7 +22,7 @@ namespace Module_Graphs
         private void SetupChartProperties()
         {
             //customize the X-Axis to properly display Time 
-            //chart1.Customize += chart1_Customize;
+            chart1.Customize += chart1_Customize;
             chart1.Series.Clear(); //first remove all series completely
 
             //// Enable all elements
@@ -193,8 +193,7 @@ namespace Module_Graphs
             CustomLabelsCollection xAxisLabels = ((Chart)sender).ChartAreas[0].AxisX.CustomLabels;
             for (int cnt = 0; cnt < xAxisLabels.Count; cnt++)
             {
-                TimeSpan ts = TimeSpan.FromSeconds(double.Parse(xAxisLabels[cnt].Text));
-                xAxisLabels[cnt].Text = ts.Seconds.ToString("00");
+                xAxisLabels[cnt].Text = (double.Parse(xAxisLabels[cnt].Text) / 30).ToString();
             }
         }
 
