@@ -1105,9 +1105,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTimeAndAmplitude = new List<List<double>>();
                         peaksByTimeAndAmplitude = removeByTime(peaksAndValleysByHeight);
-
-                        //List<List<double>> comboPulse = new List<List<double>>();
-                        //comboPulse = removeByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
                         ////Beräkning av hjärtfrekvens
@@ -1288,22 +1285,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
-                        //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
                         breathRate = breathingRate;
-
-                        // Ritar ut andningspeakar i programmet
-                        //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
-                        //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                         breathingAlarm(breathRate, lowNumBreathing);
 
+                        //Plottar andningen i andningsgrafen
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
                             chartBreath.AddPointToLine("Breath", breathingFiltList[k], k - j);
                         }
 
+                        //Begränsar listan från att bli för stor
                         if (breathingFiltList.Count >= samplesOfMeasurement)
                         {
                             depthList.RemoveRange(0, runPlotModulo);
@@ -1337,32 +1331,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 breathRate = 12;
             }
         }
-        /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-            settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                }
-
-            }
-            else
-            {
-                settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
-                breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
-    }*/
 
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
@@ -1378,35 +1346,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
-        /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                }
-            }
-            else
-            {
-                settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
-                pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
-            }
-}*/
-
-        /// Funktion som tar ut färgvärdena för en pixel
-        /// 
+        // Funktion som tar ut färgvärdena för en pixel
         private int getcolorfrompixel(int width, int heigth, byte[] array, string color)
         {
             if ((array.Length == 8294400) && (heigth - 5 > 0) && (width - 5 > 0) && (heigth + 5 < 1080) && (width + 5 < 1920))
@@ -1436,6 +1376,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        //Byter färg på en pixel till den angivna färgen
         private void ChangePixelColor(int x, int y, byte[] array, string color)
         {
             if ((array.Length == 8294400) && (y - 5 > 0) && (x - 5 > 0) && (y + 5 < 1080) && (x + 5 < 1920))
