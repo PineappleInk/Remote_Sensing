@@ -470,7 +470,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return valleyLocations;
         }
 
-        // Tar fram tiden mellan alla toppar. Del av Heart-rate-variability.
+        // Returnerar double-lista med tider mellan alla närliggande toppar.
         private List<double> timeBetweenAllPeaks(List<List<double>> correctPeaksPulse)
         {
             // Toppar i andningsdjupet (korrekta)
@@ -838,54 +838,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             return valleyLocations;
         }
 
-        private List<List<double>> removeByTime(List<List<double>> peaks)
-        {
-            List<List<double>> sortByTime = new List<List<double>>();
-            sortByTime.Add(new List<double>());
-            sortByTime.Add(new List<double>());
-
-            List<double> timeBetweenPeaks = new List<double>();
-
-            timeBetweenPeaks = timeBetweenAllPeaks(peaks);
-
-            // Konstant för hur många std-avvikelser som är OK att högst avvika från medelvärdet
-            double k1 = 0.9;
-            double k2 = 0.9;
-
-            double meanH = 0;
-            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
-            {
-                meanH += (1 / (double)timeBetweenPeaks.Count) * (timeBetweenPeaks[i]);
-            }
-
-            // Tar fram summa av tiden
-            double sum = 0;
-            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
-            {
-                sum += (timeBetweenPeaks[i] - meanH) * (timeBetweenPeaks[i] - meanH);
-            }
-            // Tar fram std-avvikelsen sigmaH
-            double sigmaH = Math.Sqrt((1 / (double)timeBetweenPeaks.Count) * sum);
-
-            for (int i = 0; i < timeBetweenPeaks.Count; ++i)
-            {
-                if (timeBetweenPeaks[i] > meanH - sigmaH * k1 && timeBetweenPeaks[i] < meanH + sigmaH * k2)
-                {
-                    sortByTime[0].Add(peaks[0][i]);
-                    sortByTime[1].Add(peaks[1][i]);
-                }
-                else if (timeBetweenPeaks[i] < meanH - sigmaH * k1)
-                {
-                    if (i != timeBetweenPeaks.Count - 1)
-                    {
-                        timeBetweenPeaks[i + 1] += timeBetweenPeaks[i];
-                    }
-                }
-            }
-            //Returnerar peakarna, där dåliga peakar ska ha tagits bort
-            return sortByTime;
-        }
-
         /* Kollar om pekarna och dalarna ligger inom tillåtet intervall.
            Hur mågna std-avvikelser höjderna får avvika upp/ned anges genom konstanten k nedan i denna funktion.*/
         private List<List<double>> checkHeights(List<List<double>> sortedPeaksAndValleys, double meanH, double sigmaH)
@@ -963,7 +915,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (xPeaks[i] > (lastSample - 1 - fps * 10) && xPeaks[i] < (lastSample - 1))
                 {
-                    // Console.WriteLine("Går in i if:en");
                     meanH10 += (yPeaks[i] - yValleys[i]);
                     M += 1;
                 }
@@ -1050,12 +1001,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Beräkning av hjärtfrekvensen
         private double meanHeartPulse(List<List<double>> peakList)
         {
+            // Lista med alla tider mellan alla toppar
+            List<double> timeBetweenHeartBeats = new List<double>();
+            timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
+
             ////Beräkning av hjärtfrekvens
             double heartRate = 0;
             double periods = 0;
             double average = 0;
-            List<double> timeBetweenHeartBeats = new List<double>();
-            timeBetweenHeartBeats = timeBetweenAllPeaks(peakList);
 
             for (int i = 0; i < timeBetweenHeartBeats.Count; ++i)
             {
@@ -1130,7 +1083,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         double momentaryPulse = 0;
 
-                        /* Toppdetektering. Toppar urskiljs även från brus. */
+                        /* Toppdetektering. Toppar urskiljs även från brus inom bandbredden. */
+
                         // Toppdetektering. Steg (1)
                         List<List<double>> peaksPulse = new List<List<double>>();
                         peaksPulse = locatePeaksPulse(rgbFiltList); // Testas nu
@@ -1142,14 +1096,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int lastSample = rgbFiltList.Count;
                         List<List<double>> peaksAndValleysByHeight = new List<List<double>>();
                         peaksAndValleysByHeight = doubleAmplitudePeaks(peaksPulse, valleysPulse);
-
-                        // Sortera toppar baserat på tiden 
-                        List<List<double>> peaksByTime = new List<List<double>>();
-                        peaksByTime = removeByTime(peaksPulse);
-
-                        //List<List<double>> comboPulse = new List<List<double>>();
-                        //comboPulse = removeByTime(peaksAndValleysByHeight);
-                        /* SLUT toppdetektering */
 
                         ////Beräkning av hjärtfrekvens
                         double heartrate = 0;
@@ -1204,9 +1150,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    chartPulse.AddPointToLine("Pulsemarkers", 60 / heartRateVariability[i], i);
                         //}
 
-                        //Skriver ut heartPulse på skärmen
+                        // Skriver ut heartPulse på skärmen
                         heartPulse = meanHeartPulse(heartRateList);
-                        //Console.WriteLine("HeartPulse: " + heartPulse);
+                        // Console.WriteLine("HeartPulse: " + heartPulse);
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         //// OM MAN VILL HA DET SOM EN FINFIN KURVA
