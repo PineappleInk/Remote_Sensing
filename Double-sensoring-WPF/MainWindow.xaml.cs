@@ -26,6 +26,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Input;
     using Microsoft.Office.Core;
     using Excel = Microsoft.Office.Interop.Excel;
+    using System.Drawing.Imaging;
+    using System.Windows.Forms;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -206,23 +208,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             //HRV - excel
             object misvalue = System.Reflection.Missing.Value;
-            try
-            {
-                oXL = new Excel.Application();             //Start Excel and get Application object.
-                oXL.Visible = true;
-                oWB = (Excel._Workbook)(oXL.Workbooks.Add(""));             //Get a new workbook.
-                oSheet = (Excel._Worksheet)oWB.ActiveSheet;
-                oSheet.Cells[1, 1] = "Tid";             //Add table headers going cell by cell.
+            //try
+            //{
+            oXL = new Excel.Application();             //Start Excel and get Application object.
+            oXL.Visible = true;
+            oWB = (Excel._Workbook)(oXL.Workbooks.Add(""));             //Get a new workbook.
+            oSheet = (Excel._Worksheet)oWB.ActiveSheet;
+            oSheet.Cells[1, 1] = "Tid";             //Add table headers going cell by cell.
 
-                oXL.Visible = false;
-                oXL.UserControl = false;
-                oWB.SaveAs("C:\\Users\\Ellinor\\Documents\\VT16\\Kandidat (Projekt i Medicinsk Teknik) TBMT14\\Excel\\test505.xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-                    false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            }
-            catch
-            {
-                Console.WriteLine("Fel när det försöker skapa Excel");
-            }
+            //}
+            //catch
+            //{
+            //    Console.WriteLine("Fel när det försöker skapa Excel");
+            //}
         }
 
         // -------------------------------- Pineapple Inc: kod ----------------------------------------------------
@@ -1927,7 +1925,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //___________________TANGENTER__________________________
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -1953,7 +1951,34 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             daySound.Play();
         }
 
+        private void excel_button_Click(object sender, RoutedEventArgs e)
+        {
+            oXL.Visible = false;
+            oXL.UserControl = false;
+            oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
+            oSheet.get_Range("A2", "A11").Value2 = stdMeanLst;
+
+            //Create a new bitmap.
+            var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
+                                           Screen.PrimaryScreen.Bounds.Height,
+                                           System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            // Create a graphics object from the bitmap.
+            var gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+
+            // Take the screenshot from the upper left corner to the right bottom corner.
+            gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
+                                        Screen.PrimaryScreen.Bounds.Y,
+                                        0,
+                                        0,
+                                        Screen.PrimaryScreen.Bounds.Size,
+                                        CopyPixelOperation.SourceCopy);
+
+            // Save the screenshot to the specified path that the user has chosen.
+            bmpScreenshot.Save(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".png", ImageFormat.Png);
+        }
     }
 }
 

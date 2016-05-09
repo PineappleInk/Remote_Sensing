@@ -76,6 +76,8 @@
             <TextBlock x:Name="textBlock_Copy" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,42,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Stor" VerticalAlignment="Top"/>
             <TextBlock x:Name="textBlock_Copy1" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,132,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Medel" VerticalAlignment="Top"/>
             <CheckBox x:Name="nighttime" Content="Nattläge" Grid.Column="2" HorizontalAlignment="Left" Margin="47.667,286,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="White" Checked="nighttime_Checked" Unchecked="nighttime_Unchecked"/>
+            <Button x:Name="excel_button" Content="Spara värden" Grid.Column="2" HorizontalAlignment="Left" Margin="241.667,254,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Background="#FFFF8181" Foreground="White" BorderBrush="#FFFF8181" Click="excel_button_Click"/>
+            <TextBox x:Name="excelnamn" Grid.Column="2" HorizontalAlignment="Left" Height="19" Margin="133.667,254,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Skriv in filnamn" VerticalAlignment="Top" Width="100" Foreground="#FF78CAFF" RenderTransformOrigin="0.424,0.627"/>
 
 
         </Grid>
