@@ -1068,9 +1068,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
+            // Skickar heart-rate variability-värden till Excel då knapp i interface klickas på.
             if (heartRateVariabilityFlag == true)
             {
-                // Kör excelfunktionen Elli
+                for (int i = 0; i < sortedByTime[0].Count; i++)
+                {
+                    oSheet.Cells[(i + 1).ToString(), "A"].Value2 = sortedByTime[0][i].ToString();
+                }
+
+                oXL.Visible = false;
+                oXL.UserControl = false;
+                oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                    false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
+                heartRateVariabilityFlag = false;
             }
 
             return sortedByTime;
@@ -1878,20 +1889,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void excel_button_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < stdMeanLst.Count; i++)
-            {
-                oSheet.Cells[(i + 1).ToString(), "A"].Value2 = stdMeanLst.ToString();
-            }
-
-            oXL.Visible = false;
-            oXL.UserControl = false;
-            oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-                false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            //Körs excel-delen
+            heartRateVariabilityFlag = true;
 
             //Create a new bitmap.
             var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
-                                           Screen.PrimaryScreen.Bounds.Height,
-                                           System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                                            Screen.PrimaryScreen.Bounds.Height,
+                                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             // Create a graphics object from the bitmap.
             var gfxScreenshot = Graphics.FromImage(bmpScreenshot);
