@@ -1032,14 +1032,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]); // x-pos = tiden
-                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
                 }
                 else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
                     timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]); // x-pos = Tiden
-                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = Tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
                     i++;
                 }
             }
