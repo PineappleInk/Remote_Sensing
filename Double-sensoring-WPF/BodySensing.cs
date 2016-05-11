@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Array for the bodies
         /// </summary>
-        private Body[] bodies = null;
+        public Body[] bodies = null;
 
         /// <summary>
         /// definition of bones

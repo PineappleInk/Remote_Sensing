@@ -1418,6 +1418,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        //Kontrollerar ifall någon kropp detekteras och följs av kameran
+        bool IsBodyTracked()
+        {
+            bool bodytracked = false;
+            for (int i = 0; i < 5; ++i)
+            {
+                if (bodySensning.bodies[i].IsTracked)
+                    bodytracked = true;
+            }
+            return bodytracked;
+        }
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -1448,9 +1460,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head && IsBodyTracked())
                     //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
+                        //Console.WriteLine("Bodies[0].isTracked: " + bodySensning.bodies[0].IsTracked);
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
@@ -1518,7 +1531,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     }
 
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1588,7 +1601,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1660,6 +1673,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            chartPulse.Visibility = Visibility.Hidden;
+            chartBreath.Visibility = Visibility.Hidden;
+            TextBlock.Text = "0 %";
+            TextLungLoad.Text = "0 %";
 
             heartPulse = 60;
             breathRate = 30;
