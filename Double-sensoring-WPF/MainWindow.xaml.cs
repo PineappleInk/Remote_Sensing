@@ -1300,7 +1300,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         //Begränsar listan från att bli för stor
-                        if (breathingFiltList.Count >= samplesOfMeasurement)
+                        if (breathingFiltList.Count >= samplesOfMeasurement && depthList.Count >= runPlotModulo)
                         {
                             depthList.RemoveRange(0, runPlotModulo);
                         }
