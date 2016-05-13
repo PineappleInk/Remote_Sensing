@@ -1044,11 +1044,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
-            if (heartRateVariabilityFlag == true)
-            {
-                // Kör excelfunktionen Elli
-            }
-
             return sortedByTime;
         }
 
@@ -1131,7 +1126,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         }
 
                         //Skriver ut heartPulse på skärmen
-                        heartPulse = Math.Round(heartrate / periods);
+                        if (periods == 0)
+                        {
+                            heartPulse = 0;
+                        }
+                        else
+                        {
+                            heartPulse = Math.Round(heartrate / periods);
+                        }
 
                         //Skriver ut momentana pulsen på skärmen
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
