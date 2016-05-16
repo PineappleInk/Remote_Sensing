@@ -140,9 +140,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         System.Media.SoundPlayer daySound = new System.Media.SoundPlayer();
 
         //HRV - excel
-        Excel.Application oXL;
-        Excel._Workbook oWB;
-        Excel._Worksheet oSheet;
+        //Excel.Application oXL;
+        //Excel._Workbook oWB;
+        //Excel._Worksheet oSheet;
 
         //----------------------------------------------------------------------------------------
 
@@ -210,11 +210,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             object misvalue = System.Reflection.Missing.Value;
             //try
             //{
-            oXL = new Excel.Application();             //Start Excel and get Application object.
-            oXL.Visible = true;
-            oWB = (Excel._Workbook)(oXL.Workbooks.Add(""));             //Get a new workbook.
-            oSheet = (Excel._Worksheet)oWB.ActiveSheet;
-            oSheet.Cells[1, 1] = "Tid";             //Add table headers going cell by cell.
+            //oXL = new Excel.Application();             //Start Excel and get Application object.
+            //oXL.Visible = true;
+            //oWB = (Excel._Workbook)(oXL.Workbooks.Add(""));             //Get a new workbook.
+            //oSheet = (Excel._Worksheet)oWB.ActiveSheet;
+            //oSheet.Cells[1, 1] = "Tid";             //Add table headers going cell by cell.
 
             //}
             //catch
@@ -1035,6 +1035,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             List<List<double>> sortedByTime = new List<List<double>>();
             sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
+            sortedByTime.Add(new List<double>());
 
             double average = 0;
 
@@ -1056,14 +1057,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i+1]); // x-pos = tiden
-                    sortedByTime[1].Add(peakList[1][i+1]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i]); // Tiden mellan topparna
                 }
                 else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
                     timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i+1]); // x-pos = Tiden
-                    sortedByTime[1].Add(peakList[1][i+1]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = Tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]); // Tiden mellan topp1 och topp3 (där topp2 förbises)
                     i++;
                 }
             }
@@ -1131,51 +1134,100 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         ////Beräkning av hjärtfrekvens
                         double heartrate = 0;
-                        double periods = 0;
-                        List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTimeAndAmplitude); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
+                        //double periods = 0; //DENNA OCH 2 NEDANSTÅENDE KAN BORTKOMMENTERAS!!!
+                        //List<double> timeBetweenHeartBeats = new List<double>();
+                        //timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTimeAndAmplitude); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
                         double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
 
                         //HÄR ÄR ALL BORTSORTERING AV FELAKTIGA PEAK:AR KLAR!!!
 
-                        List<double> excelList = new List<double>();
+                        //// DETTA KAN KOMMENTERAS BORT, HÄRIFRÅN OCH NER ...
+                        //List<double> excelList = new List<double>();
 
+                        ////Ser till att beräkningarna endast sker över valda sekunder
+                        //for (int i = 0; i < peaksByTimeAndAmplitude[0].Count - 1; ++i)
+                        //{
+                        //    if (peaksByTimeAndAmplitude[0][i] >= xStart)
+                        //    {
+                        //        heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
+                        //        periods += 1;
+                        //        excelList.Add(timeBetweenHeartBeats[i]);
+
+                        //        if (i == peaksByTimeAndAmplitude[0].Count - 2)
+                        //        {
+                        //            momentaryPulse = 60 / timeBetweenHeartBeats[i];
+                        //            momentaryPulse = Math.Round(momentaryPulse);
+                        //        }
+                        //    }
+                        //}
+
+                        ////Skriver ut heartPulse på skärmen
+                        //if (periods == 0)
+                        //{
+                        //    heartPulse = 0;
+                        //}
+                        //else
+                        //{
+                        //    heartPulse = Math.Round(heartrate / periods);
+                        //}
+
+                        //// Skickar heart-rate variability-värden till Excel då knapp i interface klickas på.
+                        //if (heartRateVariabilityFlag == true)
+                        //{
+                        //    for (int i = 0; i < excelList.Count; ++i)
+                        //    {
+                        //        //oSheet.Cells[(i+1).ToString(), "A"].Value2 = (Math.Round(excelList[i], 4)).ToString();
+                        //        Console.WriteLine(excelList[i]);
+                        //    }
+
+                        //    //oXL.Visible = false;
+                        //    //oXL.UserControl = false;
+                        //    //oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                        //    //    false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
+                        //    heartRateVariabilityFlag = false;
+                        //}
+                        //// ... HIT
+
+                        // DETTA KAN ANVÄNDAS ISTÄLLET FÖR OVANSTÅENDE KOD (OM DEN BORTKOMMENTERAS!)
                         //Ser till att beräkningarna endast sker över valda sekunder
+                        int counter = 0;
+
                         for (int i = 0; i < peaksByTimeAndAmplitude[0].Count - 1; ++i)
                         {
                             if (peaksByTimeAndAmplitude[0][i] >= xStart)
                             {
-                                heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
-                                periods += 1;
-                                excelList.Add(timeBetweenHeartBeats[i]);
-
-                                if (i == peaksByTimeAndAmplitude[0].Count - 2)
+                                heartrate += 60 / peaksByTimeAndAmplitude[2][i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
+                                counter++;
+                                if (i == peaksByTimeAndAmplitude[2].Count - 1)
                                 {
-                                    momentaryPulse = 60 / timeBetweenHeartBeats[i];
+                                    momentaryPulse = 60 / peaksByTimeAndAmplitude[2][i];
                                     momentaryPulse = Math.Round(momentaryPulse);
                                 }
                             }
                         }
                         
-                        // Skickar heart-rate variability-värden till Excel då knapp i interface klickas på.
-                        if (heartRateVariabilityFlag == true)
+                        //Skriver ut heartPulse på skärmen
+                        if (counter == 0)
                         {
-                            for (int i = 0; i < excelList.Count; ++i)
-                            {
-                                oSheet.Cells[(i+1).ToString(), "A"].Value2 = (Math.Round(excelList[i], 4)).ToString();
-                                Console.WriteLine(excelList[i]);
-                            }
-
-                            oXL.Visible = false;
-                            oXL.UserControl = false;
-                            oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-                                false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                            
-                            heartRateVariabilityFlag = false;
+                            heartPulse = 0;
+                        }
+                        else
+                        {
+                            heartPulse = Math.Round(heartrate / counter);
                         }
 
-                        //Skriver ut heartPulse på skärmen
-                        heartPulse = Math.Round(heartrate / periods);
+                        // Skriver ut heart-rate variability-värden till konsollen då knapp i interface klickas på.
+                        if (heartRateVariabilityFlag == true)
+                        {
+                            for (int i = 0; i < peaksByTimeAndAmplitude[2].Count; ++i)
+                            {
+                                Console.WriteLine(peaksByTimeAndAmplitude[2][i]);
+                            }
+
+                            heartRateVariabilityFlag = false;
+                        }
+                        //HÄR SLUTAR BORTKOMMENTERAD KOD SOM JAG TYCKER SKA VARA MED //Justus
 
                         //Skriver ut momentana pulsen på skärmen
                         momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
@@ -1338,7 +1390,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
-                        breathingAlarm(breathRate, lowNumBreathing);
+                        //breathingAlarm(breathRate, lowNumBreathing);
 
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
