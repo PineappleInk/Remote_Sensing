@@ -44,7 +44,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             if (alarmString == "pulse")
             {
-                textBlock.Text = "Pulse alarm\nNo pulse detected!";
+                textBlock.Text = "Pulsalarm\nIngen puls detekterad!";
             }
         }
 
