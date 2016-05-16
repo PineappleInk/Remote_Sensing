@@ -27,7 +27,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         string soundpath;
         System.Windows.Threading.DispatcherTimer alarmTimer = new System.Windows.Threading.DispatcherTimer();
 
-        public Alarm(MainWindow mw, KinectSensor ks, string p)
+        public Alarm(MainWindow mw, KinectSensor ks, string p,  string alarmString)
         {
             parent = mw;
             kinect = ks;
@@ -41,6 +41,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             alarmTimer.Start();
 
             InitializeComponent();
+
+            if (alarmString == "pulse")
+            {
+                textBlock.Text = "Pulse alarm\nNo pulse detected!";
+            }
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)

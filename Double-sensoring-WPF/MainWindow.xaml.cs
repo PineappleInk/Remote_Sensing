@@ -1127,9 +1127,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Sortera toppar baserat på tiden 
                         List<List<double>> peaksByTimeAndAmplitude = new List<List<double>>();
                         peaksByTimeAndAmplitude = removeByTime(peaksAndValleysByHeight);
-
-                        //List<List<double>> comboPulse = new List<List<double>>();
-                        //comboPulse = removeByTime(peaksAndValleysByHeight);
                         /* SLUT toppdetektering */
 
                         ////Beräkning av hjärtfrekvens
@@ -1206,7 +1203,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 }
                             }
                         }
-                        
+
                         //Skriver ut heartPulse på skärmen
                         if (counter == 0)
                         {
@@ -1381,23 +1378,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         // Average är antalet peakar i andningen under 60 sekunder.
                         average = breathPeaksFilt[0].Count() * 60 / breathingWarningInSeconds;
-                        //Console.WriteLine("BreathingRate: " + breathingRate + ", Average: " + average);
                         //Sparar andningsfrekvensen i den globala variabeln
                         breathRate = breathingRate;
-
-                        // Ritar ut andningspeakar i programmet
-                        //averageBreathingTextBlock.Text = "Antal peaks i andning: " + System.Environment.NewLine + peaksFilt[0].Count()
-                        //    + Environment.NewLine + "Uppskattad BPM: " + average;
 
                         //Skickar alarmgränsen till larmfunktionen för att testa ifall ett larm ska ges.
                         //breathingAlarm(breathRate, lowNumBreathing);
 
+                        //Plottar andningen i andningsgrafen
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
                             chartBreath.AddPointToLine("Breath", breathingFiltList[k], k - j);
                         }
 
-                        if (breathingFiltList.Count >= samplesOfMeasurement)
+                        //Begränsar listan från att bli för stor
+                        if (breathingFiltList.Count >= samplesOfMeasurement && depthList.Count >= runPlotModulo)
                         {
                             depthList.RemoveRange(0, runPlotModulo);
                         }
@@ -1424,38 +1418,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "pulse");
                 this.Hide();
                 breathAlarm.Show();
                 breathRate = 12;
             }
-        }
-        /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-            settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;  DETTA SKER I SEPARAT KLASS NU, MEN DÅ FUNKAR INTE LJUDAVSTÄNGSRUTAN
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.Red;
-                    breathingAlarmText.Visibility = System.Windows.Visibility.Visible;
-                }
-
             }
-            else
-            {
-                settingWindow.inputTextBreathing.Background = System.Windows.Media.Brushes.White;
-                breathingAlarmText.Visibility = System.Windows.Visibility.Hidden;
-    }*/
 
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
@@ -1464,42 +1432,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "breath");
                 this.Hide();
                 breathAlarm.Show();
                 heartPulse = 60;
             }
         }
 
-        /*
-                if (!settingWindow.checkBoxSound.HasContent)
-                {
-                    Console.WriteLine("Det fanns inget värde i checkBoxSound");
-                }
-                if ((bool)settingWindow.checkBoxSound.IsChecked)
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                    string soundpath = Path.Combine(path + @"\..\..\..\beep-07.wav");
-                    System.Media.SoundPlayer beep = new System.Media.SoundPlayer();
-                    beep.SoundLocation = soundpath;
-                    beep.Play();
-                }
-                else
-                {
-                    pulseAlarmText.Visibility = System.Windows.Visibility.Visible;
-                    settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.Red;
-                }
-            }
-            else
-            {
-                settingWindow.inputTextPulse.Background = System.Windows.Media.Brushes.White;
-                pulseAlarmText.Visibility = System.Windows.Visibility.Hidden;
-            }
-}*/
-
-        /// Funktion som tar ut färgvärdena för en pixel
-        /// 
+        // Funktion som tar ut färgvärdena för en pixel
         private int getcolorfrompixel(int width, int heigth, byte[] array, string color)
         {
             if ((array.Length == 8294400) && (heigth - 5 > 0) && (width - 5 > 0) && (heigth + 5 < 1080) && (width + 5 < 1920))
@@ -1529,6 +1469,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        //Byter färg på en pixel till den angivna färgen
         private void ChangePixelColor(int x, int y, byte[] array, string color)
         {
             if ((array.Length == 8294400) && (y - 5 > 0) && (x - 5 > 0) && (y + 5 < 1080) && (x + 5 < 1920))
@@ -1570,6 +1511,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        //Kontrollerar ifall någon kropp detekteras och följs av kameran
+        bool IsBodyTracked()
+        {
+            bool bodytracked = false;
+            for (int i = 0; i < 5; ++i)
+            {
+                if (bodySensning.bodies[i].IsTracked)
+                    bodytracked = true;
+            }
+            return bodytracked;
+        }
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -1600,9 +1553,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head && IsBodyTracked())
                     //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
+                        //Console.WriteLine("Bodies[0].isTracked: " + bodySensning.bodies[0].IsTracked);
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
@@ -1670,7 +1624,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     }
 
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1740,7 +1694,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1812,6 +1766,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            chartPulse.Visibility = Visibility.Hidden;
+            chartBreath.Visibility = Visibility.Hidden;
+            TextBlock.Text = "0 %";
+            TextLungLoad.Text = "0 %";
 
             heartPulse = 60;
             breathRate = 30;
