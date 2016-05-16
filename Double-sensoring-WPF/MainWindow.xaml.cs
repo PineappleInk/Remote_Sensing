@@ -1001,6 +1001,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Utsållning med avseende till tiden
         // Returnerar double-lista med peakar där peakar som ligger för nära varandra sållats bort
         // [0] = Peakarnas x-position, [1] = Peakarnas y-position
+        //Utsållning med avseende till tiden
+        // Returnerar double-lista med peakar där peakar som ligger för nära varandra sållats bort
+        // [0] = Peakarnas x-position, [1] = Peakarnas y-position, [2] = Tider mellan två (godkända) peakar
         private List<List<double>> removeByTime(List<List<double>> peakList)
         {
             // Lista med alla tider mellan alla toppar
@@ -1009,6 +1012,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Lista med peakar sorterade på tid.
             List<List<double>> sortedByTime = new List<List<double>>();
+            sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
 
@@ -1034,12 +1038,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 {
                     sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = tiden
                     sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i]); // Tiden mellan topparna
                 }
                 else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
                     timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
                 {
                     sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = Tiden
                     sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]); // Tiden mellan topp1 och topp3 (där topp2 förbises)
                     i++;
                 }
             }
