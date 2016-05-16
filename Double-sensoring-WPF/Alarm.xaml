@@ -17,7 +17,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="161,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="92" Width="323" FontSize="26.667" FontWeight="Bold" TextAlignment="Center"><Run Text="Breathing alarm"/><LineBreak/><Run Text="No breathing detected!"/></TextBlock>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="152,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="92" Width="341" FontSize="26.667" FontWeight="Bold" TextAlignment="Center"><Run Text="Andnings"/><Run Text="alarm"/><LineBreak/><Run Text="Ingen andning detekterad"/><Run Text="!"/></TextBlock>
 
     </Grid>
 </Window>

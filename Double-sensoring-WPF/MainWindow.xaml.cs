@@ -1333,7 +1333,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "pulse");
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "breath");
                 this.Hide();
                 breathAlarm.Show();
                 breathRate = 12;
@@ -1347,9 +1347,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "breath");
+                Alarm pulseAlarm = new Alarm(this, kinectSensor, path, "pulse");
                 this.Hide();
-                breathAlarm.Show();
+                pulseAlarm.Show();
                 heartPulse = 60;
             }
         }
