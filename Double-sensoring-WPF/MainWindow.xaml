@@ -73,6 +73,8 @@
             <TextBlock x:Name="textBlock_Copy" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,42,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Stor" VerticalAlignment="Top"/>
             <TextBlock x:Name="textBlock_Copy1" Grid.Column="2" HorizontalAlignment="Left" Margin="349.333,132,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Medel" VerticalAlignment="Top"/>
             <CheckBox x:Name="nighttime" Content="Nattläge" Grid.Column="2" HorizontalAlignment="Left" Margin="47.667,286,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="White" Checked="nighttime_Checked" Unchecked="nighttime_Unchecked"/>
+            <TextBlock x:Name="textBlock1" Grid.Column="2" HorizontalAlignment="Left" Margin="105.667,135,0,0" Grid.Row="2" TextWrapping="Wrap" Text="andetag/minut" VerticalAlignment="Top" FontStyle="Italic"/>
+            <TextBlock x:Name="textBlock1_Copy" Grid.Column="2" HorizontalAlignment="Left" Margin="104.667,256,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" FontStyle="Italic"><Run Text="hjärtslag"/><Run Text="/minut"/></TextBlock>
 
 
         </Grid>
