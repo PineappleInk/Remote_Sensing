@@ -920,9 +920,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             meanH10 = meanH10 / M;
-            // Console.WriteLine("M: " + M);
-
-            // Console.WriteLine("meanH10: " + meanH10);
 
             // Tar fram summa av höjden
             double sum10 = 0;
@@ -938,7 +935,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH10
             double sigmaH10 = Math.Sqrt((1 / M) * sum10);
             stdH10 = sigmaH10; // stdH10 är global variabel
-            Console.WriteLine("stdH10: " + stdH10);
             /* Slut */
 
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
@@ -1535,7 +1531,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     if (bodySensning.getHeadJoint().JointType == JointType.Head && IsBodyTracked())
                     //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
-                        //Console.WriteLine("Bodies[0].isTracked: " + bodySensning.bodies[0].IsTracked);
                         try
                         {
                             ColorSpacePoint colorSpaceHeadPoint = bodySensning.getCoordinateMapper().
