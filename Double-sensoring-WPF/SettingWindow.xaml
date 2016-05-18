@@ -15,7 +15,7 @@
         <TextBlock x:Name="textBlockSound" Margin="398,86,0,0" TextWrapping="Wrap" Text="Ljud för larm" Height="32" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76" Foreground="Black"/>
         <TextBox x:Name="inputTextPulse" Margin="17,113,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
         <TextBox x:Name="inputTextBreathing" Margin="17,173,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
-        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="426,107,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
+        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="426,107,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="True" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="215,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="130" Foreground="Black"><Run Text="Ändra position för att mäta andning"/><Run Text=":"/><Run Text="&#xA;"/></TextBlock>
         <Button x:Name="Save" Content="Spara och stäng" HorizontalAlignment="Left" Margin="374,199,0,0" VerticalAlignment="Top" Width="99" Click="Save_Click"/>
         <Button x:Name="resetButton" Content="Återställ " HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Width="80" Click="resetButton_Click"/>
