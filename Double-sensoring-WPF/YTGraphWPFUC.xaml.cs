@@ -138,8 +138,8 @@ namespace Module_Graphs
                 s.ShadowOffset = 1;
                 s.IsVisibleInLegend = true;
                 //s.IsValueShownAsLabel = true;                       
-                s.LegendText = strPinDescription + " (" + strUnit + ")";
-                s.LegendToolTip = strPinDescription + " (" + strUnit + ")";
+                s.LegendText = strPinDescription; //+ " (" + strUnit + ")";
+                s.LegendToolTip = strPinDescription; //+ " (" + strUnit + ")";
 
                 if (strPinDescription == "Andning")
                 {

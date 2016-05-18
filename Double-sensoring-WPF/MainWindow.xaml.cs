@@ -1236,7 +1236,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (peaksByTimeAndAmplitude[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("Toppmarkeringar", peaksByTimeAndAmplitude[1][i], peaksByTimeAndAmplitude[0][i] - j);
+                                chartPulse.AddPointToLine("Toppmarkeringar", peaksByTimeAndAmplitude[1][i] * 1.001, peaksByTimeAndAmplitude[0][i] - j);
                             }
                         }
                         /* Slut plottning puls */
@@ -1313,7 +1313,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (breathPeaksFilt[0][i] >= j)
                             {
-                                chartBreath.AddPointToLine("Toppmarkeringar", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
+                                chartBreath.AddPointToLine("Toppmarkeringar", breathPeaksFilt[1][i] * 1.001, breathPeaksFilt[0][i] - j);
                             }
                         }
 
