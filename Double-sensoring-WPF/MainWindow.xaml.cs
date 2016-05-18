@@ -1199,10 +1199,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             heartRateVariabilityFlag = false;
                         }
-                        //HÄR SLUTAR BORTKOMMENTERAD KOD SOM JAG TYCKER SKA VARA MED //Justus
-
-                        //Skriver ut momentana pulsen på skärmen
-                        momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
 
                         /* Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt toppdetektering. */
                         int j = 0;
@@ -1254,10 +1250,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaksPulse[0].RemoveAt(0);
                             peaksPulse[1].RemoveAt(0);
                         }
-
-                        //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = "Old heartrate: " + momentaryPulse.ToString() + ", * 6 puls: " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
-                            + ", Puls utan tidsperspektiv: " + heartrate;
 
                         /* Tar in larmgränsen och jämför med personens uppskattade puls. */
                         pulseAlarm(heartPulse, lowNumPulse, lastSample);
