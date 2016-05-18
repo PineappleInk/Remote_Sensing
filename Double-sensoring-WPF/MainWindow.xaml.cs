@@ -1074,12 +1074,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Slut filtrering
 
                         // Initialisering av markeringar i pulsplot
-                        chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                        chartPulse.CheckAndAddSeriesToGraph("Puls", "hjärtslag/minut");
                         //chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
-                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+                        chartPulse.CheckAndAddSeriesToGraph("Toppmarkeringar", "topp");
                         //chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
-                        chartPulse.CheckAndAddSeriesToGraph("TimeAndHeightMarker", "TimeAndHeightMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("TimeAndHeightMarker", "TimeAndHeightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
@@ -1224,19 +1224,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }*/
 
-                        for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
-                        {
-                            if (peaksAndValleysByHeight[0][i] >= j)
-                            {
-                                chartPulse.AddPointToLine("Pulsemarkers", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
-                            }
-                        }
+                        //for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
+                        //{
+                        //    if (peaksAndValleysByHeight[0][i] >= j)
+                        //    {
+                        //        chartPulse.AddPointToLine("Toppmarkeringar", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
+                        //    }
+                        //}
 
                         for (int i = 0; i < peaksByTimeAndAmplitude[0].Count(); i++)
                         {
                             if (peaksByTimeAndAmplitude[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("TimeAndHeightMarker", peaksByTimeAndAmplitude[1][i] + 0.002, peaksByTimeAndAmplitude[0][i] - j);
+                                chartPulse.AddPointToLine("Toppmarkeringar", peaksByTimeAndAmplitude[1][i], peaksByTimeAndAmplitude[0][i] - j);
                             }
                         }
                         /* Slut plottning puls */
@@ -1257,7 +1257,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
-                            chartPulse.AddPointToLine("Pulse", rgbFiltList[k], k - j);
+                            chartPulse.AddPointToLine("Puls", rgbFiltList[k], k - j);
                         }
                         /*
                         for (int k = 0; k < heartRateList[0].Count(); k++)
@@ -1286,9 +1286,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         breathingFiltList.RemoveRange(0, fps);
 
-                        chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                        chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
-                        chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
+                        chartBreath.CheckAndAddSeriesToGraph("Andning", "andetag/minut");
+                        chartBreath.CheckAndAddSeriesToGraph("Toppmarkeringar", "topp");
+                        //chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
                         chartBreath.ClearCurveDataPointsFromGraph();
 
                         // Toppdetektering
@@ -1313,7 +1313,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (breathPeaksFilt[0][i] >= j)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
+                                chartBreath.AddPointToLine("Toppmarkeringar", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
                             }
                         }
 
@@ -1354,7 +1354,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //Plottar andningen i andningsgrafen
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
-                            chartBreath.AddPointToLine("Breath", breathingFiltList[k], k - j);
+                            chartBreath.AddPointToLine("Andning", breathingFiltList[k], k - j);
                         }
 
                         //Begränsar listan från att bli för stor

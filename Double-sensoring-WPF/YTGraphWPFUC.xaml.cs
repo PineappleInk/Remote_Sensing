@@ -84,7 +84,7 @@ namespace Module_Graphs
                     return; //already exists
                 }
             }
-            if (strUnit == "marker")
+            if (strUnit == "hjärtslag/minut")
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
@@ -93,15 +93,15 @@ namespace Module_Graphs
                 s.Color = System.Drawing.Color.FromArgb(255, 150, 0, 150);
                 s.BorderWidth = 3;
             }
-            //else if (strUnit == "heightMarker")
-            //{
-            //    Series s = chart1.Series.Add(strPinDescription);
-            //    s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
-            //    s.MarkerStyle = MarkerStyle.Diamond;
-            //    s.MarkerSize = 10;
-            //    s.Color = System.Drawing.Color.FromArgb(255, 255, 135, 0);
-            //    s.BorderWidth = 3;
-            //}
+            else if (strUnit == "andetag/minut")
+            {
+                Series s = chart1.Series.Add(strPinDescription);
+                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+                s.MarkerStyle = MarkerStyle.Diamond;
+                s.MarkerSize = 10;
+                s.Color = System.Drawing.Color.FromArgb(255, 255, 135, 0);
+                s.BorderWidth = 3;
+            }
             //else if (strUnit == "valleyMarker")
             //{
             //    Series s = chart1.Series.Add(strPinDescription);
@@ -120,7 +120,7 @@ namespace Module_Graphs
             //    s.Color = System.Drawing.Color.FromArgb(255, 0, 0, 255);
             //    s.BorderWidth = 3;
             //}
-            else if (strUnit == "TimeAndHeightMarker")
+            else if (strUnit == "topp")
             {
                 Series s = chart1.Series.Add(strPinDescription);
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
