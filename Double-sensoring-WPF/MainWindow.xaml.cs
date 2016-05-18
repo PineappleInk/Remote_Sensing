@@ -1219,7 +1219,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             for (int i = 0; i < peaksByTimeAndAmplitude[2].Count; ++i)
                             {
-                                Console.WriteLine(peaksByTimeAndAmplitude[2][i]);
+                                if (peaksByTimeAndAmplitude[0][i] >= xStart)
+                                {
+                                    Console.WriteLine(peaksByTimeAndAmplitude[2][i]);
+                                }
                             }
 
                             heartRateVariabilityFlag = false;
@@ -1285,7 +1288,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             + ", Puls utan tidsperspektiv: " + heartrate;
 
                         /* Tar in larmgränsen och jämför med personens uppskattade puls. */
-                        pulseAlarm(heartPulse, lowNumPulse, lastSample);
+                        //pulseAlarm(heartPulse, lowNumPulse, lastSample);
                         /* Slut larm */
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
@@ -1423,7 +1426,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 breathAlarm.Show();
                 breathRate = 12;
             }
-            }
+        }
 
         // Larm för pulsen
         private void pulseAlarm(double averagePulse, int lowNum, int lastSample)
