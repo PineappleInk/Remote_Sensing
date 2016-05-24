@@ -84,7 +84,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     inputTextBreathing.Text = Convert.ToString(mainWindow.lowNumBreathing);
-                    System.Windows.MessageBox.Show("Invalid breathing alarm level! Choose a number between 2 and 40");
+                    System.Windows.MessageBox.Show("Otillåtet värde! Välj ett värde mellan 2 och 65 andetag/min");
                 }
 
                 int inputnumber = Convert.ToInt32(inputTextPulse.Text);
@@ -95,7 +95,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 else
                 {
                     inputTextPulse.Text = Convert.ToString(mainWindow.lowNumPulse);
-                    System.Windows.MessageBox.Show("Invalid pulse alarm level ! Choose a number between 30 and 200");
+                    System.Windows.MessageBox.Show("Otillåtet värde! Välj ett värde mellan 30 och 200 slag/minut");
                 }
 
                 if(inputnumber_b >= 2 && inputnumber_b <= 40 && inputnumber >= 30 && inputnumber <= 200)

@@ -332,6 +332,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
             lung3.Visibility = Visibility.Hidden;
+            heartrateTextBlock.Visibility = Visibility.Hidden;
+            breathrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
         }
 
         /// <summary>
@@ -920,9 +924,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
             meanH10 = meanH10 / M;
-            // Console.WriteLine("M: " + M);
-
-            // Console.WriteLine("meanH10: " + meanH10);
 
             // Tar fram summa av höjden
             double sum10 = 0;
@@ -938,7 +939,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // Tar fram std-avvikelsen sigmaH10
             double sigmaH10 = Math.Sqrt((1 / M) * sum10);
             stdH10 = sigmaH10; // stdH10 är global variabel
-            Console.WriteLine("stdH10: " + stdH10);
             /* Slut */
 
             /* Sök medelvärde och standardavvikelse för höjderna (topp-till-dal) */
@@ -1001,6 +1001,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         //Utsållning med avseende till tiden
         // Returnerar double-lista med peakar där peakar som ligger för nära varandra sållats bort
         // [0] = Peakarnas x-position, [1] = Peakarnas y-position
+        //Utsållning med avseende till tiden
+        // Returnerar double-lista med peakar där peakar som ligger för nära varandra sållats bort
+        // [0] = Peakarnas x-position, [1] = Peakarnas y-position, [2] = Tider mellan två (godkända) peakar
         private List<List<double>> removeByTime(List<List<double>> peakList)
         {
             // Lista med alla tider mellan alla toppar
@@ -1009,6 +1012,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             // Lista med peakar sorterade på tid.
             List<List<double>> sortedByTime = new List<List<double>>();
+            sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
             sortedByTime.Add(new List<double>());
 
@@ -1032,21 +1036,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 if (timeBetweenHeartBeats[i] > average * 0.7 && timeBetweenHeartBeats[i] <= average * 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]); // x-pos = tiden
-                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i]); // Tiden mellan topparna
                 }
                 else if (i != timeBetweenHeartBeats.Count - 1 && (timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]) > average * 0.7 &&
                     timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1] <= 1.4)
                 {
-                    sortedByTime[0].Add(peakList[0][i]); // x-pos = Tiden
-                    sortedByTime[1].Add(peakList[1][i]); // y-pos = Amplituden
+                    sortedByTime[0].Add(peakList[0][i + 1]); // x-pos = Tiden
+                    sortedByTime[1].Add(peakList[1][i + 1]); // y-pos = Amplituden
+                    sortedByTime[2].Add(timeBetweenHeartBeats[i] + timeBetweenHeartBeats[i + 1]); // Tiden mellan topp1 och topp3 (där topp2 förbises)
                     i++;
                 }
-            }
-
-            if (heartRateVariabilityFlag == true)
-            {
-                // Kör excelfunktionen Elli
             }
 
             return sortedByTime;
@@ -1077,12 +1078,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         // Slut filtrering
 
                         // Initialisering av markeringar i pulsplot
-                        chartPulse.CheckAndAddSeriesToGraph("Pulse", "fps");
+                        chartPulse.CheckAndAddSeriesToGraph("Puls", "hjärtslag/minut");
                         //chartPulse.CheckAndAddSeriesToGraph("TopLines", "fps2");
-                        chartPulse.CheckAndAddSeriesToGraph("Pulsemarkers", "marker");
+                        chartPulse.CheckAndAddSeriesToGraph("Toppmarkeringar", "topp");
                         //chartPulse.CheckAndAddSeriesToGraph("HeightMarkers", "heightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("ValleyMarkers", "valleyMarker");
-                        chartPulse.CheckAndAddSeriesToGraph("TimeAndHeightMarker", "TimeAndHeightMarker");
+                        //chartPulse.CheckAndAddSeriesToGraph("TimeAndHeightMarker", "TimeAndHeightMarker");
                         //chartPulse.CheckAndAddSeriesToGraph("CcccomboMarkers", "comboMarker");
                         chartPulse.ClearCurveDataPointsFromGraph();
 
@@ -1109,32 +1110,99 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         ////Beräkning av hjärtfrekvens
                         double heartrate = 0;
-                        double periods = 0;
-                        List<double> timeBetweenHeartBeats = new List<double>();
-                        timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTimeAndAmplitude); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
+                        //double periods = 0; //DENNA OCH 2 NEDANSTÅENDE KAN BORTKOMMENTERAS!!!
+                        //List<double> timeBetweenHeartBeats = new List<double>();
+                        //timeBetweenHeartBeats = timeBetweenAllPeaks(peaksByTimeAndAmplitude); //SE TILL SÅ DETTA ÄR RÄTT LISTA!!! O.o :-O
                         double xStart = rgbFiltList.Count - (pulseWarningInSeconds * fps);
 
+                        //HÄR ÄR ALL BORTSORTERING AV FELAKTIGA PEAK:AR KLAR!!!
+
+                        //// DETTA KAN KOMMENTERAS BORT, HÄRIFRÅN OCH NER ...
+                        //List<double> excelList = new List<double>();
+
+                        ////Ser till att beräkningarna endast sker över valda sekunder
+                        //for (int i = 0; i < peaksByTimeAndAmplitude[0].Count - 1; ++i)
+                        //{
+                        //    if (peaksByTimeAndAmplitude[0][i] >= xStart)
+                        //    {
+                        //        heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
+                        //        periods += 1;
+                        //        excelList.Add(timeBetweenHeartBeats[i]);
+
+                        //        if (i == peaksByTimeAndAmplitude[0].Count - 2)
+                        //        {
+                        //            momentaryPulse = 60 / timeBetweenHeartBeats[i];
+                        //            momentaryPulse = Math.Round(momentaryPulse);
+                        //        }
+                        //    }
+                        //}
+
+                        ////Skriver ut heartPulse på skärmen
+                        //if (periods == 0)
+                        //{
+                        //    heartPulse = 0;
+                        //}
+                        //else
+                        //{
+                        //    heartPulse = Math.Round(heartrate / periods);
+                        //}
+
+                        //// Skickar heart-rate variability-värden till Excel då knapp i interface klickas på.
+                        //if (heartRateVariabilityFlag == true)
+                        //{
+                        //    for (int i = 0; i < excelList.Count; ++i)
+                        //    {
+                        //        //oSheet.Cells[(i+1).ToString(), "A"].Value2 = (Math.Round(excelList[i], 4)).ToString();
+                        //        Console.WriteLine(excelList[i]);
+                        //    }
+
+                        //    //oXL.Visible = false;
+                        //    //oXL.UserControl = false;
+                        //    //oWB.SaveAs(path + @"\..\..\..\HRV-excel\" + excelnamn.Text + ".xls", Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                        //    //    false, false, Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
+                        //    heartRateVariabilityFlag = false;
+                        //}
+                        //// ... HIT
+
+                        // DETTA KAN ANVÄNDAS ISTÄLLET FÖR OVANSTÅENDE KOD (OM DEN BORTKOMMENTERAS!)
                         //Ser till att beräkningarna endast sker över valda sekunder
+                        int counter = 0;
+
                         for (int i = 0; i < peaksByTimeAndAmplitude[0].Count - 1; ++i)
                         {
                             if (peaksByTimeAndAmplitude[0][i] >= xStart)
                             {
-                                heartrate += 60 / timeBetweenHeartBeats[i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
-                                periods += 1;
-
-                                if (i == peaksByTimeAndAmplitude[0].Count - 2)
+                                heartrate += 60 / peaksByTimeAndAmplitude[2][i]; // Beräknar den momentana pulsen för varje topp och medelvärdesberäknar därefter alla
+                                counter++;
+                                if (i == peaksByTimeAndAmplitude[2].Count - 1)
                                 {
-                                    momentaryPulse = 60 / timeBetweenHeartBeats[i];
+                                    momentaryPulse = 60 / peaksByTimeAndAmplitude[2][i];
                                     momentaryPulse = Math.Round(momentaryPulse);
                                 }
                             }
                         }
 
                         //Skriver ut heartPulse på skärmen
-                        heartPulse = Math.Round(heartrate / periods);
+                        if (counter == 0)
+                        {
+                            heartPulse = 0;
+                        }
+                        else
+                        {
+                            heartPulse = Math.Round(heartrate / counter);
+                        }
 
-                        //Skriver ut momentana pulsen på skärmen
-                        momentaryHeartrate.Text = "Momentary heartrate: " + momentaryPulse;
+                        // Skriver ut heart-rate variability-värden till konsollen då knapp i interface klickas på.
+                        if (heartRateVariabilityFlag == true)
+                        {
+                            for (int i = 0; i < peaksByTimeAndAmplitude[2].Count; ++i)
+                            {
+                                Console.WriteLine(peaksByTimeAndAmplitude[2][i]);
+                            }
+
+                            heartRateVariabilityFlag = false;
+                        }
 
                         /* Plottning av pulskurva (färgvärde median(röd/grön) över tid), samt toppdetektering. */
                         int j = 0;
@@ -1160,19 +1228,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             }
                         }*/
 
-                        for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
-                        {
-                            if (peaksAndValleysByHeight[0][i] >= j)
-                            {
-                                chartPulse.AddPointToLine("Pulsemarkers", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
-                            }
-                        }
+                        //for (int i = 0; i < peaksAndValleysByHeight[0].Count(); i++)
+                        //{
+                        //    if (peaksAndValleysByHeight[0][i] >= j)
+                        //    {
+                        //        chartPulse.AddPointToLine("Toppmarkeringar", peaksAndValleysByHeight[1][i], peaksAndValleysByHeight[0][i] - j);
+                        //    }
+                        //}
 
                         for (int i = 0; i < peaksByTimeAndAmplitude[0].Count(); i++)
                         {
                             if (peaksByTimeAndAmplitude[0][i] >= j)
                             {
-                                chartPulse.AddPointToLine("TimeAndHeightMarker", peaksByTimeAndAmplitude[1][i] + 0.002, peaksByTimeAndAmplitude[0][i] - j);
+                                chartPulse.AddPointToLine("Toppmarkeringar", peaksByTimeAndAmplitude[1][i] * 1.001, peaksByTimeAndAmplitude[0][i] - j);
                             }
                         }
                         /* Slut plottning puls */
@@ -1187,17 +1255,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             peaksPulse[1].RemoveAt(0);
                         }
 
-                        //Placerar uppdaterar variabel för medelvärdet, för att användas i det visuella hjärtat
-                        oldheartrateTextBlock.Text = "Old heartrate: " + momentaryPulse.ToString() + ", * 6 puls: " + (peaksPulse[0].Count() * 60 / pulseWarningInSeconds)
-                            + ", Puls utan tidsperspektiv: " + heartrate;
-
                         /* Tar in larmgränsen och jämför med personens uppskattade puls. */
                         pulseAlarm(heartPulse, lowNumPulse, lastSample);
                         /* Slut larm */
 
                         for (int k = j; k < rgbFiltList.Count(); k++)
                         {
-                            chartPulse.AddPointToLine("Pulse", rgbFiltList[k], k - j);
+                            chartPulse.AddPointToLine("Puls", rgbFiltList[k], k - j);
                         }
                         /*
                         for (int k = 0; k < heartRateList[0].Count(); k++)
@@ -1226,9 +1290,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                         breathingFiltList.RemoveRange(0, fps);
 
-                        chartBreath.CheckAndAddSeriesToGraph("Breath", "fps");
-                        chartBreath.CheckAndAddSeriesToGraph("Breathmarkers", "marker");
-                        chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
+                        chartBreath.CheckAndAddSeriesToGraph("Andning", "andetag/minut");
+                        chartBreath.CheckAndAddSeriesToGraph("Toppmarkeringar", "topp");
+                        //chartBreath.CheckAndAddSeriesToGraph("Valleymarkers", "valleyMarker");
                         chartBreath.ClearCurveDataPointsFromGraph();
 
                         // Toppdetektering
@@ -1253,7 +1317,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         {
                             if (breathPeaksFilt[0][i] >= j)
                             {
-                                chartBreath.AddPointToLine("Breathmarkers", breathPeaksFilt[1][i], breathPeaksFilt[0][i] - j);
+                                chartBreath.AddPointToLine("Toppmarkeringar", breathPeaksFilt[1][i] * 1.001, breathPeaksFilt[0][i] - j);
                             }
                         }
 
@@ -1294,11 +1358,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         //Plottar andningen i andningsgrafen
                         for (int k = j; k < breathingFiltList.Count; k++)
                         {
-                            chartBreath.AddPointToLine("Breath", breathingFiltList[k], k - j);
+                            chartBreath.AddPointToLine("Andning", breathingFiltList[k], k - j);
                         }
 
                         //Begränsar listan från att bli för stor
-                        if (breathingFiltList.Count >= samplesOfMeasurement)
+                        if (breathingFiltList.Count >= samplesOfMeasurement && depthList.Count >= runPlotModulo)
                         {
                             depthList.RemoveRange(0, runPlotModulo);
                         }
@@ -1325,7 +1389,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                Alarm breathAlarm = new Alarm(this, kinectSensor, path, "breath");
                 this.Hide();
                 breathAlarm.Show();
                 breathRate = 12;
@@ -1339,9 +1403,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 clearGraphs();
                 kinectSensor.Close();
-                Alarm breathAlarm = new Alarm(this, kinectSensor, path);
+                Alarm pulseAlarm = new Alarm(this, kinectSensor, path, "pulse");
                 this.Hide();
-                breathAlarm.Show();
+                pulseAlarm.Show();
                 heartPulse = 60;
             }
         }
@@ -1418,6 +1482,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        //Kontrollerar ifall någon kropp detekteras och följs av kameran
+        bool IsBodyTracked()
+        {
+            bool bodytracked = false;
+            for (int i = 0; i < 5; ++i)
+            {
+                if (bodySensning.bodies[i].IsTracked)
+                    bodytracked = true;
+            }
+            return bodytracked;
+        }
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -1448,7 +1524,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                     //--------------------------------------------Puls----------------------------------------------------------------------
-                    if (bodySensning.getHeadJoint().JointType == JointType.Head)
+                    if (bodySensning.getHeadJoint().JointType == JointType.Head && IsBodyTracked())
                     //if (bodySensning.getRightHandJoint().JointType == JointType.HandRight)
                     {
                         try
@@ -1495,6 +1571,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100);
                                 TextBlock.Text = procent.ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
+                                heartrateTextBlock.Visibility = Visibility.Hidden;
+                                textBlock1_Copy.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
                                 heart2.Width = heart2.MaxWidth * procent / 100;
                                 heart2.Height = heart2.MaxHeight * procent / 100;
@@ -1503,6 +1581,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 TextBlock.Text = "";
                                 chartPulse.Visibility = Visibility.Visible;
+                                heartrateTextBlock.Visibility = Visibility.Visible;
+                                textBlock1_Copy.Visibility = Visibility.Visible;
                                 heart2.Visibility = Visibility.Hidden;
                             }
 
@@ -1518,7 +1598,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                     }
 
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1588,7 +1668,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     depthFrame.CopyFrameDataToArray(pixelData);
 
                     //Om midSpine-jointen hittas ska andningen beräknas
-                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid)
+                    if (bodySensning.getSpineMidJoint().JointType == JointType.SpineMid && IsBodyTracked())
                     {
                         try
                         {
@@ -1607,6 +1687,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 double procent = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps + fps) * 100);
                                 TextLungLoad.Text = procent.ToString() + "%";
                                 chartBreath.Visibility = Visibility.Hidden;
+                                breathrateTextBlock.Visibility = Visibility.Hidden;
+                                textBlock1.Visibility = Visibility.Hidden;
                                 lung3.Visibility = Visibility.Visible;
                                 lung3.Width = lung3.MaxWidth * procent / 100;
                                 lung3.Height = lung3.MaxHeight * procent / 100;
@@ -1615,6 +1697,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 TextLungLoad.Text = "";
                                 chartBreath.Visibility = Visibility.Visible;
+                                breathrateTextBlock.Visibility = Visibility.Visible;
+                                textBlock1.Visibility = Visibility.Visible;
                                 lung3.Visibility = Visibility.Hidden;
                             }
                         }
@@ -1660,11 +1744,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             colorSensing.gDrList.Clear();
             chartPulse.ClearCurveDataPointsFromGraph();
             chartBreath.ClearCurveDataPointsFromGraph();
+            chartPulse.Visibility = Visibility.Hidden;
+            chartBreath.Visibility = Visibility.Hidden;
+            TextBlock.Text = "0 %";
+            TextLungLoad.Text = "0 %";
 
+            heartrateTextBlock.Visibility = Visibility.Hidden;
+            breathrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
             heartPulse = 60;
             breathRate = 30;
 
-            //Rensa data för standardavvikelsen
+            //Rensa data för standardavvikelsenn
             stdMeanLst.Clear();
             stdMean = 0;
             stdH10 = 0;
@@ -1778,6 +1870,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             nightSound.Play();
             chartPulse.Visibility = Visibility.Hidden;
             heartrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
             heart.Visibility = Visibility.Hidden;
         }
 
@@ -1789,6 +1882,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             daySound.Play();
             chartPulse.Visibility = Visibility.Visible;
             heartrateTextBlock.Visibility = Visibility.Visible;
+            textBlock1_Copy.Visibility = Visibility.Visible;
             heart.Visibility = Visibility.Visible;
 
         }

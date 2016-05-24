@@ -11,22 +11,22 @@
             <TextBlock.Background>
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background><Run Text="L"/><Run Text="armnivå"/><Run Text=" på pulsen"/><Run Text=":"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
-        <TextBlock x:Name="informationTextPulse_Copy" Margin="16,146,0,0" TextWrapping="Wrap" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Foreground="Black"><Run Text="L"/><Run Text="armnivå"/><Run Text=" på "/><Run Text="andningen"/><Run Text=":"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="informationTextPulse_Copy" Margin="17,145,0,0" TextWrapping="Wrap" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Foreground="Black"><Run Text="L"/><Run Text="armnivå"/><Run Text=" på "/><Run Text="andningen"/><Run Text=":"/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
         <TextBlock x:Name="textBlockSound" Margin="398,86,0,0" TextWrapping="Wrap" Text="Ljud för larm" Height="32" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76" Foreground="Black"/>
-        <TextBox x:Name="inputTextPulse" Margin="17,107,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
-        <TextBox x:Name="inputTextBreathing" Margin="17,167,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
-        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="426,107,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="False" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
+        <TextBox x:Name="inputTextPulse" Margin="17,113,0,0" TextWrapping="Wrap" MaxLines="1" Text="30" RenderTransformOrigin="0.5,0.5" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+        <TextBox x:Name="inputTextBreathing" Margin="17,173,0,0" TextWrapping="Wrap" MaxLines="1" Text="10" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+        <CheckBox x:Name="checkBoxSound" Content="&#xD;&#xA;" Margin="426,107,0,0" RenderTransformOrigin="0.5,0.5" IsChecked="True" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="22"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="215,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="130" Foreground="Black"><Run Text="Ändra position för att mäta andning"/><Run Text=":"/><Run Text="&#xA;"/></TextBlock>
         <Button x:Name="Save" Content="Spara och stäng" HorizontalAlignment="Left" Margin="374,199,0,0" VerticalAlignment="Top" Width="99" Click="Save_Click"/>
         <Button x:Name="resetButton" Content="Återställ " HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Width="80" Click="resetButton_Click"/>
         <RadioButton x:Name="Position_High" Content="Högt (på bröstet)" HorizontalAlignment="Left" Margin="217,127,0,0" VerticalAlignment="Top" Checked="Position_High_Checked" Foreground="#FF363636"/>
         <RadioButton x:Name="Position_Normal" Content="Normal" HorizontalAlignment="Left" Margin="217,148,0,0" VerticalAlignment="Top" IsChecked="True" Checked="Position_Normal_Checked" Foreground="#FF363636"/>
         <RadioButton x:Name="Position_Low" Content="Lågt (nedre delen av magen)" HorizontalAlignment="Left" Margin="217,170,0,0" VerticalAlignment="Top" Checked="Position_Low_Checked" Foreground="#FF363636"/>
-        <TextBlock x:Name="Text_larmpulse" Margin="75,107,0,0" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="88" Foreground="#FF363636">
+        <TextBlock x:Name="Text_larmpulse" Margin="75,113,0,0" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="88" Foreground="#FF363636">
             <TextBlock.Background>
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background><Run Text="slag"/><Run Text="/minut"/></TextBlock>
-        <TextBlock x:Name="Text_larmbreathing" Margin="75,168,0,0" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="88" Text="andetag/minut" Foreground="#FF363636">
+        <TextBlock x:Name="Text_larmbreathing" Margin="75,174,0,0" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="88" Text="andetag/minut" Foreground="#FF363636">
             <TextBlock.Background>
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background>
@@ -36,5 +36,13 @@
                 <SolidColorBrush Color="White" Opacity="0"/>
             </TextBlock.Background>
         </TextBlock>
+        <TextBlock x:Name="informationTextPulse_Copy1" Margin="17,100,0,0" TextWrapping="Wrap" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Foreground="Black" Text="(välj mellan 30-200)" FontSize="9.333" FontStyle="Italic">
+            <TextBlock.Background>
+                <SolidColorBrush Color="White" Opacity="0"/>
+            </TextBlock.Background></TextBlock>
+        <TextBlock x:Name="informationTextPulse_Copy2" Margin="17,160,0,0" TextWrapping="Wrap" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162" Foreground="Black" FontSize="9.333" FontStyle="Italic">
+            <TextBlock.Background>
+                <SolidColorBrush Color="White" Opacity="0"/>
+            </TextBlock.Background><Run Text="(välj mellan "/><Run Text="2"/><Run Text="-"/><Run Text="65"/><Run Text=")"/></TextBlock>
     </Grid>
 </Window>
