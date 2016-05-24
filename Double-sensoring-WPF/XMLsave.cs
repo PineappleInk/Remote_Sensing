@@ -14,17 +14,30 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 {
     class XMLsave
     {
-        public void saveToXML(string str)
+        private string pulse;
+        private string breath;
+
+        public void saveToXML(string str, string index)
         {
+            if (index == "pulse")
+            {
+                pulse = str;
+            }
+            else if(index == "breath")
+            {
+                breath = str;
+            }
             // Create the XmlDocument.
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml("<item><name>Pulse: </name></item>");
-
+            doc.LoadXml("<item><nameP>Pulse: </nameP><nameB>Breath: </nameB></item>");
 
             // Add a price element.
-            XmlElement newElem = doc.CreateElement("Pulse");
-            newElem.InnerText = str;
-            doc.DocumentElement.AppendChild(newElem);
+            XmlElement newElemP = doc.CreateElement("pulse");
+            newElemP.InnerText = pulse;
+            doc.DocumentElement.AppendChild(newElemP);
+            XmlElement newElemB = doc.CreateElement("breath");
+            newElemB.InnerText = breath;
+            doc.DocumentElement.AppendChild(newElemB);
 
             // Save the document to a file. White space is
             // preserved (no white space).

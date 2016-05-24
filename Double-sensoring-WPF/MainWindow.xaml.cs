@@ -1790,7 +1790,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             //Skriv ut hjärtfrekvensen
             heartrateTextBlock.Text = heartPulse.ToString();
             XMLsave XMLsave = new XMLsave();
-            XMLsave.saveToXML(heartPulse.ToString());
+            XMLsave.saveToXML(heartPulse.ToString(), "pulse");
 
             //Sätt timertiden till att matcha hjärtfrekvensen
             if (heartPulse != 0)

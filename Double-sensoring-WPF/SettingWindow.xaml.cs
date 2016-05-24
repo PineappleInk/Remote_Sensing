@@ -61,7 +61,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         {
             Position_Low.IsChecked = false;
             Position_Normal.IsChecked = false;
-            mainWindow.setBellyJointYPosition(2/3);
+            mainWindow.setBellyJointYPosition(2/2.7);
             Console.WriteLine(mainWindow.bellyJointYPosition);
         }
 
