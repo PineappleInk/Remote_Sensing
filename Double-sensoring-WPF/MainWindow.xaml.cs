@@ -332,6 +332,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             chartBreath.Visibility = Visibility.Hidden;
             heart2.Visibility = Visibility.Hidden;
             lung3.Visibility = Visibility.Hidden;
+            heartrateTextBlock.Visibility = Visibility.Hidden;
+            breathrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
         }
 
         /// <summary>
@@ -1567,6 +1571,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100);
                                 TextBlock.Text = procent.ToString() + "%";
                                 chartPulse.Visibility = Visibility.Hidden;
+                                heartrateTextBlock.Visibility = Visibility.Hidden;
+                                textBlock1_Copy.Visibility = Visibility.Hidden;
                                 heart2.Visibility = Visibility.Visible;
                                 heart2.Width = heart2.MaxWidth * procent / 100;
                                 heart2.Height = heart2.MaxHeight * procent / 100;
@@ -1575,6 +1581,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 TextBlock.Text = "";
                                 chartPulse.Visibility = Visibility.Visible;
+                                heartrateTextBlock.Visibility = Visibility.Visible;
+                                textBlock1_Copy.Visibility = Visibility.Visible;
                                 heart2.Visibility = Visibility.Hidden;
                             }
 
@@ -1679,6 +1687,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                                 double procent = Math.Round((double)depthList.Count / (double)(startBreathingAfterSeconds * fps + fps) * 100);
                                 TextLungLoad.Text = procent.ToString() + "%";
                                 chartBreath.Visibility = Visibility.Hidden;
+                                breathrateTextBlock.Visibility = Visibility.Hidden;
+                                textBlock1.Visibility = Visibility.Hidden;
                                 lung3.Visibility = Visibility.Visible;
                                 lung3.Width = lung3.MaxWidth * procent / 100;
                                 lung3.Height = lung3.MaxHeight * procent / 100;
@@ -1687,6 +1697,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             {
                                 TextLungLoad.Text = "";
                                 chartBreath.Visibility = Visibility.Visible;
+                                breathrateTextBlock.Visibility = Visibility.Visible;
+                                textBlock1.Visibility = Visibility.Visible;
                                 lung3.Visibility = Visibility.Hidden;
                             }
                         }
@@ -1737,10 +1749,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             TextBlock.Text = "0 %";
             TextLungLoad.Text = "0 %";
 
+            heartrateTextBlock.Visibility = Visibility.Hidden;
+            breathrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
             heartPulse = 60;
             breathRate = 30;
 
-            //Rensa data för standardavvikelsen
+            //Rensa data för standardavvikelsenn
             stdMeanLst.Clear();
             stdMean = 0;
             stdH10 = 0;
@@ -1854,6 +1870,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             nightSound.Play();
             chartPulse.Visibility = Visibility.Hidden;
             heartrateTextBlock.Visibility = Visibility.Hidden;
+            textBlock1_Copy.Visibility = Visibility.Hidden;
             heart.Visibility = Visibility.Hidden;
         }
 
@@ -1865,6 +1882,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             daySound.Play();
             chartPulse.Visibility = Visibility.Visible;
             heartrateTextBlock.Visibility = Visibility.Visible;
+            textBlock1_Copy.Visibility = Visibility.Visible;
             heart.Visibility = Visibility.Visible;
 
         }
