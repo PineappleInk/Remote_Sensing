@@ -1568,22 +1568,39 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             //Laddar hjärt-grafen
                             if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100) <= 100)
                             {
-                                double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100);
-                                TextBlock.Text = procent.ToString() + "%";
-                                chartPulse.Visibility = Visibility.Hidden;
-                                heartrateTextBlock.Visibility = Visibility.Hidden;
-                                textBlock1_Copy.Visibility = Visibility.Hidden;
-                                heart2.Visibility = Visibility.Visible;
-                                heart2.Width = heart2.MaxWidth * procent / 100;
-                                heart2.Height = heart2.MaxHeight * procent / 100;
+                                if (nighttime.IsChecked == false)
+                                {
+                                    double procent = Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100);
+                                    TextBlock.Text = procent.ToString() + "%";
+                                    TextBlock.Visibility = Visibility.Visible;
+                                    chartPulse.Visibility = Visibility.Hidden;
+                                    heartrateTextBlock.Visibility = Visibility.Hidden;
+                                    textBlock1_Copy.Visibility = Visibility.Hidden;
+                                    heart2.Visibility = Visibility.Visible;
+                                    heart2.Width = heart2.MaxWidth * procent / 100;
+                                    heart2.Height = heart2.MaxHeight * procent / 100;
+                                }
+                                else
+                                {
+                                    heart2.Visibility = Visibility.Hidden;
+                                    TextBlock.Visibility = Visibility.Hidden;
+                                }
                             }
                             else if (Math.Round((double)pulseList.Count / (double)(startPulseAfterSeconds * fps + fps) * 100) == 101)
                             {
-                                TextBlock.Text = "";
-                                chartPulse.Visibility = Visibility.Visible;
-                                heartrateTextBlock.Visibility = Visibility.Visible;
-                                textBlock1_Copy.Visibility = Visibility.Visible;
-                                heart2.Visibility = Visibility.Hidden;
+                                if (nighttime.IsChecked == false)
+                                {
+                                    TextBlock.Text = "";
+                                    chartPulse.Visibility = Visibility.Visible;
+                                    heartrateTextBlock.Visibility = Visibility.Visible;
+                                    textBlock1_Copy.Visibility = Visibility.Visible;
+                                    heart2.Visibility = Visibility.Hidden;
+                                }
+                                else
+                                {
+                                    heart2.Visibility = Visibility.Hidden;
+                                    TextBlock.Visibility = Visibility.Hidden;
+                                }
                             }
 
                             //definiera hur ofta och hur stor listan är här innan.
@@ -1872,6 +1889,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             heartrateTextBlock.Visibility = Visibility.Hidden;
             textBlock1_Copy.Visibility = Visibility.Hidden;
             heart.Visibility = Visibility.Hidden;
+            heart2.Visibility = Visibility.Hidden;
         }
 
         private void nighttime_Unchecked(object sender, RoutedEventArgs e)
@@ -1880,11 +1898,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.Background = bgBrush;
             movieFrame.Source = ImageSource2;
             daySound.Play();
-            chartPulse.Visibility = Visibility.Visible;
+            //chartPulse.Visibility = Visibility.Visible;
             heartrateTextBlock.Visibility = Visibility.Visible;
             textBlock1_Copy.Visibility = Visibility.Visible;
             heart.Visibility = Visibility.Visible;
 
+            // Rensa data för standardavvikelsen
+            stdMeanLst.Clear();
+            stdMean = 0;
+            stdH10 = 0;
+
+            // Rensa pulsdata och grafer
+            colorSensing.gDrList.Clear();
+            chartPulse.ClearCurveDataPointsFromGraph();
+            textBlock1_Copy.Visibility = Visibility.Hidden; // Pulsens enhet (slag / minut).
         }
 
 
